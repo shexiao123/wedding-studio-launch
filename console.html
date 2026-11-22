@@ -7149,13 +7149,13 @@ window.WA_CUT = (function(){
   }
   async function analyze(silent){
     var its=C.items.slice();
-    await Promise.all(its.map(function(x){ return waitReady(x,12000); }));
+    await Promise.all(its.map(function(x){ return waitReady(x,15000); }));
     for(var i=0;i<its.length;i++){
       var it=its[i];
       if(!silent) status('正在分析 '+(i+1)+'/'+its.length+'：'+it.name+'…');
       bar((i+0.5)/its.length*0.5);
       if(it.kind==='image'){
-        if(!it.img) it.img=placeholder(it);
+        if(!it.img){ it.ok=false; it.score=0; it.reason='仍在加载 · 图片就绪后重新分析即可'; continue; }
         it.poster=it.img;
         var m=measure(it.img);
         if(!m){ it.ok=false; it.score=0; it.reason='画面读取失败 · 已剔除'; continue; }
