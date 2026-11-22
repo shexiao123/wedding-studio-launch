@@ -2677,6 +2677,7 @@ const S = {
   selWardrobe: null,        // null = 沿用模板自带服装
   selHair: null,            // null = 沿用参考图发型
   genModels: [], styles: [], wardrobes: [], hairstyles: [],
+  preview: false,          // 静态页/后端没起来时走本地默认目录
   refB64List: [], modelB64: null, revB64: null,
   swapB64: null, swapAnalysis: null, selDress: null,
   plans: [], cycles: [], cycleSel: 'month',
@@ -3232,11 +3233,12 @@ function selectTemplateFromDock(id){
   toast('已选择模板：' + t.name + '（已自动填充提示词）');
 }
 function renderTplPicker(){
-  const el = document.getElementById('tplSelect');
-  if (!el) return;
+  const els = document.querySelectorAll('#tplSelect');
+  if (!els.length) return;
   const list = S.templates || [];
-  el.innerHTML = '<option value="">选择婚纱模板'+(list.length?'':'（去广场添加）')+'</option>' +
+  const html = '<option value="">选择婚纱模板'+(list.length?'':'（去广场添加）')+'</option>' +
     list.map(t=>`<option value="${t.id}" ${S.selTemplate&&S.selTemplate.id===t.id?'selected':''}>${esc(t.name)} · ${esc(t.style||'')}</option>`).join('');
+  els.forEach(el => el.innerHTML = html);
 }
 
 /* ================= 模板投稿（上传通道 · 内部审核） ================= */
@@ -3800,33 +3802,44 @@ function activeModelInfo(){
   return S.genModels.find(m=>m.route===activeModelRoute()) || null;
 }
 function renderModelSeg(){
-  const el = document.getElementById('dockModel');
-  if (!el) return;
-  if (!S.genModels.length){ el.innerHTML = '<option>加载中…</option>'; return; }
+  // dock 整块在两处视图里各有一份且 id 相同，必须全部渲染，不能只填第一个
+  const els = document.querySelectorAll('#dockModel');
+  if (!els.length) return;
+  if (!S.genModels.length){
+    els.forEach(el => el.innerHTML = '<option>加载中…</option>');
+    return;
+  }
   const cur = activeModelRoute();
-  el.innerHTML = '<option value="">默认模型</option>' + S.genModels.map(m=>{
-    const na = m.available === false;
+  const html = '<option value="">默认模型</option>' + S.genModels.map(m=>{
+    const na = (m.available === false) && !S.preview;
     // 097：不可用有两种原因，标签/提示必须分开 —— Key 配了只是账户欠费时
     // 写「未配置」会让运维以为 Key 丢了，跑去翻控制台，方向完全错
     const blocked = na && m.blocked === true;
     const label = `${esc(m.vname||m.label)}${na?(blocked?'（账户异常）':'（未配置）'):''}`;
     // 提示语里 env_hint 只放环境变量名，补充说明放 env_note（避免“未配置 XXX（已配置）”这种自相矛盾）
     const note = m.env_note ? `（${m.env_note}）` : '';
-    const tip  = na
-      ? (blocked ? '该通道账户欠费或额度用尽，已自动停用，充值后自动恢复，请联系管理员'
-                 : (m.env_hint ? `未配置 ${m.env_hint}${note}，请联系管理员`
-                               : '该模型暂未配置 API Key，请联系管理员'))
-      : '';
+    const tip  = S.preview
+      ? '当前是界面预览（未连接后端）：这里显示本地默认目录，需本机 start.bat 打开完整版才能提交出图'
+      : (na
+        ? (blocked ? '该通道账户欠费或额度用尽，已自动停用，充值后自动恢复，请联系管理员'
+                   : (m.env_hint ? `未配置 ${m.env_hint}${note}，请联系管理员`
+                                 : '该模型暂未配置 API Key，请联系管理员'))
+        : '');
     return `<option value="${m.route}" ${m.route===cur?'selected':''}${na?' disabled':''} title="${esc(tip)}">${label}</option>`;
   }).join('');
+  els.forEach(el => el.innerHTML = html);
 }
 function renderStyleSeg(){
-  const el = document.getElementById('dockStyle');
-  if (!el) return;
-  if (!S.styles.length){ el.innerHTML = '<option>加载中…</option>'; return; }
-  el.innerHTML = S.styles.map(s=>
+  const els = document.querySelectorAll('#dockStyle');
+  if (!els.length) return;
+  if (!S.styles.length){
+    els.forEach(el => el.innerHTML = '<option>加载中…</option>');
+    return;
+  }
+  const html = S.styles.map(s=>
     `<option value="${s.key}" ${s.key===S.selStyle?'selected':''}>${esc(s.label)}</option>`
   ).join('');
+  els.forEach(el => el.innerHTML = html);
 }
 /* 服装/发型：dock 上是一个触发卡（缩略图+标签+箭头），
    点击 openPresetPicker() 弹出样式墙点选。S.selWardrobe / S.selHair 仍是 key（无值时为 null） */
@@ -3834,29 +3847,30 @@ let PICKER = { kind: 'wardrobe', gender: '女' };
 function renderWardrobeSeg(){ renderPresetTrigger('wardrobe'); }
 function renderHairSeg(){    renderPresetTrigger('hair'); }
 function renderPresetTrigger(kind){
-  const el = document.getElementById(kind === 'wardrobe' ? 'dockWardrobe' : 'dockHair');
-  if (!el) return;
+  const els = document.querySelectorAll(kind === 'wardrobe' ? '#dockWardrobe' : '#dockHair');
+  if (!els.length) return;
   const list = kind === 'wardrobe' ? S.wardrobes : S.hairstyles;
   const sel  = kind === 'wardrobe' ? S.selWardrobe : S.selHair;
   const placeholder = kind === 'wardrobe' ? '跟随模板' : '跟随参考图';
+  const icon = kind === 'wardrobe' ? '👗' : '💇';
+  let html, has = false;
   if (!list || !list.length){
-    el.innerHTML = `<div class="ph">${kind==='wardrobe'?'👗':'💇'}</div>
-                    <div class="lab ph2">加载中…</div><span class="arr">▾</span>`;
-    el.classList.remove('has-val');
-    return;
-  }
-  const item = sel ? list.find(x => x.key === sel) : null;
-  if (item){
-    el.classList.add('has-val');
-    el.innerHTML = `<img src="${esc(item.image)}" alt="${esc(item.label)}">
-                    <div class="lab">${esc(item.label)}</div>
-                    <span class="arr">▾</span>`;
+    html = `<div class="ph">${icon}</div>
+                     <div class="lab ph2">加载中…</div><span class="arr">▾</span>`;
   } else {
-    el.classList.remove('has-val');
-    el.innerHTML = `<div class="ph">${kind==='wardrobe'?'👗':'💇'}</div>
-                    <div class="lab ph2">${esc(placeholder)}</div>
-                    <span class="arr">▾</span>`;
+    const item = sel ? list.find(x => x.key === sel) : null;
+    if (item){
+      has = true;
+      html = `<img src="${esc(item.image)}" alt="${esc(item.label)}">
+                     <div class="lab">${esc(item.label)}</div>
+                     <span class="arr">▾</span>`;
+    } else {
+      html = `<div class="ph">${icon}</div>
+                     <div class="lab ph2">${esc(placeholder)}</div>
+                     <span class="arr">▾</span>`;
+    }
   }
+  els.forEach(el => { el.innerHTML = html; el.classList.toggle('has-val', has); });
 }
 function openPresetPicker(kind){
   PICKER = { kind, gender: '女' };
@@ -3920,10 +3934,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (m) m.addEventListener('click', e => { if (e.target === m) closePresetPicker(); });
 });
 function renderDock(){
-  const ratioSel = document.getElementById('dockRatio');
-  if (ratioSel) ratioSel.value = S.ratio;
-  const qSel = document.getElementById('dockQuality');
-  if (qSel) qSel.value = S.quality;
+  document.querySelectorAll('#dockRatio').forEach(el => el.value = S.ratio);
+  document.querySelectorAll('#dockQuality').forEach(el => el.value = S.quality);
   renderModelSeg();
   renderStyleSeg();
   renderWardrobeSeg();
@@ -3935,23 +3947,33 @@ function renderDock(){
 // 全部生图通道都不可用时，用户看到的是一排灰掉的模型选项，得逐个 hover 才知道
 // 为什么。不如直接横幅说清楚：现在提交也出不了图（但不会扣积分）。
 function updateServiceBanner(){
-  const el = document.getElementById('svcBanner');
-  if (!el) return;
+  const boxes = [...document.querySelectorAll('#svcBanner')];
+  if (!boxes.length) return;
+  const paint = (html, show) => boxes.forEach(b => {
+    if (html !== null) b.innerHTML = html;
+    b.classList.toggle('hidden', !show);
+  });
+  const setBtnTitle = t => document.querySelectorAll('#genBtn').forEach(b => b.title = t);
   const list = S.genModels || [];
-  if (!list.length){ el.classList.add('hidden'); return; }
+  if (S.preview){
+    paint('\u2139 当前是 <b>界面预览</b>（没有连上后端服务）：模型 / 风格 / 服装 / 发型显示的是本地默认目录，'
+      + 'AI 生图、登录、作品库等功能需要本机双击 <b>start.bat</b>，用 <b>http://127.0.0.1:8080</b> 打开完整版；'
+      + '「照片成片 / 智能剪辑 / 影像工具箱」纯浏览器本地处理，这里可以直接用。', true);
+    setBtnTitle('预览模式：需连接后端才能出图');
+    return;
+  }
+  if (!list.length){ paint(null, false); return; }
   const ok = list.filter(m => m.available === true);
-  if (ok.length){ el.classList.add('hidden'); return; }
+  if (ok.length){ paint(null, false); return; }
   const blocked = list.filter(m => m.blocked === true).length;
   const unconf = list.length - blocked;
   let why;
   if (blocked && !unconf)     why = '所有生图通道的账户都已欠费或额度用尽';
   else if (unconf && !blocked) why = '所有生图通道都还没配置 API 密钥';
   else                         why = `${blocked} 个通道账户欠费、${unconf} 个未配置密钥`;
-  el.innerHTML = `⚠ 生图服务暂时不可用：${why}。`
-    + `这段时间提交任务不会出图，也<b>不会扣积分</b>；请联系管理员处理后自动恢复。`;
-  el.classList.remove('hidden');
-  const btn = document.getElementById('genBtn');
-  if (btn) btn.title = '生图服务暂时不可用';
+  paint(`⚠ 生图服务暂时不可用：${why}。`
+    + `这段时间提交任务不会出图，也<b>不会扣积分</b>；请联系管理员处理后自动恢复。`, true);
+  setBtnTitle('生图服务暂时不可用');
 }
 function toggleDockChat(){
   const d = document.getElementById('dockChatDrawer');
@@ -4065,8 +4087,8 @@ function updatePriceNote(){
       : (S.prices.PRICE_QUALITY_STD ?? 60);
   }
   const qLabel = (S.quality === 'hd') ? '高画质' : '标准画质';
-  document.getElementById('priceNote').innerHTML =
-    `本次消耗 <b>${p}</b> 积分（${qLabel}）· 冻结→质检通过结算→失败自动退款<br>当前余额 ${S.user ? S.user.balance : '--'} 积分`;
+  const note = `本次消耗 <b>${p}</b> 积分（${qLabel}）· 冻结→质检通过结算→失败自动退款<br>当前余额 ${S.user ? S.user.balance : '--'} 积分`;
+  document.querySelectorAll('#priceNote').forEach(el => el.innerHTML = note);
 }
 
 /* ================= AI记忆 ================= */
@@ -4097,6 +4119,7 @@ const POLL_TXT = {CREATED:'排队中', ANALYZING:'分析人物', SEARCHING:'匹�
                   PROMPTING:'合成提示词', GENERATING:'AI生成中', RETRYING:'质检重试中',
                   CHECKING:'质检中', UPSCALING:'高清处理'};
 async function doGenerate(){
+  if (S.preview) return toast('当前是界面预览，没有连上后端；请在本机双击 start.bat 打开完整版（后端已启动的话刷新本页即可）', true);
   if (!S.user) return toast('请先登录', true);
   if (!S.selCharacter) return toast('请先在左侧上传人物照片', true);
   if (!S.selTemplate && S.mode!=='replace_person') return toast('请先选择婚纱模板', true);
@@ -5595,6 +5618,65 @@ async function fairyIdleCheck(){
   }catch(e){}
 }
 
+/* 静态预览兜底：/api/config 拉不到时（GitHub Pages 无后端、本机服务没启动、
+   或配置接口报错），用与后端默认目录一致的一份本地副本把模型/风格/服装/发型填上。
+   只负责界面展示与选择，不假装生图通道可用；真正提交仍走 /api/generate，
+   预览态在 doGenerate() 里明确拦下并给出本机启动方式。 */
+function applyPreviewConfig(){
+  const STYLES = [
+    ['auto','跟随模板'], ['photoreal','写实婚纱大片'], ['cinematic','电影感'],
+    ['fashion','时尚杂志大片'], ['chinese','中式古典'], ['art','艺术油画'],
+    ['watercolor','水彩插画'], ['retro','复古胶片'], ['dreamy','梦幻柔光'], ['bw','黑白经典']
+  ];
+  const WARDROBES = [
+    ['w_satin_train','缎面大拖尾','女'], ['w_mermaid','鱼尾轻纱','女'],
+    ['w_a_line','A字蓬蓬裙','女'], ['w_lace_vintage','复古蕾丝长袖','女'],
+    ['w_minimal_slip','极简缎面吊带','女'], ['w_chinese_xh','中式秀禾服','女'],
+    ['w_short_tulle','齐地短纱','女'], ['w_puff_sleeve','法式泡泡袖','女'],
+    ['w_high_collar','高领宫廷长袖','女'], ['w_off_shoulder','一字肩鱼尾','女'],
+    ['m_black_suit','经典黑色西装','男'], ['m_navy_slim','藏青修身西装','男'],
+    ['m_beige_linen','米色亚麻西装','男'], ['m_plaid_3p','英伦格纹三件套','男'],
+    ['m_white_linen','白色亚麻西装','男'], ['m_tuxedo','塔士多晚礼服','男'],
+    ['m_chinese_ma','中式立领马褂','男'], ['m_corduroy','复古灯芯绒西装','男'],
+    ['m_wool_coat','深灰羊毛大衣','男'], ['m_velvet','天鹅绒晚宴外套','男']
+  ];
+  const HAIRSTYLES = [
+    ['h_low_bun','优雅低盘发','女'], ['h_high_bun','高盘花苞头','女'],
+    ['h_waves_long','大波浪长卷发','女'], ['h_lob_straight','及肩直发LOB','女'],
+    ['h_braid','法式编发','女'], ['h_half_up','半扎公主切','女'],
+    ['h_retro_wave','复古手推波纹','女'], ['h_air_bangs','空气刘海长直发','女'],
+    ['h_low_pony','侧分低马尾','女'], ['h_bob','波波短发','女'],
+    ['m_side_part','三七分油头','男'], ['m_slick_back','大背头','男'],
+    ['m_korean_perm','韩式纹理烫','男'], ['m_buzz','利落短寸','男'],
+    ['m_comma','逗号刘海','男'], ['m_curtain','中分微卷','男'],
+    ['m_textured_crop','蓬松碎盖头','男'], ['m_pompadour','飞机头','男'],
+    ['m_messy_short','自然微乱短发','男'], ['m_man_bun','低马尾','男']
+  ];
+  const MODELS = [
+    ['MODEL_PRO','专业版','最高画质 · 婚纱大片首选'],
+    ['MODEL_STANDARD','标准版','均衡画质与速度'],
+    ['MODEL_FAST','极速版','快速出图 · 预览效果'],
+    ['MODEL_CHARACTER','人物替换版','人像一致性优先']
+  ];
+  // 样式图用相对路径：GitHub Pages 挂在 /wedding-studio-launch/ 子目录下，
+  // 后端返回的 /assets/... 绝对路径在 Pages 上会指到域名根，必然 404。
+  const presets = arr => arr.map(([key,label,gender]) => ({
+    key, label, gender, image: 'assets/presets/' + key + '.jpg'
+  }));
+  S.preview = true;
+  S.prices = S.prices || {};
+  S.media = S.media || {restoring:false};
+  S.styles = STYLES.map(([key,label]) => ({key,label}));
+  S.wardrobes = presets(WARDROBES);
+  S.hairstyles = presets(HAIRSTYLES);
+  // available=false 保持「没有可用后端」的事实；renderModelSeg 在预览态不置灰，
+  // 让目录可以正常查看、选择，同时由独立横幅说明这不是可出图的通道。
+  S.genModels = MODELS.map(([route,label,desc]) => ({
+    route, label, desc, provider:'preview', model_id:route,
+    available:false, preview:true, env_hint:''
+  }));
+}
+
 /* ================= 初始化 ================= */
 function refreshCreate(){ renderDock(); updatePriceNote(); loadMemory(); renderRefZone(); renderGenGrid(); }
 (async function init(){
@@ -5607,13 +5689,17 @@ function refreshCreate(){ renderDock(); updatePriceNote(); loadMemory(); renderR
   showFairy();
   try{
     const c = await api('/api/config');
+    S.preview = false;
     S.prices = c.prices || {};
     S.genModels = c.gen_models || [];
   S.media = c.media || {restoring:false};
     S.styles = c.styles || [];
     S.wardrobes = c.wardrobes || [];
     S.hairstyles = c.hairstyles || [];
-  }catch(e){}
+  }catch(e){
+    // 静态页没有 /api/：不补本地默认目录的话，模型/风格会永远停在「加载中…」
+    applyPreviewConfig();
+  }
   renderDock();
   updatePriceNote();
   renderGenGrid();
