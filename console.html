@@ -1350,6 +1350,39 @@ table.tbl td{transition:background .15s}
 .av-hist-item em{font-style:normal;color:var(--ink3);white-space:nowrap}
 @media(max-width:980px){.av-picks{grid-template-columns:repeat(4,1fr)}}
 
+/* ===== 智能剪辑工作台 · v146 ===== */
+.sc-wrap{display:grid;grid-template-columns:340px minmax(0,1fr);gap:18px;align-items:start;padding-bottom:36px}
+.sc-wrap .vf-actions{flex-wrap:wrap}
+.sc-drop{display:block;border:1px dashed var(--gold);border-radius:10px;background:var(--gold-bg);
+  padding:11px 10px;text-align:center;color:var(--gold);font-size:12px;cursor:pointer;transition:.15s}
+.sc-drop:hover{background:rgba(176,141,87,.16)}
+.sc-srcline{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.sc-srcbtn{padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);
+  color:var(--ink2);font-size:11px;cursor:pointer;font-family:inherit;transition:.15s}
+.sc-srcbtn:hover{border-color:var(--gold);color:var(--gold)}
+.sc-list{display:flex;flex-direction:column;gap:7px;margin-top:9px;max-height:270px;overflow:auto;padding-right:3px}
+.sc-item{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:9px;align-items:center;
+  border:1px solid var(--line);border-radius:9px;padding:6px;background:var(--soft);transition:.15s}
+.sc-item.off{opacity:.48}
+.sc-item.off .sc-score{color:#b45f5f}
+.sc-thumb{width:58px;height:42px;border-radius:6px;object-fit:cover;display:block;background:#241b12}
+.sc-name{font-size:11.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px}
+.sc-why{font-size:10px;color:var(--ink3);line-height:1.5;margin-top:2px;max-width:172px}
+.sc-why.bad{color:#b45f5f}
+.sc-score{font-family:"Noto Serif SC",Georgia,serif;font-size:13px;font-weight:600;
+  color:var(--gold);white-space:nowrap;text-align:right}
+.sc-score small{display:block;font-size:9px;color:var(--ink3);font-weight:400;letter-spacing:1px}
+.sc-ops{display:flex;flex-direction:column;gap:3px;margin-left:6px}
+.sc-ops button{border:1px solid var(--line);background:var(--panel);color:var(--ink2);border-radius:5px;
+  font-size:10px;width:23px;height:18px;line-height:1;cursor:pointer;padding:0;font-family:inherit}
+.sc-ops button:hover{border-color:var(--gold);color:var(--gold)}
+.sc-brief{border:1px solid var(--line);border-radius:9px;background:var(--soft);padding:9px 11px;
+  font-size:11px;line-height:1.8;color:var(--ink2);margin-top:9px}
+.sc-brief b{color:var(--gold);font-weight:600}
+.sc-check{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink2);margin-top:10px;cursor:pointer}
+.sc-check input{accent-color:var(--gold)}
+@media(max-width:980px){.sc-wrap{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body data-page-node-id="49BDSpZ9whJVodG2WbJR0f">
@@ -1390,6 +1423,7 @@ table.tbl td{transition:background .15s}
       <button class="nav-item" data-v="create" data-page-node-id="sKUQdYJmWycZ4hd7QHBvhJ"><span class="ico" data-page-node-id="BD6VTMBd42GQqQXe3ZqVoB">✦</span>AI创作</button>
     <button class="nav-item" data-v="aivideo"><span class="ico">✧</span>AI 生成视频</button>
     <button class="nav-item" data-v="video"><span class="ico">▶</span>照片成片</button>
+    <button class="nav-item" data-v="cut"><span class="ico">✂</span>智能剪辑</button>
       <button class="nav-item" data-v="plaza" data-page-node-id="kS1mOvSMeHsHBukPCfu8cm"><span class="ico" data-page-node-id="z1uvPIZNuEyQDoTE265mL3">❖</span>模板广场</button>
       <button class="nav-item hidden" id="navReview" data-v="review" data-page-node-id="73GN1MAa57ghJLmB2Qq3ED"><span class="ico" data-page-node-id="NIGe3nmbGp1AiCS0MsYXRB">✔</span>模板审核</button>
       <button class="nav-item hidden" id="navTpl" data-v="tpl" data-page-node-id="pwmwCkIXdFTTlZBmxENDc7"><span class="ico" data-page-node-id="xea8ackCztfKDMsAbC6MEY">❑</span>模板管理</button>
@@ -1805,6 +1839,7 @@ table.tbl td{transition:background .15s}
             <div class="vf-actions">
               <button class="btn btn-gold" id="vfMake">▶ 生成视频</button>
               <button class="btn btn-ghost" id="vfDownload" disabled>⬇ 下载成片</button>
+              <button class="btn btn-ghost" id="vfToCut">✂ 送去智能剪辑</button>
             </div>
             <div class="vf-progress"><span id="vfBar"></span></div>
             <div class="vf-status" id="vfStatus">选好照片，点「生成视频」，画面会在这里现场合成。</div>
@@ -1887,6 +1922,7 @@ table.tbl td{transition:background .15s}
             <div class="vf-actions">
               <button class="btn btn-gold" id="avMake">✧ 生成 AI 视频</button>
               <a class="btn btn-ghost" id="avDownload" style="display:none;text-align:center;text-decoration:none" download="wedding-ai-video.mp4">⬇ 下载视频</a>
+              <button class="btn btn-ghost" id="avToCut">✂ 送去智能剪辑</button>
             </div>
             <div class="vf-progress"><span id="avBar"></span></div>
             <div class="vf-status" id="avStatus">填写画面描述后点「生成 AI 视频」，模型通常需要 1–5 分钟。</div>
@@ -1904,6 +1940,90 @@ table.tbl td{transition:background .15s}
               <span class="vf-live" id="avLive">AI VIDEO · MODEL GENERATED</span>
             </div>
             <div class="vf-tips">与「照片成片」不同：这里不是把静态照片加运镜录制，而是由视频大模型重新生成动态画面（人物微动、光影变化、镜头运动）。生成走后端代理，避免浏览器直连中转站被 CORS 拦截，也避免 Key 暴露在公开页面。GitHub Pages 静态页请用「通道设置」里的直连或 https 公网后端；本机 start.bat 完整版最省事。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ 智能剪辑 · v146 ============ -->
+      <div class="view" id="v-cut">
+        <h2 class="view-title">智能剪辑<small>逐帧分析 · 废片剔除 · 节奏编排 · 一键出片</small></h2>
+        <div class="sc-wrap">
+          <div class="vf-panel vf-settings">
+            <div class="vf-sec">
+              <div class="vf-label">01 · 素材池<span>视频 / 照片混合</span></div>
+              <label class="sc-drop" for="scFile">＋ 导入本地视频或照片（可多选）</label>
+              <input type="file" id="scFile" accept="video/*,image/*" multiple hidden>
+              <div class="sc-srcline">
+                <button class="sc-srcbtn" id="scFromFilm">⟵ 照片成片</button>
+                <button class="sc-srcbtn" id="scFromAI">⟵ AI 成片</button>
+                <button class="sc-srcbtn" id="scReset">↺ 恢复示例</button>
+              </div>
+              <div class="sc-list" id="scList"></div>
+              <div class="sc-brief" id="scBrief">尚未分析。点「AI 分析素材」会逐帧打分，自动剔除过暗、模糊、重复与几乎静止的镜头。</div>
+            </div>
+
+            <div class="vf-sec">
+              <div class="vf-label">02 · 剪辑策略</div>
+              <div class="vf-fields">
+                <label>镜头排序<select id="scOrder">
+                  <option value="story">叙事顺序 · 保留原次序</option>
+                  <option value="color">色彩连贯 · 自动串联</option>
+                  <option value="score">精彩优先 · 高分开场</option>
+                </select></label>
+                <label>节奏 BPM<select id="scBpm">
+                  <option value="60">60 · 舒缓</option>
+                  <option value="80" selected>80 · 标准</option>
+                  <option value="100">100 · 明快</option>
+                </select></label>
+                <label>每段时长<select id="scDur">
+                  <option value="0">跟随节拍 · 自动</option>
+                  <option value="1.5">1.5 秒</option>
+                  <option value="2">2 秒</option>
+                  <option value="3">3 秒</option>
+                  <option value="4">4 秒</option>
+                </select></label>
+                <label>成片风格<select id="scStyle">
+                  <option value="classic">香槟金</option>
+                  <option value="film">胶片</option>
+                  <option value="fresh">森系清新</option>
+                  <option value="chinese">中式囍韵</option>
+                </select></label>
+                <label>画幅<select id="scRatio">
+                  <option value="16:9">横屏 16:9</option>
+                  <option value="9:16">竖屏 9:16</option>
+                  <option value="1:1">方形 1:1</option>
+                </select></label>
+                <label>转场<select id="scTrans">
+                  <option value="auto">AI 自动匹配</option>
+                  <option value="dissolve">叠化</option>
+                  <option value="wipe">擦除</option>
+                  <option value="fade">淡黑</option>
+                </select></label>
+              </div>
+              <div class="vf-fields" style="margin-top:9px">
+                <label>片头署名<input id="scNames" placeholder="如：舍先生 & 砚生" autocomplete="off"></label>
+                <label>婚礼日期<input id="scDate" placeholder="如：2026.10.01" autocomplete="off"></label>
+              </div>
+              <label class="sc-check"><input type="checkbox" id="scCaption" checked> 自动字幕卡（片头 / 片尾 / 镜头角标）</label>
+            </div>
+
+            <div class="vf-actions">
+              <button class="btn btn-ghost" id="scAnalyze">◎ AI 分析素材</button>
+              <button class="btn btn-gold" id="scMake">✂ 一键智能剪辑</button>
+              <button class="btn btn-ghost" id="scDownload" disabled>⬇ 下载成片</button>
+            </div>
+            <div class="vf-progress"><span id="scBar"></span></div>
+            <div class="vf-status" id="scStatus">素材已备好。点「一键智能剪辑」即可自动分析并出片，全程在浏览器本地完成。</div>
+          </div>
+
+          <div class="vf-panel vf-stage">
+            <div class="vf-stage-head"><strong>智能成片预览</strong><span id="scMeta">1280 × 720 · 30fps</span></div>
+            <div class="vf-screen" id="scScreen">
+              <canvas id="scCanvas" width="1280" height="720"></canvas>
+              <video id="scPlayer" controls playsinline style="display:none"></video>
+              <span class="vf-live" id="scLive">SMART CUT · AUTO EDIT</span>
+            </div>
+            <div class="vf-tips">智能剪辑会先对每段素材抽帧，量化清晰度、曝光、层次、色彩、构图与运动量，得分过低的自动降权或剔除，相近画面自动去重；再按 BPM 把切点对齐节拍，用相邻镜头的色彩距离决定叠化 / 擦除 / 淡黑，最后统一调色、补片头片尾字幕卡并录成 30fps 成片。所有决策都可在左侧素材列表里手动覆写（启停、排序、删除）。素材不上传，不耗积分，静态页也能用；导出请用 Chrome / Edge。</div>
           </div>
         </div>
       </div>
@@ -2522,6 +2642,7 @@ function go(v){
   if (v==='create') refreshCreate();
   if (v==='wedding') loadWeddingCenter();
   if (v==='video' && window.WA_VIDEO) WA_VIDEO.ensure();
+  if (v==='cut' && window.WA_CUT) WA_CUT.ensure();
   if (v==='aivideo' && window.WA_AIVIDEO) WA_AIVIDEO.ensure();
 }
 
@@ -2540,6 +2661,7 @@ const WC_QUICK = [
   {v:'plaza',  ico:'❖', t:'模板广场'},
   {v:'aivideo', ico:'✧', t:'AI生成视频'},
   {v:'video',  ico:'▶', t:'照片成片'},
+  {v:'cut',    ico:'✂', t:'智能剪辑'},
   {v:'swap',   ico:'✧', t:'灵感换装'},
   {v:'works',  ico:'▣', t:'我的作品'},
   {v:'reverse',ico:'⌾', t:'Prompt反推'},
@@ -6874,10 +6996,635 @@ window.WA_VIDEO = (function(){
     V.photos.forEach(function(p){ if(!p.own) loadOne(p.src); });  // 进入视图即后台预取
     drawFrame(0.8,previewOpts());
   }
-  return {ensure:ensure, make:make, download:download,
+  return {ensure:ensure, make:make, download:download, blob:function(){ return V.blob; },
           state:function(){ return {ready:V.ready,photos:V.photos.length,picked:V.picked.slice(),busy:V.busy,
             blob:V.blob?V.blob.size:0,mime:V.mime,total:V.total,canvas:[V.W,V.H]}; }};
 })();
 </script>
+
+
+<script>
+/* ============ 智能剪辑工作台 · v146（纯前端：抽帧分析 / 废片剔除 / 节拍编排 / 录制出片） ============ */
+window.WA_CUT = (function(){
+  'use strict';
+  var C = {ready:false, busy:false, items:[], uid:0, analyzed:false,
+           canvas:null, ctx:null, probe:null, pctx:null,
+           rec:null, stream:null, chunks:[], blob:null, url:null, mime:'',
+           segs:[], total:0, startAt:0, raf:0, active:-1,
+           W:1280, H:720, o:null};
+  var FILTER = {
+    classic:'sepia(.10) saturate(1.06) contrast(1.04)',
+    film:'sepia(.24) saturate(.84) contrast(1.10) brightness(.96)',
+    fresh:'saturate(1.12) contrast(1.02) brightness(1.04) hue-rotate(-6deg)',
+    chinese:'sepia(.06) saturate(1.20) contrast(1.06)'
+  };
+  function el(id){ return document.getElementById(id); }
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  function esc(t){ return String(t==null?'':t).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function status(t,warn){ var n=el('scStatus'); if(n){ n.textContent=t; n.style.color=warn?'var(--bad)':'var(--ink2)'; } }
+  function bar(p){ var n=el('scBar'); if(n) n.style.width=clamp(p,0,1)*100+'%'; }
+  function font(sz,w){ return (w||'')+' '+sz+'px "Noto Serif SC","Songti SC",Georgia,serif'; }
+  function mkCanvas(w,h){ var c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
+
+  /* ---------- 素材装载 ---------- */
+  function loadImage(src){
+    return new Promise(function(res){
+      var done=false, fin=function(v){ if(done)return; done=true; res(v); };
+      var im=new Image();
+      im.onload=function(){ fin(im); };
+      im.onerror=function(){ fin(null); };
+      setTimeout(function(){ fin(null); }, 3000);
+      im.src=src;
+    });
+  }
+  function loadVideo(src){
+    return new Promise(function(res){
+      var done=false, fin=function(v){ if(done)return; done=true; res(v); };
+      var v=document.createElement('video');
+      v.muted=true; v.playsInline=true; v.preload='auto';
+      v.onloadedmetadata=function(){ fin(v); };
+      v.onerror=function(){ fin(null); };
+      setTimeout(function(){ fin(null); }, 6000);
+      v.src=src;
+    });
+  }
+  function addItem(kind,src,name){
+    var it={id:++C.uid, kind:kind, src:src, name:name||'素材', keep:true, ok:false,
+            score:0, reason:'待分析', metric:null, poster:null, img:null, vid:null,
+            in:0, seed:Math.random()*6.28, p:null};
+    C.items.push(it);
+    it.p = (kind==='image'
+      ? loadImage(src).then(function(im){ it.img=im; it.poster=im; return it; })
+      : loadVideo(src).then(function(v){ it.vid=v; return it; }));
+    renderList();
+    return it;
+  }
+  function placeholder(it){
+    var c=mkCanvas(960,540), x=c.getContext('2d');
+    var g=x.createLinearGradient(0,0,960,540);
+    g.addColorStop(0,'#3a2a1a'); g.addColorStop(1,'#17110b');
+    x.fillStyle=g; x.fillRect(0,0,960,540);
+    x.strokeStyle='rgba(232,205,156,.35)'; x.lineWidth=2; x.strokeRect(60,60,840,420);
+    x.fillStyle='rgba(232,205,156,.85)'; x.textAlign='center';
+    x.font=font(42); x.fillText(it.name||'婚礼影像',480,278);
+    x.fillStyle='rgba(232,205,156,.55)'; x.font='20px Georgia,serif';
+    x.fillText('WEDDING FILM · FRAME',480,322);
+    return c;
+  }
+  function reset(){
+    C.items=[]; C.analyzed=false; C.blob=null; C.segs=[]; C.total=0;
+    if(C.url){ try{ URL.revokeObjectURL(C.url); }catch(e){} C.url=null; }
+    var v=el('scPlayer'); if(v){ v.style.display='none'; v.removeAttribute('src'); }
+    if(C.canvas) C.canvas.style.display='block';
+    var d=el('scDownload'); if(d) d.disabled=true;
+    (window.WA_PHOTOS||[]).slice(0,6).forEach(function(p){ addItem('image',p[0],p[1]); });
+    C.items.forEach(function(it){ it.p && it.p.then(function(){ renderList(); }); });
+    renderList();
+    brief('已恢复 6 张内置示例照片。可继续导入本地视频 / 照片，或从「照片成片」「AI 成片」一键送剪。');
+  }
+
+  /* ---------- 逐帧量化分析 ---------- */
+  function measure(src){
+    var w=96,h=54,c=C.pctx,d,i,x,y;
+    try{ c.clearRect(0,0,w,h); c.drawImage(src,0,0,w,h); d=c.getImageData(0,0,w,h).data; }
+    catch(e){ return null; }
+    var n=w*h, lum=new Float32Array(n), R=0,G=0,B=0,sat=0,dark=0,blow=0;
+    for(i=0;i<n;i++){
+      var r=d[i*4],g=d[i*4+1],b=d[i*4+2];
+      var mx=Math.max(r,g,b),mn=Math.min(r,g,b);
+      lum[i]=0.299*r+0.587*g+0.114*b;
+      R+=r;G+=g;B+=b;
+      sat+= mx? (mx-mn)/mx : 0;
+      if(lum[i]<48)dark++; if(lum[i]>232)blow++;
+    }
+    var mean=0,std=0,sharp=0,cs=0,cn=0,es=0,en=0;
+    for(i=0;i<n;i++) mean+=lum[i]; mean/=n;
+    for(i=0;i<n;i++) std+=(lum[i]-mean)*(lum[i]-mean); std=Math.sqrt(std/n);
+    var sc0=0;
+    for(y=1;y<h-1;y+=2)for(x=1;x<w-1;x+=2){ var q=y*w+x; sharp+=Math.abs(lum[q]-lum[q+1])+Math.abs(lum[q]-lum[q-w]); sc0+=2; }
+    sharp/=Math.max(1,sc0);
+    for(y=0;y<h;y++)for(x=0;x<w;x++){
+      var L=lum[y*w+x], ctr=(x>w*0.28&&x<w*0.72&&y>h*0.22&&y<h*0.78);
+      if(ctr){cs+=L;cn++;}else{es+=L;en++;}
+    }
+    return {lum:mean,std:std,sharp:sharp,sat:sat/n,dark:dark/n,blow:blow/n,
+            center:Math.abs(cs/Math.max(1,cn)-es/Math.max(1,en))/255,
+            rgb:[R/n,G/n,B/n],lumarr:lum};
+  }
+  function ldiff(a,b){
+    var s=0,n=0;
+    for(var i=0;i<a.length;i+=7){ s+=Math.abs(a[i]-b[i]); n++; }
+    return s/Math.max(1,n);
+  }
+  function scoreOf(m,motion){
+    var s=0;
+    s+=30*clamp(m.sharp/16,0,1);
+    s+=20*(1-clamp(Math.abs(m.lum-132)/115,0,1));
+    s+=15*clamp(m.std/52,0,1);
+    s+=15*clamp((m.sat-0.05)/0.32,0,1);
+    s+=10*clamp(m.center/0.18,0,1);
+    s+=10*clamp(motion/9,0,1);
+    return Math.round(clamp(s,0,100));
+  }
+  function why(m,motion){
+    var r=[];
+    if(m.lum<78)r.push('画面偏暗');
+    if(m.lum>200)r.push('曝光偏亮');
+    if(m.sharp<4)r.push('细节偏软');
+    if(m.std<22)r.push('层次偏平');
+    if(m.sat<0.09)r.push('色彩偏淡');
+    if(motion<1.2)r.push('镜头几乎静止');
+    if(r.length) return r.join('、')+' · 已降权';
+    if(m.sharp>11&&m.std>40) return '细节清晰、层次饱满 · 建议保留';
+    if(m.center>0.09) return '主体突出 · 建议保留';
+    return '曝光与构图达标 · 建议保留';
+  }
+  function seekTo(v,t){
+    return new Promise(function(res){
+      var done=false, fin=function(){ if(done)return; done=true; res(); };
+      v.onseeked=fin;
+      setTimeout(fin,1500);
+      try{ v.currentTime=t; }catch(e){ fin(); }
+    });
+  }
+  async function analyze(silent){
+    var its=C.items.slice();
+    await Promise.all(its.map(function(x){ return x.p||Promise.resolve(); }));
+    for(var i=0;i<its.length;i++){
+      var it=its[i];
+      if(!silent) status('正在分析 '+(i+1)+'/'+its.length+'：'+it.name+'…');
+      bar((i+0.5)/its.length*0.5);
+      if(it.kind==='image'){
+        if(!it.img) it.img=placeholder(it);
+        it.poster=it.img;
+        var m=measure(it.img);
+        if(!m){ it.ok=false; it.score=0; it.reason='画面读取失败 · 已剔除'; continue; }
+        it.metric=m; it.score=scoreOf(m,6); it.reason=why(m,6);
+      } else {
+        var v=it.vid;
+        if(!v||!isFinite(v.duration)||v.duration<=0){
+          it.poster=placeholder(it); it.ok=false; it.score=0;
+          it.reason='视频读取失败或 0 秒 · 已剔除'; continue;
+        }
+        var pts=[0.12,0.35,0.6,0.85], prev=null, best=null, mv=0, grabbed=0;
+        for(var j=0;j<pts.length;j++){
+          await seekTo(v, pts[j]*Math.min(v.duration,20));
+          var m2=measure(v);
+          if(!m2) continue;
+          if(prev) mv+=ldiff(prev.lumarr,m2.lumarr);
+          prev=m2; grabbed++;
+          var sc=scoreOf(m2,6);
+          if(!best||sc>best.s) best={s:sc,m:m2,t:v.currentTime};
+          if(!it.poster){
+            var pc=mkCanvas(320,180);
+            try{ pc.getContext('2d').drawImage(v,0,0,320,180); it.poster=pc; }catch(e){}
+          }
+        }
+        if(!best){ it.poster=it.poster||placeholder(it); it.ok=false; it.score=0;
+                   it.reason='抽帧失败 · 已剔除'; continue; }
+        mv=mv/Math.max(1,grabbed-1);
+        it.metric=best.m; it.in=best.t; it.poster=it.poster||placeholder(it);
+        it.score=best.s; it.reason=why(best.m,mv);
+        if(v.duration<1.0) it.reason='时长不足 1 秒 · 已剔除';
+      }
+    }
+    /* 剔除 + 去重（按色彩向量） */
+    var kept=[];
+    its.slice().sort(function(a,b){return b.score-a.score;}).forEach(function(it){
+      var dup=null;
+      if(it.metric&&it.ok!==false){
+        for(var k=0;k<kept.length;k++){
+          var q=kept[k].metric;
+          if(q){
+            var d=Math.sqrt(Math.pow(q.rgb[0]-it.metric.rgb[0],2)+
+                            Math.pow(q.rgb[1]-it.metric.rgb[1],2)+
+                            Math.pow(q.rgb[2]-it.metric.rgb[2],2));
+            if(d<24){ dup=kept[k]; break; }
+          }
+        }
+      }
+      var drop = it.score<38 || (it.metric&&(it.metric.dark>0.6||it.metric.blow>0.5||it.metric.sharp<2.5)) || dup;
+      if(drop){ it.keep=false; it.ok=false;
+        it.reason = dup ? ('与「'+dup.name+'」画面重复 · 已剔除') : ('评分不足('+it.score+') · 已剔除');
+      } else { it.ok=true; kept.push(it); }
+    });
+    if(!kept.length&&its.length){
+      var top=its.slice().sort(function(a,b){return b.score-a.score;})[0];
+      top.keep=true; top.ok=true; top.reason='素材有限 · 保留最佳镜头';
+    }
+    C.analyzed=true; renderList(); bar(0);
+    var n=C.items.length, keepN=C.items.filter(function(x){return x.keep;}).length;
+    brief('分析完成：<b>'+n+'</b> 段素材，保留 <b>'+keepN+'</b> 段、剔除 <b>'+(n-keepN)+
+          '</b> 段。点击每段的「启 / 停」可覆写 AI 决策，排序按钮可手动调整次序。');
+    if(!silent) status('分析完成，点「一键智能剪辑」出片。');
+    return C.items;
+  }
+
+  /* ---------- 智能编排 ---------- */
+  function cdist(a,b){
+    return Math.sqrt(Math.pow(a[0]-b[0],2)+Math.pow(a[1]-b[1],2)+Math.pow(a[2]-b[2],2));
+  }
+  function opts(){
+    return {
+      order:(el('scOrder')||{}).value||'story',
+      bpm:parseFloat((el('scBpm')||{}).value||80),
+      dur:parseFloat((el('scDur')||{}).value||0),
+      style:(el('scStyle')||{}).value||'classic',
+      ratio:(el('scRatio')||{}).value||'16:9',
+      trans:(el('scTrans')||{}).value||'auto',
+      names:(el('scNames')||{}).value||'',
+      date:(el('scDate')||{}).value||'',
+      caption: el('scCaption') ? el('scCaption').checked : true,
+      intro:2, outro:2
+    };
+  }
+  function plan(o){
+    var kept=C.items.filter(function(x){ return x.keep&&x.ok&&x.metric; });
+    if(!kept.length){
+      var top=C.items.slice().sort(function(a,b){return b.score-a.score;})[0];
+      if(top){ top.keep=true; top.ok=true; kept=[top]; }
+    }
+    if(!kept.length) return 0;
+    if(o.order==='score') kept=kept.slice().sort(function(a,b){return b.score-a.score;});
+    else if(o.order==='color'){
+      var pool=kept.slice().sort(function(a,b){return b.score-a.score;});
+      var out=[pool.shift()];
+      while(pool.length){
+        var cur=out[out.length-1].metric.rgb, bi=0, bd=1e9;
+        for(var i=0;i<pool.length;i++){
+          var d=cdist(cur,pool[i].metric.rgb);
+          if(d<bd){ bd=d; bi=i; }
+        }
+        out.push(pool.splice(bi,1)[0]);
+      }
+      kept=out;
+    }
+    var beat=60/o.bpm;
+    var per=o.dur>0 ? o.dur : Math.round(beat*(o.bpm>=100?2:3)*10)/10;
+    per=clamp(per,1.2,6);
+    if(kept.length*per>45) per=Math.max(1.2,45/kept.length);
+    var segs=[], t=0;
+    segs.push({t0:t,dur:o.intro,kind:'intro',trans:Math.min(0.8,o.intro*0.4),tt:'dissolve'});
+    t+=o.intro;
+    kept.forEach(function(it,i){
+      var nxt=kept[i+1], dist=nxt?cdist(it.metric.rgb,nxt.metric.rgb):0;
+      var tt=o.trans==='auto' ? (dist<26?'dissolve':dist<70?'wipe':'fade') : o.trans;
+      segs.push({t0:t,dur:per,kind:'shot',item:it,trans:Math.min(0.7,per*0.32),tt:tt});
+      t+=per;
+    });
+    segs.push({t0:t,dur:o.outro,kind:'outro'});
+    t+=o.outro;
+    C.segs=segs; C.total=t; C.o=o;
+    return kept.length;
+  }
+  function segAt(t){
+    for(var i=C.segs.length-1;i>=0;i--) if(t>=C.segs[i].t0) return i;
+    return 0;
+  }
+
+  /* ---------- 逐帧渲染 ---------- */
+  function setCanvas(ratio){
+    var m = ratio==='9:16' ? [720,1280] : ratio==='1:1' ? [960,960] : [1280,720];
+    C.W=m[0]; C.H=m[1];
+    if(C.canvas){ C.canvas.width=C.W; C.canvas.height=C.H; }
+    var sc=el('scScreen');
+    if(sc) sc.style.aspectRatio = ratio==='9:16' ? '9 / 16' : ratio==='1:1' ? '1 / 1' : '16 / 9';
+    var mt=el('scMeta'); if(mt) mt.textContent=C.W+' × '+C.H+' · 30fps';
+  }
+  function drawShot(c,it,lt,dur,usePoster){
+    var W=C.W,H=C.H,src=null;
+    if(!usePoster && it.kind==='video' && it.vid && it.vid.readyState>=2) src=it.vid;
+    if(!src) src=it.poster||it.img||placeholder(it);
+    var iw=src.naturalWidth||src.videoWidth||src.width||960,
+        ih=src.naturalHeight||src.videoHeight||src.height||540;
+    if(!iw||!ih) return;
+    var p=clamp(lt/Math.max(0.1,dur),0,1);
+    var sc=Math.max(W/iw,H/ih)*(1.05+0.11*p);
+    var w=iw*sc,h=ih*sc;
+    var ox=Math.sin(p*3.4+it.seed)*W*0.012, oy=(p-0.5)*H*0.018;
+    try{ c.drawImage(src,(W-w)/2+ox,(H-h)/2+oy,w,h); }catch(e){}
+  }
+  function cardBase(c){
+    var W=C.W,H=C.H;
+    var g=c.createLinearGradient(0,0,W,H);
+    g.addColorStop(0,'#221a10'); g.addColorStop(1,'#4a3621');
+    c.fillStyle=g; c.fillRect(0,0,W,H);
+    c.strokeStyle='rgba(232,205,156,.4)'; c.lineWidth=Math.max(1,W*0.0018);
+    c.strokeRect(W*0.055,H*0.075,W*0.89,H*0.85);
+    c.strokeStyle='rgba(232,205,156,.18)';
+    c.strokeRect(W*0.065,H*0.085,W*0.87,H*0.83);
+  }
+  function drawIntro(c,lt,dur){
+    var W=C.W,H=C.H,o=C.o||{};
+    cardBase(c);
+    var a=clamp(lt/0.8,0,1);
+    c.globalAlpha=a; c.textAlign='center';
+    c.fillStyle='rgba(240,226,204,.92)';
+    c.font=font(Math.round(W*0.052));
+    c.fillText((o.names||'我们的婚礼'),W/2,H*0.46);
+    c.fillStyle='rgba(232,205,156,.75)'; c.font=font(Math.round(W*0.02));
+    c.fillText((o.date||new Date().toISOString().slice(0,10).replace(/-/g,'.')),W/2,H*0.55);
+    c.fillStyle='rgba(232,205,156,.5)'; c.font=font(Math.round(W*0.014));
+    c.fillText('A  S M A R T  C U T  F I L M',W/2,H*0.62);
+    c.globalAlpha=1;
+  }
+  function drawOutro(c,lt,dur){
+    var W=C.W,H=C.H;
+    cardBase(c);
+    var a=clamp(lt/0.8,0,1)*clamp((dur-lt)/0.6,0,1);
+    c.globalAlpha=a; c.textAlign='center';
+    c.fillStyle='rgba(240,226,204,.9)';
+    c.font=font(Math.round(W*0.036));
+    c.fillText('永 结 同 心',W/2,H*0.47);
+    c.fillStyle='rgba(232,205,156,.55)'; c.font=font(Math.round(W*0.014));
+    c.fillText('FOREVER BEGINS HERE',W/2,H*0.56);
+    c.globalAlpha=1;
+  }
+  function petals(c,t){
+    var W=C.W,H=C.H;
+    c.save(); c.globalCompositeOperation='lighter';
+    for(var i=0;i<26;i++){
+      var sd=i*7.31, sp=0.035+((i%7)*0.006);
+      var x=(Math.sin(sd)*0.5+0.5)*W + Math.sin(t*0.7+i)*W*0.018;
+      var y=((Math.cos(sd)*0.5+0.5)+t*sp)%1*H;
+      var r=(i%5===0?3.0:1.7)*(W/1280);
+      c.globalAlpha=0.08+0.16*(0.5+0.5*Math.sin(t*1.1+i));
+      c.fillStyle=i%4===0?'#e8cd9c':'#f6d9c8';
+      c.beginPath(); c.ellipse(x,y,r,r*1.5,sd,0,6.283); c.fill();
+    }
+    c.restore();
+  }
+  function overlay(c,t){
+    var W=C.W,H=C.H,o=C.o||{};
+    var g=c.createLinearGradient(0,H*0.62,0,H);
+    g.addColorStop(0,'rgba(12,9,7,0)'); g.addColorStop(1,'rgba(12,9,7,.5)');
+    c.fillStyle=g; c.fillRect(0,0,W,H);
+    var v=c.createRadialGradient(W/2,H/2,H*0.28,W/2,H/2,H*0.82);
+    v.addColorStop(0,'rgba(0,0,0,0)'); v.addColorStop(1,'rgba(0,0,0,.4)');
+    c.fillStyle=v; c.fillRect(0,0,W,H);
+    petals(c,t);
+    c.fillStyle='rgba(232,205,156,.6)'; c.fillRect(0,H-3,W*clamp(t/Math.max(0.1,C.total),0,1),3);
+    if(o.caption){
+      c.font=font(Math.round(W*0.0125)); c.textAlign='left';
+      c.fillStyle='rgba(240,226,204,.66)';
+      c.fillText('SMART CUT · '+Math.round(o.bpm)+' BPM',W*0.03,H-14);
+    }
+  }
+  function drawFrame(t){
+    var c=C.ctx; if(!c||!C.segs.length) return;
+    var W=C.W,H=C.H;
+    c.save(); c.setTransform(1,0,0,1,0,0);
+    c.filter='none'; c.globalAlpha=1; c.textAlign='left';
+    c.fillStyle='#14100c'; c.fillRect(0,0,W,H);
+    var k=segAt(t), seg=C.segs[k];
+    if(!seg){ c.restore(); return; }
+    var lt=clamp(t-seg.t0,0,seg.dur);
+    c.filter=FILTER[(C.o||{}).style]||'none';
+    if(seg.kind==='intro') drawIntro(c,lt,seg.dur);
+    else if(seg.kind==='outro') drawOutro(c,lt,seg.dur);
+    else drawShot(c,seg.item,lt,seg.dur,false);
+    c.filter='none';
+    if(seg.trans && lt>seg.dur-seg.trans && C.segs[k+1]){
+      var nx=C.segs[k+1], p=clamp((lt-(seg.dur-seg.trans))/seg.trans,0,1);
+      c.save();
+      if(seg.tt==='fade'){
+        c.fillStyle='rgba(12,9,7,'+(p*0.94)+')'; c.fillRect(0,0,W,H);
+      } else {
+        if(seg.tt==='wipe'){ c.beginPath(); c.rect(0,0,W*p,H); c.clip(); }
+        else c.globalAlpha=p;
+        c.filter=FILTER[(C.o||{}).style]||'none';
+        if(nx.kind==='shot') drawShot(c,nx.item,0,nx.dur,true);
+        else if(nx.kind==='intro') drawIntro(c,0,nx.dur);
+        else drawOutro(c,0,nx.dur);
+      }
+      c.restore();
+    }
+    c.filter='none';
+    overlay(c,t);
+    c.restore();
+  }
+  function activate(k){
+    if(C.active>=0){
+      var old=C.segs[C.active];
+      if(old&&old.item&&old.item.vid){ try{ old.item.vid.pause(); }catch(e){} }
+    }
+    C.active=k;
+    var seg=C.segs[k];
+    if(seg&&seg.kind==='shot'&&seg.item.vid){
+      var v=seg.item.vid;
+      try{
+        v.currentTime=Math.min(seg.item.in||0,Math.max(0,v.duration-0.2));
+        var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){});
+      }catch(e){}
+    }
+  }
+
+  /* ---------- 录制出片 ---------- */
+  function pickMime(){
+    if(!window.MediaRecorder||!MediaRecorder.isTypeSupported) return '';
+    var a=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'];
+    for(var i=0;i<a.length;i++){ try{ if(MediaRecorder.isTypeSupported(a[i])) return a[i]; }catch(e){} }
+    return '';
+  }
+  function make(over){
+    if(C.busy) return;
+    ensure();
+    var seq = analyze(true).then(function(){
+      var o=opts(), k;
+      if(over) for(k in over) o[k]=over[k];
+      var n=plan(o);
+      if(!n){ status('没有可用素材，先导入或恢复示例。',true); return; }
+      setCanvas(o.ratio);
+      if(C.url){ try{ URL.revokeObjectURL(C.url); }catch(e){} C.url=null; }
+      var v=el('scPlayer'); v.style.display='none'; v.removeAttribute('src');
+      C.canvas.style.display='block';
+      el('scLive').textContent='SMART CUT · RECORDING';
+      el('scMake').disabled=true; el('scMake').textContent='剪辑中…';
+      el('scDownload').disabled=true; bar(0);
+      C.active=-1;
+      drawFrame(0.02);
+      C.mime=pickMime();
+      var ok=!!(window.MediaRecorder&&C.canvas.captureStream&&C.mime);
+      if(ok){
+        try{
+          C.stream=C.canvas.captureStream(30);
+          C.rec=new MediaRecorder(C.stream,{mimeType:C.mime,videoBitsPerSecond:4500000});
+          C.chunks=[];
+          C.rec.ondataavailable=function(e){ if(e.data&&e.data.size) C.chunks.push(e.data); };
+          C.rec.onstop=function(){
+            var ext=C.mime.indexOf('mp4')>=0?'mp4':'webm';
+            var blob=new Blob(C.chunks,{type:ext==='mp4'?'video/mp4':'video/webm'});
+            if(C.stream){ C.stream.getTracks().forEach(function(tr){ try{tr.stop();}catch(e){} }); }
+            if(blob.size>0) finish(blob,ext);
+            else{
+              status('录制没有产出数据，请换 Chrome / Edge 再试',true);
+              resetButtons();
+            }
+          };
+          C.rec.start(200);
+          status('正在逐帧剪辑并录制 · 约 '+Math.round(C.total)+' 秒，请保持页面在前台');
+        }catch(e){ ok=false; C.rec=null; }
+      }
+      if(!ok) status('当前浏览器不支持录制，改为实时预览；导出请用 Chrome / Edge',true);
+      C.busy=true; C.startAt=performance.now();
+      C.raf=requestAnimationFrame(loop);
+    });
+    return seq;
+  }
+  function resetButtons(){
+    el('scMake').disabled=false; el('scMake').textContent='✂ 一键智能剪辑';
+    el('scLive').textContent='SMART CUT · AUTO EDIT';
+    C.busy=false;
+  }
+  function finish(blob,ext){
+    C.blob=blob; C.url=URL.createObjectURL(blob);
+    var v=el('scPlayer');
+    v.src=C.url; v.style.display='block'; C.canvas.style.display='none';
+    var pr=v.play(); if(pr&&pr.catch) pr.catch(function(){});
+    var d=el('scDownload'); d.disabled=false; d.dataset.ext=ext;
+    el('scLive').textContent='SMART CUT · '+Math.round(C.total)+'s';
+    el('scMake').disabled=false; el('scMake').textContent='✂ 重新剪辑';
+    status('成片完成：'+Math.round(C.total)+' 秒 · '+C.W+'×'+C.H+' · '+(blob.size/1048576).toFixed(1)+' MB · 可播放或下载。');
+    bar(1); C.busy=false;
+  }
+  function loop(){
+    var t=(performance.now()-C.startAt)/1000;
+    if(t>=C.total){
+      drawFrame(Math.max(0,C.total-0.05));
+      if(C.rec&&C.rec.state!=='inactive'){ try{ C.rec.stop(); }catch(e){ resetButtons(); } }
+      else resetButtons();
+      C.active=-1;
+      C.segs.forEach(function(s){ if(s.item&&s.item.vid){ try{s.item.vid.pause();}catch(e){} } });
+      return;
+    }
+    var k=segAt(t);
+    if(k!==C.active) activate(k);
+    drawFrame(t);
+    bar(t/C.total);
+    C.raf=requestAnimationFrame(loop);
+  }
+  function download(){
+    if(!C.url||!C.blob) return;
+    var a=document.createElement('a');
+    a.href=C.url;
+    a.download='智能剪辑_'+new Date().toISOString().slice(0,10)+'.'+(el('scDownload').dataset.ext||'webm');
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  /* ---------- 列表 / 摘要 ---------- */
+  function renderList(){
+    var box=el('scList'); if(!box) return;
+    box.innerHTML='';
+    C.items.forEach(function(it,i){
+      var d=document.createElement('div');
+      d.className='sc-item'+(it.keep?'':' off');
+      var th=document.createElement('img');
+      th.className='sc-thumb';
+      th.src = it.poster && it.poster.toDataURL ? it.poster.toDataURL('image/jpeg',0.7) : it.src;
+      th.alt=it.name;
+      d.appendChild(th);
+      var mid=document.createElement('div');
+      mid.innerHTML='<div class="sc-name">'+esc(it.name)+'</div>'+
+        '<div class="sc-why'+(it.keep?'':' bad')+'">'+esc(it.reason)+'</div>';
+      d.appendChild(mid);
+      var sc=document.createElement('div');
+      sc.className='sc-score';
+      sc.innerHTML=(it.analyzed!==false&&C.analyzed?it.score:'—')+'<small>'+esc(it.kind==='video'?'视频':'照片')+'</small>';
+      d.appendChild(sc);
+      var ops=document.createElement('div'); ops.className='sc-ops';
+      function op(txt,fn,ti){
+        var b=document.createElement('button'); b.textContent=txt; b.title=ti;
+        b.onclick=function(ev){ ev.stopPropagation(); fn(); };
+        ops.appendChild(b);
+      }
+      op('↑',function(){ if(i>0){ C.items.splice(i-1,0,C.items.splice(i,1)[0]); renderList(); }},'上移');
+      op('↓',function(){ if(i<C.items.length-1){ C.items.splice(i+1,0,C.items.splice(i,1)[0]); renderList(); }},'下移');
+      op(it.keep?'停':'启',function(){ it.keep=!it.keep; renderList(); },it.keep?'剔除该段':'恢复该段');
+      op('×',function(){ C.items.splice(i,1); renderList(); },'删除');
+      d.appendChild(ops);
+      box.appendChild(d);
+    });
+  }
+  function brief(html){ var n=el('scBrief'); if(n) n.innerHTML=html; }
+
+  /* ---------- 导入桥 ---------- */
+  function fromFilm(){
+    var b=(window.WA_VIDEO&&WA_VIDEO.blob)?WA_VIDEO.blob():null;
+    if(!b||!b.size){ status('还没有照片成片。先去「照片成片」生成一段，再回来送剪。',true); return; }
+    var it=addItem('video',URL.createObjectURL(b),'照片成片 '+new Date().toISOString().slice(11,19));
+    it.p.then(function(){ C.analyzed=false; status('已导入照片成片，点「AI 分析素材」重新评分。'); });
+  }
+  function fromAI(){
+    var nodes=[].slice.call(document.querySelectorAll('#avHist .av-hist-item'));
+    if(!nodes.length){ status('暂无 AI 成片记录（需先在「AI 生成视频」生成成功）。',true); return; }
+    var n=0;
+    nodes.slice(0,4).forEach(function(x){
+      var u=x.getAttribute('data-u');
+      if(u){ addItem('video',u,'AI 成片 '+(++n)); }
+    });
+    C.analyzed=false;
+    status('已导入 '+n+' 段 AI 成片，点「AI 分析素材」评分。');
+  }
+  function toCut(src,name){
+    ensure();
+    var it=addItem('video',src,name||'成片素材');
+    it.p.then(function(){ C.analyzed=false; renderList(); status('成片已送入智能剪辑素材池。'); });
+    if(typeof go==='function') go('cut');
+  }
+
+  /* ---------- 初始化 ---------- */
+  function bind(){
+    var f=el('scFile');
+    if(f) f.onchange=function(){
+      var files=[].slice.call(f.files||[]).slice(0,8);
+      if(!files.length) return;
+      files.forEach(function(file){
+        var kind=/^video\//i.test(file.type)?'video':'image';
+        addItem(kind,URL.createObjectURL(file),file.name.replace(/\.[^.]+$/,'').slice(0,14)||'本地素材');
+      });
+      C.analyzed=false;
+      status('已加入 '+files.length+' 个素材，点「AI 分析素材」评分。');
+      f.value='';
+    };
+    var an=el('scAnalyze'); if(an) an.onclick=function(){ if(!C.busy) analyze(false); };
+    var mk=el('scMake'); if(mk) mk.onclick=function(){ make(); };
+    var dl=el('scDownload'); if(dl) dl.onclick=download;
+    var rf=el('scFromFilm'); if(rf) rf.onclick=fromFilm;
+    var ra=el('scFromAI'); if(ra) ra.onclick=fromAI;
+    var rs=el('scReset'); if(rs) rs.onclick=function(){ reset(); status('示例素材已恢复。'); };
+    var vt=el('vfToCut'); if(vt) vt.onclick=function(){ toCut(URL.createObjectURL(WA_VIDEO.blob()),'照片成片'); };
+    var at=el('avToCut'); if(at) at.onclick=function(){
+      var nodes=document.querySelectorAll('#avHist .av-hist-item');
+      if(!nodes.length){ status('还没有 AI 成片可送剪。',true); return; }
+      toCut(nodes[0].getAttribute('data-u'),'AI 成片');
+    };
+    ['scOrder','scBpm','scDur','scStyle','scRatio','scTrans','scNames','scDate','scCaption'].forEach(function(id){
+      var n=el(id); if(!n) return;
+      var h=function(){
+        if(id==='scRatio') setCanvas(n.value);
+        if(!C.busy&&C.segs.length){ C.o=opts(); plan(C.o); drawFrame(0.02); }
+      };
+      n.addEventListener('input',h); n.addEventListener('change',h);
+    });
+  }
+  function ensure(){
+    if(C.ready) return;
+    C.ready=true;
+    C.canvas=el('scCanvas'); C.ctx=C.canvas?C.canvas.getContext('2d'):null;
+    C.probe=mkCanvas(96,54); C.pctx=C.probe.getContext('2d',{willReadFrequently:true});
+    bind(); setCanvas('16:9');
+    reset();
+    drawFrame(0);
+  }
+  return {ensure:ensure, make:make, analyze:analyze, download:download,
+          toCut:toCut,
+          state:function(){ return {ready:C.ready,busy:C.busy,items:C.items.length,
+            kept:C.items.filter(function(x){return x.keep;}).length,
+            analyzed:C.analyzed,segs:C.segs.length,total:C.total,
+            blob:C.blob?C.blob.size:0,score:C.items.map(function(x){return x.score;})}; }};
+})();
+</script>
+
 </body>
 </html>
