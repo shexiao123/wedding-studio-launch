@@ -7028,25 +7028,16 @@ window.WA_CUT = (function(){
   function mkCanvas(w,h){ var c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
 
   /* ---------- 素材装载 ---------- */
-  function loadImage(src){
+  /* 装载不再用一次性超时（弱网/代理下 3s 不够，会整批拿到占位图）：
+     改为事件写入 + 轮询等待，analyze 时最多等 12s，加载完多少用多少。 */
+  function waitReady(it,ms){
+    var t0=Date.now();
     return new Promise(function(res){
-      var done=false, fin=function(v){ if(done)return; done=true; res(v); };
-      var im=new Image();
-      im.onload=function(){ fin(im); };
-      im.onerror=function(){ fin(null); };
-      setTimeout(function(){ fin(null); }, 3000);
-      im.src=src;
-    });
-  }
-  function loadVideo(src){
-    return new Promise(function(res){
-      var done=false, fin=function(v){ if(done)return; done=true; res(v); };
-      var v=document.createElement('video');
-      v.muted=true; v.playsInline=true; v.preload='auto';
-      v.onloadedmetadata=function(){ fin(v); };
-      v.onerror=function(){ fin(null); };
-      setTimeout(function(){ fin(null); }, 6000);
-      v.src=src;
+      (function poll(){
+        if(it.img||it.vid||it.err) return res();
+        if(Date.now()-t0>ms) return res();
+        setTimeout(poll,350);
+      })();
     });
   }
   function addItem(kind,src,name){
@@ -7054,9 +7045,18 @@ window.WA_CUT = (function(){
             score:0, reason:'待分析', metric:null, poster:null, img:null, vid:null,
             in:0, seed:Math.random()*6.28, p:null};
     C.items.push(it);
-    it.p = (kind==='image'
-      ? loadImage(src).then(function(im){ it.img=im; it.poster=im; return it; })
-      : loadVideo(src).then(function(v){ it.vid=v; return it; }));
+    if(kind==='image'){
+      var im=new Image();
+      im.onload=function(){ it.img=im; it.poster=im; };
+      im.onerror=function(){ it.err=true; };
+      im.src=src;
+    } else {
+      var v=document.createElement('video');
+      v.muted=true; v.playsInline=true; v.preload='auto';
+      v.onloadedmetadata=function(){ it.vid=v; };
+      v.onerror=function(){ it.err=true; };
+      v.src=src;
+    }
     renderList();
     return it;
   }
@@ -7079,7 +7079,6 @@ window.WA_CUT = (function(){
     if(C.canvas) C.canvas.style.display='block';
     var d=el('scDownload'); if(d) d.disabled=true;
     (window.WA_PHOTOS||[]).slice(0,6).forEach(function(p){ addItem('image',p[0],p[1]); });
-    C.items.forEach(function(it){ it.p && it.p.then(function(){ renderList(); }); });
     renderList();
     brief('已恢复 6 张内置示例照片。可继续导入本地视频 / 照片，或从「照片成片」「AI 成片」一键送剪。');
   }
@@ -7150,7 +7149,7 @@ window.WA_CUT = (function(){
   }
   async function analyze(silent){
     var its=C.items.slice();
-    await Promise.all(its.map(function(x){ return x.p||Promise.resolve(); }));
+    await Promise.all(its.map(function(x){ return waitReady(x,12000); }));
     for(var i=0;i<its.length;i++){
       var it=its[i];
       if(!silent) status('正在分析 '+(i+1)+'/'+its.length+'：'+it.name+'…');
@@ -7553,7 +7552,7 @@ window.WA_CUT = (function(){
     var b=(window.WA_VIDEO&&WA_VIDEO.blob)?WA_VIDEO.blob():null;
     if(!b||!b.size){ status('还没有照片成片。先去「照片成片」生成一段，再回来送剪。',true); return; }
     var it=addItem('video',URL.createObjectURL(b),'照片成片 '+new Date().toISOString().slice(11,19));
-    it.p.then(function(){ C.analyzed=false; status('已导入照片成片，点「AI 分析素材」重新评分。'); });
+    waitReady(it,15000).then(function(){ C.analyzed=false; status('已导入照片成片，点「AI 分析素材」重新评分。'); });
   }
   function fromAI(){
     var nodes=[].slice.call(document.querySelectorAll('#avHist .av-hist-item'));
@@ -7569,7 +7568,7 @@ window.WA_CUT = (function(){
   function toCut(src,name){
     ensure();
     var it=addItem('video',src,name||'成片素材');
-    it.p.then(function(){ C.analyzed=false; renderList(); status('成片已送入智能剪辑素材池。'); });
+    waitReady(it,15000).then(function(){ C.analyzed=false; renderList(); status('成片已送入智能剪辑素材池。'); });
     if(typeof go==='function') go('cut');
   }
 
