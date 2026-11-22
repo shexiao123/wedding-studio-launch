@@ -244,7 +244,7 @@ input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink)}
 .nav-item.active{background:var(--gold-bg);color:var(--gold);font-weight:600}
 .nav-item .ico{width:20px;text-align:center;opacity:.85}
 .main{flex:1;overflow:auto;padding:24px;min-width:0;background:transparent}
-.view{display:none;max-width:1280px;margin:0 auto;height:100%}
+.view{display:none;max-width:100%;width:100%;margin:0 auto;height:100%}
 .view.active{display:block}
 .view-title{font-size:20px;margin-bottom:18px;font-family:Georgia,"Songti SC",serif}
 .view-title small{font-size:12px;color:var(--ink3);font-family:inherit;margin-left:10px}
@@ -494,7 +494,7 @@ input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink)}
 
 /* ---------- 底部创作栏（截图风格） ---------- */
 #v-create.view{position:relative;max-width:none;margin:0;padding:0;height:100%}
-.create-studio{position:absolute;inset:0;display:flex;flex-direction:row;background:var(--bg)}
+.create-studio{position:absolute;inset:0;display:flex;flex-direction:row;background:var(--bg);overflow:hidden}
 /* —— 左：玻璃创作设定栏 —— */
 .create-aside{position:relative;z-index:5;width:300px;flex-shrink:0;height:100%;
   display:flex;flex-direction:column;padding:22px 18px 18px;overflow:hidden;
@@ -670,7 +670,7 @@ table.tbl tr:hover td{background:var(--soft)}
 .mc-use:hover{background:var(--gold);color:#fff}
 
 /* 反推 */
-.rev-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:960px}
+.rev-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:100%}
 .rev-result{font-size:13px;color:var(--ink2);line-height:2.1}
 .rev-result .kv b{color:var(--ink);display:inline-block;width:88px}
 .rev-result .kv{border-bottom:1px dashed #eee7db;padding:2px 0}
@@ -805,7 +805,7 @@ table.tbl tr:hover td{background:var(--soft)}
 .mem-box .chip i{color:var(--gold);font-style:normal}
 
 /* ================= 灵感换装 ================= */
-.swap-layout{display:grid;grid-template-columns:400px 1fr;gap:18px;max-width:1080px}
+.swap-layout{display:grid;grid-template-columns:400px 1fr;gap:18px;max-width:100%}
 .swap-locked{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .swap-locked .lk{background:var(--gold-bg);border:1px solid var(--line);border-radius:10px;
   padding:8px 12px;font-size:12px;color:var(--ink2);line-height:1.6;min-width:120px}
@@ -820,7 +820,7 @@ table.tbl tr:hover td{background:var(--soft)}
   padding:10px 13px;font-size:12px;color:var(--ink2);line-height:1.8;margin-top:10px}
 
 /* ================= 公告栏 ================= */
-.ann-list{display:flex;flex-direction:column;gap:14px;max-width:860px}
+.ann-list{display:flex;flex-direction:column;gap:14px;max-width:100%}
 .ann-item{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
   padding:18px 22px;box-shadow:var(--shadow)}
 .ann-item h3{font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
@@ -857,7 +857,7 @@ table.tbl tr:hover td{background:var(--soft)}
   box-shadow:0 1px 4px rgba(0,0,0,.08)}
 .cycle-seg button .off{font-size:10px;opacity:.75}
 .sub-status{background:linear-gradient(135deg,#3a3129,#5c4d3a);color:#f5ead6;
-  border-radius:var(--radius);padding:20px 26px;margin-bottom:16px;max-width:860px}
+  border-radius:var(--radius);padding:20px 26px;margin-bottom:16px;max-width:100%}
 .sub-status .row{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
 .sub-status .kv{line-height:1.6}
 .sub-status .kv .k{font-size:11px;opacity:.7;letter-spacing:1px}
@@ -1016,9 +1016,9 @@ table.tbl tr:hover td{background:var(--soft)}
   background:var(--soft);padding:7px 9px;border-radius:7px;margin:0 0 9px}
 
 /* ===== 婚礼中心（婚礼工作室首页） ===== */
-#v-wedding{ max-width:1200px; margin:0 auto; padding:28px 24px 48px; color:var(--ink);
+#v-wedding{ max-width:100%; width:100%; margin:0; padding:28px clamp(16px,2vw,36px) 48px; color:var(--ink);
   --wd-cream:#faf7f1; --wd-gold:#b08d57; --wd-ink:#3a2e22; --wd-ink2:#6b5e4f; --wd-line:#ece5d8 }
-.wd-hero{ display:grid; grid-template-columns:1fr 1.05fr; gap:44px; align-items:center; min-height:420px; margin-bottom:34px }
+.wd-hero{ display:grid; grid-template-columns:1fr 1.05fr; gap:clamp(24px,3vw,56px); align-items:center; min-height:420px; margin-bottom:34px }
 .wd-hero-text{ position:relative; z-index:1 }
 .wd-kicker{ font-family:"Cormorant Garamond","Noto Serif SC",serif; letter-spacing:.32em;
   font-size:12px; color:var(--wc-accent,var(--wd-gold)); text-transform:uppercase; margin-bottom:16px }
@@ -1037,7 +1037,7 @@ table.tbl tr:hover td{background:var(--soft)}
 .wd-cd-lab{ font-size:11px; color:var(--wd-ink2); margin-top:4px; letter-spacing:.12em }
 .wd-date{ font-size:13px; color:var(--wd-ink2); margin-top:10px; letter-spacing:.04em }
 .wd-hero-visual{ position:relative }
-.wd-feature-card{ position:relative; height:clamp(320px,42vw,460px); border-radius:28px; overflow:hidden;
+.wd-feature-card{ position:relative; height:clamp(320px,34vw,600px); border-radius:28px; overflow:hidden;
   background:
     radial-gradient(circle at 30% 20%, rgba(255,255,255,.38) 0%, transparent 26%),
     radial-gradient(circle at 72% 78%, rgba(201,168,106,.28) 0%, transparent 32%),
@@ -1054,7 +1054,7 @@ table.tbl tr:hover td{background:var(--soft)}
   padding:9px 14px; border-radius:20px; background:rgba(255,253,249,.88); backdrop-filter:blur(8px);
   font-size:12px; color:var(--wd-ink); box-shadow:0 4px 14px rgba(60,45,20,.1) }
 .wd-feature-badge::before{ content:'📍'; font-size:11px }
-.wd-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:44px }
+.wd-stats{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:clamp(12px,1.2vw,20px); margin-bottom:44px }
 .wd-stat-card{ background:var(--panel); border:1px solid var(--wd-line); border-radius:20px; padding:22px 20px;
   box-shadow:0 8px 26px rgba(60,45,20,.06); transition:transform .3s, box-shadow .3s; position:relative; overflow:hidden }
 .wd-stat-card:hover{ transform:translateY(-3px); box-shadow:0 14px 36px rgba(60,45,20,.1) }
@@ -1071,7 +1071,7 @@ table.tbl tr:hover td{background:var(--soft)}
 .wd-section-title{ font-family:"Playfair Display","Cormorant Garamond","Noto Serif SC",serif;
   font-size:26px; font-weight:600; color:var(--wd-ink); margin:0 0 6px }
 .wd-section-sub{ font-size:13px; color:var(--wd-ink2); margin:0 }
-.wd-recent-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px }
+.wd-recent-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:clamp(12px,1.2vw,20px) }
 .wd-recent-empty{ color:var(--wd-ink2); font-size:13px; grid-column:1/-1; padding:38px 0; text-align:center;
   background:var(--panel); border:1px dashed var(--wd-line); border-radius:16px }
 .wd-work-card{ position:relative; border-radius:18px; overflow:hidden; background:var(--panel);
@@ -1114,6 +1114,13 @@ table.tbl tr:hover td{background:var(--soft)}
 @media (prefers-reduced-motion: reduce){
   .wd-hero-text > *, .wd-stat-card, .wd-section-head, .wd-recent-grid > *{ animation:none }
 }
+@media (min-width:1800px){
+  .wd-title{ font-size:clamp(56px,4.2vw,88px) }
+  .wd-desc{ max-width:620px; font-size:16px }
+  .wd-hero{ gap:clamp(40px,4vw,88px) }
+  .wd-stat-num{ font-size:40px }
+  .wd-stat-card{ padding:28px 26px }
+}
 @media (max-width:980px){
   .wd-hero{ grid-template-columns:1fr }
   .wd-stats{ grid-template-columns:repeat(2,1fr) }
@@ -1139,7 +1146,7 @@ table.tbl tr:hover td{background:var(--soft)}
   background:radial-gradient(circle,rgba(190,154,94,.16),transparent 62%);z-index:56;pointer-events:none;
   opacity:0;transition:opacity .4s}
 /* 修图对比滑块（视觉展示组件） */
-.wd-compare{position:relative;border-radius:22px;overflow:hidden;height:clamp(320px,42vw,480px);box-shadow:var(--wv-shadow-lift);
+.wd-compare{position:relative;border-radius:22px;overflow:hidden;height:clamp(320px,32vw,560px);box-shadow:var(--wv-shadow-lift);
   user-select:none;cursor:ew-resize;background:#e9d6bf;margin-bottom:8px}
 .wd-compare .layer{position:absolute;inset:0;background-size:cover;background-position:center}
 .wd-compare .layer.before{background:linear-gradient(135deg,#cfc3b6,#a99a8d 60%,#8a7866);filter:grayscale(.35) brightness(.92) contrast(.96)}
@@ -6538,7 +6545,7 @@ button.sm{font-size:12px;padding:3px 8px}
 .wd-sample-wrap{ grid-column:1/-1 }
 .wd-sample-cap{ grid-column:1/-1; text-align:center; color:var(--wd-ink2,#7a6a55); font-family:"Cormorant Garamond","Noto Serif SC",serif;
   font-size:15px; letter-spacing:.06em; margin:6px 0 16px }
-.wd-sample-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px }
+.wd-sample-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:clamp(10px,1vw,18px) }
 .wd-sample-card{ position:relative; aspect-ratio:3/4; border-radius:14px; overflow:hidden; cursor:pointer;
   border:1px solid rgba(176,141,87,.25); box-shadow:0 6px 18px rgba(80,60,25,.08);
   transition:transform .4s var(--spring), box-shadow .3s var(--ease-out) }
