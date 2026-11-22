@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#150f10">
+<title>婚礼影像 · 智能影楼 — 启动台</title>
+<style>
+  :root{
+    --bg:#150f10; --bg2:#241719; --ink:#f5e9e2; --muted:rgba(245,233,226,.58);
+    --gold:#d9b27c; --gold2:#ecd0a4; --rose:#d99aa6; --line:rgba(217,178,124,.26);
+    --warn:#e8b06a; --ok:#8fc9a8;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    min-height:100vh; color:var(--ink);
+    font-family:"Noto Serif SC","Songti SC","STSong",Georgia,serif;
+    background:
+      radial-gradient(ellipse 70% 55% at 50% 8%, rgba(217,154,166,.16), transparent 70%),
+      radial-gradient(ellipse 90% 70% at 50% 100%, rgba(217,178,124,.10), transparent 70%),
+      linear-gradient(160deg,var(--bg),var(--bg2) 60%,#180f11);
+    display:flex; align-items:center; justify-content:center; padding:28px 18px 40px;
+  }
+  .wrap{width:100%;max-width:560px}
+  .hd{text-align:center;margin-bottom:26px}
+  .mark{
+    font-size:11px;letter-spacing:.42em;color:var(--gold);opacity:.85;margin-bottom:14px;
+  }
+  h1{font-size:29px;letter-spacing:.16em;margin:0 0 10px;font-weight:600;
+     background:linear-gradient(100deg,#d9b27c,#f3dfbd,#d9b27c);
+     -webkit-background-clip:text;background-clip:text;color:transparent}
+  .en{font-size:10px;letter-spacing:.34em;color:var(--muted);font-family:Georgia,serif}
+  .heart{font-size:22px;color:var(--rose);margin-bottom:12px;letter-spacing:.3em}
+
+  .card{
+    background:linear-gradient(155deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+    border:1px solid var(--line);border-radius:16px;padding:22px 20px;margin-bottom:16px;
+    box-shadow:0 18px 50px rgba(0,0,0,.24),inset 0 0 0 1px rgba(217,178,124,.05);
+  }
+  .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .label{font-size:12px;letter-spacing:.18em;color:var(--gold)}
+  .badge{font-size:11px;letter-spacing:.08em;padding:5px 11px;border-radius:999px;
+    border:1px solid rgba(232,176,106,.42);color:var(--warn);background:rgba(232,176,106,.08)}
+  .badge.ok{border-color:rgba(143,201,168,.45);color:var(--ok);background:rgba(143,201,168,.08)}
+
+  .url{
+    display:block;width:100%;font-family:Georgia,serif;font-size:12.5px;line-height:1.7;
+    color:var(--ink);background:rgba(0,0,0,.26);border:1px solid rgba(217,178,124,.16);
+    border-radius:10px;padding:12px 13px;word-break:break-all;margin-bottom:14px;
+  }
+  .btns{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{
+    flex:1 1 150px;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    min-height:48px;padding:0 18px;border-radius:10px;text-decoration:none;
+    font-size:14px;letter-spacing:.1em;cursor:pointer;transition:transform .2s,box-shadow .2s,opacity .2s;
+    border:1px solid var(--line);
+  }
+  .btn:hover{transform:translateY(-2px)}
+  .btn-main{
+    color:#2a1a12;font-weight:600;border:none;
+    background:linear-gradient(100deg,#d9b27c,#f0d5ab,#d9b27c);
+    box-shadow:0 8px 26px rgba(217,178,124,.24);
+  }
+  .btn-main:hover{box-shadow:0 12px 34px rgba(217,178,124,.36)}
+  .btn-ghost{color:var(--gold2);background:rgba(217,178,124,.06)}
+
+  .note{font-size:12.5px;line-height:1.85;color:var(--muted);margin:14px 0 0}
+  .note b{color:var(--warn);font-weight:600}
+  .note code{font-family:Georgia,serif;color:var(--gold2);font-size:12px}
+  kbd{
+    font-family:Georgia,serif;font-size:11.5px;color:#2a1a12;background:var(--gold2);
+    border-radius:4px;padding:2px 7px;letter-spacing:.02em;
+  }
+  ul{margin:10px 0 0;padding-left:19px;font-size:12.5px;line-height:2;color:var(--muted)}
+  ul li::marker{color:var(--gold)}
+  .ft{text-align:center;font-size:11px;line-height:1.9;color:rgba(245,233,226,.38);margin-top:22px;letter-spacing:.06em}
+  .toast{
+    position:fixed;left:50%;bottom:30px;transform:translate(-50%,14px);
+    background:rgba(30,20,20,.94);border:1px solid var(--line);color:var(--gold2);
+    padding:10px 20px;border-radius:999px;font-size:12.5px;opacity:0;pointer-events:none;
+    transition:opacity .25s,transform .25s;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  @media(max-width:420px){h1{font-size:23px}.card{padding:18px 16px}.btn{flex:1 1 100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hd">
+    <div class="heart">♥</div>
+    <div class="mark">WEDDING PHOTOGRAPHY AGENT</div>
+    <h1>婚礼影像 · 智能影楼</h1>
+    <div class="en">START LAUNCHPAD</div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <span class="label">云端控制台</span>
+      <span class="badge" id="badge">● 当前未运行</span>
+    </div>
+    <div class="url" id="cloudUrl">https://wedding-agent-305975-11-1474028098.sh.run.tcloudbase.com</div>
+    <div class="btns">
+      <a class="btn btn-main" id="goBtn" href="https://wedding-agent-305975-11-1474028098.sh.run.tcloudbase.com" target="_blank" rel="noopener">进入控制台 ↗</a>
+      <button class="btn btn-ghost" id="copyBtn">复制网址</button>
+    </div>
+    <p class="note">
+      <b>状态说明（2026-11-22 核实）：</b>原 CloudBase 环境
+      <code>shanghai123-d3g0t9xz85f397e35</code> 已被回收，网关返回
+      <code>INVALID_HOST</code>，域名暂时打不开。重新开通环境并部署后，
+      上面这个按钮即可直接使用，本页无需改动。
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="row"><span class="label">本机启动（完整功能）</span></div>
+    <ul>
+      <li>双击项目根目录的 <kbd>start.bat</kbd></li>
+      <li>或命令行运行 <code>python scripts/start.py</code></li>
+      <li>浏览器打开 <code>http://127.0.0.1:8080</code>（端口被占会自动顺延，以窗口打印的为准）</li>
+      <li>退出按 <kbd>Ctrl + C</kbd></li>
+    </ul>
+    <p class="note">
+      ⚠ <code>127.0.0.1</code> 只指向电脑自己，<b>手机和微信打不开</b> —— 这不是服务坏了。
+      本机启动包含后端、数据库、生图等全部功能。
+    </p>
+  </div>
+
+  <div class="ft">
+    本页为静态启动入口，托管于 GitHub Pages，不含后端程序与任何账号数据。<br>
+    影楼控制台的完整功能需后端服务运行后才可用。
+  </div>
+</div>
+
+<div class="toast" id="toast">已复制</div>
+<script>
+(function(){
+  var url = document.getElementById('cloudUrl').textContent.trim();
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var done = function(){
+      var t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(function(){ t.classList.remove('show'); }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(done, function(){ fallback(url, done); });
+    } else { fallback(url, done); }
+  });
+  function fallback(text, cb){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta); cb();
+  }
+})();
+</script>
+</body>
+</html>
