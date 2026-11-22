@@ -3207,6 +3207,9 @@ function tplColor(t){
 // 相比原先只依赖 /api/templates/{id}/preview（走生图通道，通道欠费就永远出不来图、
 // 只能停在「封面生成中」），静态资源本地与线上都稳定，且部署时随 assets/ 一起进镜像。
 function tplAssetCover(t){
+  // 本地采集带回来的样片模板直接用 cover 指向 assets/wedding-photos/，
+  // 其余仍按 template_code 拼预生成封面，行为不变。
+  if (t.cover) return t.cover;
   return 'assets/template-covers/' + encodeURIComponent(t.template_code || ('tpl_' + t.id)) + '.jpg';
 }
 function tplAssetFail(img, id){
@@ -5683,9 +5686,76 @@ async function fairyChatter(){
   if (!F.on) return;
   const b = document.getElementById('fairyBubble');
   if (!b.classList.contains('hidden')) return;
-  try{ const g = await api('/api/fairy/greet'); fairyBubbleShow(esc(g.text)); }catch(e){}
+  try{ const g = await api('/api/fairy/greet'); fairyBubbleShow(esc(g.text)); }
+  catch(e){ if (S.preview && !authBackend()) fairyBubbleShow('🐳 今天也在认真吃白饭～（预览模式，点我可以出门采本地样片哦）'); }
+}
+/* 静态预览的「出门采集」：真采集走后端线程（LLM 生成趋势模板 + 写库），
+   GitHub Pages 没有后端，点按钮只会撞采集接口 404 然后弹个错。
+   这里降级成「本地样片巡游」：从 6 张内置实拍样片里带回 1~2 套展示模板，
+   有动画、有结果、能去广场选用；明确标注不联网、不写库、刷新即清空。 */
+const FAIRY_LOCAL_POOL = [
+  {key:'meadow', name:'晨光草坪白纱', style:'森系/自然/清新', dress_type:'轻纱A字裙',
+   scene:'阳光草坪', pose:'并肩回望', shot:'全身', lens:'35mm', lighting:'清晨侧逆光', color_tone:'暖绿调',
+   prompt:'清晨草坪上的轻纱婚纱，露珠与逆光发丝，自然清新的森系婚礼大片'},
+  {key:'church', name:'哥特彩窗誓约', style:'西式/神圣/极简', dress_type:'极简缎面吊带',
+   scene:'哥特式教堂', pose:'侧身祈祷', shot:'全身', lens:'135mm', lighting:'彩窗侧照', color_tone:'自然调',
+   prompt:'哥特教堂彩窗光影下的极简缎面婚纱，神圣静谧，长廊纵深构图'},
+  {key:'chinese', name:'朱墙秀禾红妆', style:'中式/传统/喜庆', dress_type:'重工秀禾服',
+   scene:'朱墙中式庭院', pose:'端坐执扇', shot:'半身', lens:'50mm', lighting:'侧逆暖光', color_tone:'红金调',
+   prompt:'朱红宫墙前的重工秀禾新娘，凤冠金饰，端坐执团扇，传统中式婚照'},
+  {key:'beach', name:'落日海崖誓言', style:'海边/逆光/电影感', dress_type:'飘逸大拖尾',
+   scene:'落日海崖', pose:'迎风相拥', shot:'全身', lens:'85mm', lighting:'金色逆光', color_tone:'橘金调',
+   prompt:'落日海崖边迎风扬起的大拖尾婚纱，金色逆光剪影，电影感婚礼大片'},
+  {key:'palace', name:'宫邸夜宴高定', style:'法式/高级/宫廷', dress_type:'缎面宫廷拖尾',
+   scene:'宫殿长廊夜景', pose:'缓步回眸', shot:'全身', lens:'50mm', lighting:'烛台暖光', color_tone:'琥珀调',
+   prompt:'古典宫殿夜宴长廊，象牙白缎面宫廷拖尾婚纱，烛光与镜厅反射，高级时装大片'},
+  {key:'sakura', name:'樱吹雪和风纱', style:'日系/柔光/梦幻', dress_type:'柔纱齐地裙',
+   scene:'樱花花园', pose:'抬手接花瓣', shot:'半身', lens:'85mm', lighting:'阴天柔光', color_tone:'粉白调',
+   prompt:'樱花纷飞的庭园里，柔纱齐地婚纱的新娘抬手接花瓣，日系柔光梦幻婚照'}
+];
+function fairyPreviewCrawl(){
+  if (F.crawlTimer) return;   // 上一趟还没回来
+  F.lastCrawlAt = Date.now();
+  localStorage.setItem('wa_fairy_crawl', String(F.lastCrawlAt));
+  if (P.ready) petPlay(petPick(PET_CLIPS.work), true);
+  const remain = FAIRY_LOCAL_POOL.filter(x =>
+    !PREVIEW_TEMPLATES.some(t => t.template_code === 'tpl_local_' + x.key));
+  const steps = ['· 起飞～', '· 在本地样片库里翻了翻…', '· 挑了几张顺眼的带回来～'];
+  let step = 0;
+  fairyBubbleShow('出发咯～我去<b>本地样片库</b>采新模板啦！<div class="log"><div>' + steps[0] + '</div></div>', true);
+  F.crawlTimer = setInterval(()=>{
+    step++;
+    if (step < 3){
+      const log = steps.slice(0, step + 1).map(s => '<div>' + s + '</div>').join('');
+      fairyBubbleShow('正在 <b>本地样片库</b> 采风 · 预览采集（不联网）<div class="log">' + log + '</div>', true);
+      return;
+    }
+    clearInterval(F.crawlTimer); F.crawlTimer = null;
+    if (P.ready) petPlay('work3', false, petIdle);
+    const n = Math.min(1 + Math.floor(Math.random() * 2), remain.length);
+    const picked = remain.slice(0, n);
+    picked.forEach(x => PREVIEW_TEMPLATES.push({
+      id: 1000 + PREVIEW_TEMPLATES.length,
+      template_code: 'tpl_local_' + x.key,
+      name: x.name, style: x.style, dress_type: x.dress_type,
+      scene: x.scene, pose: x.pose, shot: x.shot, lens: x.lens,
+      lighting: x.lighting, color_tone: x.color_tone,
+      aspect_ratio: '3:4', prompt: x.prompt,
+      negative_prompt: '畸形手指，模糊，变形面部，多余肢体',
+      recommended_model: 'MODEL_STANDARD',
+      use_count: 0, success_rate: 1,
+      image_key: null, origin_image_key: null,
+      cover: 'assets/wedding-photos/' + x.key + '.jpg'
+    }));
+    const tip = '<div style="margin-top:6px;font-size:11px;color:var(--ink3)">预览采集：仅本次浏览有效，刷新后清空；真采集（联网抓趋势＋写入模板库）需在本机双击 start.bat 启动后端。</div>';
+    const goBtn = '<div class="fa"><button onclick="go(\'plaza\');loadTemplates();fairyBubbleHide()">去模板广场看</button><button onclick="fairyBubbleHide()">谢谢小鲸</button></div>';
+    fairyBubbleShow(picked.length
+      ? '叮咚～我带回 <b>' + picked.length + '</b> 套本地样片模板：' + esc(picked.map(x => x.name).join('、')) + '！' + tip + goBtn
+      : '本地样片都采过啦～' + tip + goBtn, true);
+  }, 2600);
 }
 async function fairyCrawl(){
+  if (S.preview && !authBackend()) return fairyPreviewCrawl();
   try{ await api('/api/fairy/crawl', {}); }
   catch(e){ toast(e.message, true); return; }
   if(P.ready) petPlay(petPick(PET_CLIPS.work), true);
@@ -5718,6 +5788,7 @@ async function fairyPoll(){
 }
 async function fairyIdleCheck(){
   if (!F.on || _genTimer || F.crawlTimer) return;
+  if (S.preview && !authBackend()) return;   // 静态预览没有采集状态接口，别空转 404
   if (Date.now() - F.lastCrawlAt < 30*60*1000) return;
   try{
     const s = await api('/api/fairy/status');
