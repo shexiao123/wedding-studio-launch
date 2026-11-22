@@ -3168,6 +3168,37 @@ const STYLE_COLORS = {
   '森系':'linear-gradient(135deg,#7d9b76,#4c6b47)','夜景':'linear-gradient(135deg,#4a5568,#232b3a)',
   '港风':'linear-gradient(135deg,#8a6d4f,#5a4433)','教堂':'linear-gradient(135deg,#9aa5b1,#5f6b78)'
 };
+/* 静态预览兜底：模板广场列表原本只从 /api/templates 读，
+   GitHub Pages / 本机后端没启动时接口 404，catch 只弹一个 toast，
+   #tplGrid 从头到尾是空的 —— 看起来就像「模板没了」。
+   这里放一份与 backend/db/init_db.py 种子模板 + fairy 模板一致的本地副本；
+   封面走 assets/template-covers/（相对路径，本机与 Pages 都在，共 15 张）。
+   只负责展示与选用（自动填提示词），投稿 / 审核 / 使用统计仍需真实后端。 */
+const PREVIEW_TEMPLATES = [
+  {"id":1,"template_code":"tpl_demo_001","name":"法式卢浮宫婚纱","style":"法式/高级/宫廷","dress_type":"缎面大拖尾","scene":"宫殿","pose":"45度侧身回望","shot":"全身","lens":"85mm","lighting":"左侧柔光","color_tone":"暖调","aspect_ratio":"3:4","prompt":"高级法式象牙白缎面拖尾婚纱，欧洲古典宫殿大厅，85mm人像镜头","negative_prompt":"畸形手指，模糊，变形面部","recommended_model":"MODEL_PRO","use_count":16,"success_rate":0.6},
+  {"id":3,"template_code":"tpl_demo_002","name":"海崖森系轻纱","style":"森系/自然/清新","dress_type":"轻纱鱼尾","scene":"海崖","pose":"迎风而立","shot":"全身","lens":"35mm","lighting":"逆光剪影","color_tone":"冷调","aspect_ratio":"3:4","prompt":"海崖边缘迎风轻纱鱼尾婚纱，夕阳逆光，自然清新风格","negative_prompt":"畸形手指，模糊，变形面部","recommended_model":"MODEL_STANDARD","use_count":3,"success_rate":1.0},
+  {"id":4,"template_code":"tpl_demo_003","name":"中式秀禾红妆","style":"中式/传统/喜庆","dress_type":"秀禾服","scene":"中式庭院","pose":"端坐执扇","shot":"半身","lens":"50mm","lighting":"侧逆暖光","color_tone":"红调","aspect_ratio":"3:4","prompt":"中式秀禾服新娘，古典庭院，红妆凤冠，喜庆氛围","negative_prompt":"畸形手指，模糊，变形面部","recommended_model":"MODEL_STANDARD","use_count":0,"success_rate":0.5},
+  {"id":5,"template_code":"tpl_demo_004","name":"夜景城市婚纱","style":"都市/时尚/夜景","dress_type":"简约缎面","scene":"城市天台","pose":"背影回眸","shot":"全身","lens":"50mm","lighting":"城市霓虹补光","color_tone":"蓝调","aspect_ratio":"3:4","prompt":"城市天台夜景婚纱，霓虹光斑背景，时尚杂志风格","negative_prompt":"畸形手指，模糊，变形面部","recommended_model":"MODEL_PRO","use_count":0,"success_rate":0.5},
+  {"id":6,"template_code":"tpl_demo_005","name":"复古港风旗袍","style":"港风/复古/胶片","dress_type":"旗袍","scene":"老街","pose":"倚栏浅笑","shot":"半身","lens":"85mm","lighting":"正面柔光","color_tone":"胶片调","aspect_ratio":"3:4","prompt":"复古港风旗袍婚纱照，90年代老街场景，胶片质感","negative_prompt":"畸形手指，模糊，变形面部","recommended_model":"MODEL_STANDARD","use_count":0,"success_rate":0.5},
+  {"id":7,"template_code":"tpl_demo_006","name":"教堂光影婚纱","style":"西式/神圣/极简","dress_type":"极简吊带纱","scene":"教堂","pose":"侧身祈祷","shot":"全身","lens":"135mm","lighting":"窗光侧照","color_tone":"自然调","aspect_ratio":"3:4","prompt":"教堂彩窗光影下的极简婚纱，神圣静谧氛围","negative_prompt":"畸形手指，模糊，变形面部","recommended_model":"MODEL_PRO","use_count":0,"success_rate":0.5},
+  {"id":14,"template_code":"tpl_fairy_98f0512b","name":"牧场晚风婚纱","style":"日系治愈胶片风","dress_type":"碎珍珠轻拖尾纱","scene":"近郊缓坡牧场，原木栅栏旁散落白雏菊，三五只奶羊漫步草甸","pose":"新娘半靠在新郎肩头，指尖轻揪纱裙边角，侧脸迎向晚风露出浅笑","shot":"中全景，连带1/3的草甸远景纳入画面","lens":"50mm F1.4定焦","lighting":"黄金小时落日侧逆光，柔光板补亮面部暗部","color_tone":"暖奶橘低饱和柔调","aspect_ratio":"3:4","prompt":"新娘身着缀满细碎珍珠的柔纱轻婚纱，靠在穿米白休闲西装的新郎肩头，脚边绕着软乎乎的奶白小绵羊，晚风掀动纱裙边角，手里攥着半束沾了草屑的白雏菊，落日把两人发丝染成浅金色，背景是漫山的浅绿草甸和原木栅栏","negative_prompt":"避免过度磨皮失真，不要奇装异服，不要出现杂乱游客入镜，不要色调过饱和，不要羊的毛发脏乱","recommended_model":"MODEL_PRO","use_count":0,"success_rate":0.5},
+  {"id":15,"template_code":"tpl_fairy_0cbd26ac","name":"烟雨水岸婚纱","style":"新中式水墨写意风","dress_type":"斜襟银绣真丝婚纱","scene":"江南古村临河石拱桥，水面飘着几支白荷，身后是白墙黛瓦老民居","pose":"两人并肩站在桥边，新郎虚扶新娘腰肢，新娘垂眸轻抚鬓边茉莉发簪","shot":"大远景，连带整片朦胧水岸环境纳入画面","lens":"35mm F2定焦","lighting":"阴柔漫射雨天天光，补微弱侧暖光提亮面部轮廓","color_tone":"烟青灰柔粉融合调","aspect_ratio":"16:9","prompt":"穿绣银竹纹样的改良真丝婚纱的新娘，与身着暗纹中山装的新郎同站在烟雨笼罩的古村石拱桥上，发梢沾了细碎的雨珠，河面飘着几支初绽的白荷，远处白墙黛瓦隐在薄雾里，整体像晕开的水墨工笔画","negative_prompt":"不要浓艳色彩，不要西式建筑入镜，不要人物表情过度夸张，不要水面漂浮垃圾，不要婚纱上出现多余亮钻","recommended_model":"MODEL_PRO","use_count":0,"success_rate":0.5},
+  {"id":16,"template_code":"tpl_fairy_af92630f","name":"天台星芒婚纱","style":"潮酷都市甜飒风","dress_type":"露背碎亮片短婚纱","scene":"市中心高层天台，背景是错落霓虹楼宇，脚边摆放冷焰火与复古玻璃汽水瓶","pose":"新娘手臂环住新郎脖颈仰头大笑，新郎低头轻抵新娘额头，发丝扫过对方脸颊","shot":"中近景，连带背景流动车流的光轨纳入画面","lens":"85mm F1.8定焦","lighting":"慢门同步机顶闪打亮人物，保留霓虹原生环境光效","color_tone":"冷蓝撞暖橙高对比调","aspect_ratio":"9:16","prompt":"穿短款露背闪片婚纱的新娘站在高层天台，搂着穿黑西装的新郎脖子仰头大笑，脚边散落着冒着冷白火星的仙女棒，身后是深夜都市错落的霓虹灯光和马路上拉出的橙红色车流光轨，星芒效果落在婚纱亮片上闪闪发光","negative_prompt":"不要路人乱入，不要面部油光过重，不要光轨糊成一团，不要出现高空危险动作，不要婚纱纱面过度发灰","recommended_model":"MODEL_PRO","use_count":0,"success_rate":0.5},
+  {"id":17,"template_code":"tpl_fairy_341e379e","name":"旷野公路婚纱","style":"美式复古公路风","dress_type":"砂质缎面短拖尾婚纱搭配做旧牛仔短外套","scene":"西部荒漠沿线的废弃柏油公路旁，停着一辆复古红色敞篷老爷车","pose":"新娘跨坐于老爷车车头侧身回眸，新郎半倚车门指尖轻勾新娘垂落的头纱","shot":"中全景带全车与公路纵深感入镜","lens":"24mm f/1.4 广角定焦镜头","lighting":"黄金一小时侧逆光，发丝边缘形成清晰金边，辅以地面环境柔光补暗部","color_tone":"暖焦糖棕低饱和复古调，橘调落日余晖铺满画面","aspect_ratio":"16:9","prompt":"欧美流行大片质感，黄金落日下荒漠公路的复古婚照，新娘缎面婚纱配牛仔外套随性浪漫，红色敞篷老爷车做前景，发丝被逆光勾勒出金边，整体氛围自由松弛充满故事感，细节锐利画面通透","negative_prompt":"多余路人、现代工程车、杂乱电线杆、过曝死白、塑料感假纱面","recommended_model":"MODEL_PRO","use_count":0,"success_rate":0.5},
+  {"id":18,"template_code":"tpl_fairy_66d2b075","name":"蓝洞人鱼婚纱","style":"超现实高定艺术风","dress_type":"缀满施华洛世奇碎钻的透薄纱质鱼尾婚纱","scene":"热带海岛天然蓝洞水下，水体澄澈通透，顶部有自然光束垂落","pose":"新娘舒展裙摆仿人鱼姿态向光源浮游，新郎从后方虚扶新娘腰侧，发丝与薄纱随水流轻盈飘动","shot":"水下纵深全景构图，捕捉水流中纱层的动态轨迹","lens":"16-35mm f/2.8 专业防水广角镜头","lighting":"洞顶垂直射入的自然光形成清晰耶稣光，水下漫反射光均匀柔化面部阴影","color_tone":"冰透克莱因蓝主调，搭配珍珠白高光点缀清透氛围感","aspect_ratio":"9:16","prompt":"Pinterest顶级水下婚拍大片质感，蓝洞澄澈水底新人游动的梦幻画面，碎钻鱼尾婚纱在水流中泛着细碎闪光，耶稣光从顶部倾泻而下，画面干净纯净充满超现实浪漫感","negative_prompt":"水下浮尘杂物、浑浊水体、生硬摆拍痕迹、夸张后期滤镜、面部变形","recommended_model":"MODEL_PRO","use_count":0,"success_rate":0.5},
+  {"id":19,"template_code":"tpl_fairy_da4cdb7b","name":"旧馆绒光婚纱","style":"典藏油画复古风","dress_type":"维多利亚时期刺绣蕾丝长袖复古婚纱，搭配复古珍珠头纱","scene":"满墙排布百年旧皮面藏书的私人典藏图书馆，窗边堆叠着泛黄旧相册与复古黄铜台灯","pose":"新娘侧身倚在橡木书架旁垂眸翻旧相册，新郎站在她身后轻轻用额头抵着新娘发顶，氛围静谧缱绻","shot":"中近景构图，将半侧复古书架纳入画面做背景层次","lens":"85mm f/1.2 人像定焦镜头，全开光圈虚化背景","lighting":"窗边柔化侧漫射光为主，搭配黄铜台灯的暖黄光补亮面部暗部，整体光线绒感柔和","color_tone":"低饱和榛子棕调，搭配奶油米柔化高光，整体像中世纪古典油画质感","aspect_ratio":"3:2","prompt":"欧美古典婚拍大片质感，百年藏书馆内的静谧婚照，刺绣蕾丝复古婚纱细节精致，暖柔绒光铺满整个空间，画面氛围充满岁月沉淀的浪漫感，油画质感浓郁","negative_prompt":"现代电子设备、杂乱电线、亮面塑料家具、尖锐刺眼光线、面部油光","recommended_model":"MODEL_PRO","use_count":0,"success_rate":0.5},
+  {"id":20,"template_code":"tpl_fairy_3bb09440","name":"银镜高定婚纱","style":"先锋高级时装感","dress_type":"镜面缎面建筑廓形主纱，搭配金属解构配饰","scene":"全反射镜面沉浸式艺术展厅，无冗余杂物","pose":"新人背靠背倚靠镜面，仅露出半张侧颜，垂落的指尖自然相牵，全程不直视镜头","shot":"带环境全景","lens":"35mm f2.0定焦镜头","lighting":"单侧硬面聚光打亮人物轮廓，周边环境保留低曝光暗调","color_tone":"冷银低饱和调","aspect_ratio":"2:3","prompt":"以Vogue婚尚高定大片标准拍摄，利用全镜面展厅的反射效果制造多重人物虚像，整体画面充满先锋时装的疏离高级感，无多余装饰干扰视觉重心","negative_prompt":"避免路人乱入，避免甜俗露齿笑脸，避免鲜艳高饱和色彩，避免影楼风摆拍道具，避免杂乱背景元素","recommended_model":"MODEL_PRO","use_count":0,"success_rate":0.5},
+  {"id":21,"template_code":"tpl_fairy_398d94e0","name":"金廊香氛婚纱","style":"复古轻奢时装感","dress_type":"刺绣碎光收腰轻婚纱，搭配珍珠丝绒手套","scene":"百年老洋房改造的复古香氛工坊，摆放水晶香水瓶、丝绒窗帘、鎏金壁灯","pose":"新娘侧身坐在复古黄铜台面上，手捏香氛瓶凑近鼻尖，新郎半蹲在身侧轻扶她的腰，眼神温柔落在她侧脸上","shot":"半身环境特写","lens":"85mm f1.2人像定焦镜头","lighting":"窗边漫射柔光加壁灯暖调补光，制造柔和丝绒光感","color_tone":"暖金焦糖调","aspect_ratio":"16:9","prompt":"参照Vogue婚尚复古时装大片调性拍摄，刺绣婚纱在暖光下透出细碎闪光泽，画面质感细腻充满慵懒贵气氛围，符合高级杂志内页呈现效果","negative_prompt":"避免塑料感廉价道具，避免夸张刻意摆拍动作，避免冷调荧光光线，避免游客感路人乱入，避免画面过曝丢失细节","recommended_model":"MODEL_PRO","use_count":0,"success_rate":0.5},
+  {"id":22,"template_code":"tpl_fairy_8a3f3eff","name":"釉色岩滩婚纱","style":"野奢户外时装感","dress_type":"防水硬挺材质超大拖尾高定婚纱，搭配极简皮革腰封","scene":"覆满黑釉火山岩的无人海滩，阴天灰蓝色厚重云层铺满天空","pose":"新娘站在滩涂礁石上，裙摆被海风大力吹起铺满整个岩面，身体微微后仰望向云层方向，动作舒展充满力量感","shot":"大场景远景","lens":"16-35mm f2.8广角镜头","lighting":"阴天漫反射天光加侧后方轮廓光打透婚纱裙摆","color_tone":"灰蓝低对比调","aspect_ratio":"9:16","prompt":"按照Vogue婚尚户外高定大片标准拍摄，捕捉海风扬起超大拖尾婚纱的动态瞬间，厚重云层作为背景衬出人物的舒展张力，画面充满电影级高级时装氛围，无多余人工痕迹","negative_prompt":"避免海边游客入镜，避免高饱和蓝绿网红海水滤镜，避免普通白纱的轻薄软塌质感，避免摆拍僵硬动作，避免海面出现垃圾杂物","recommended_model":"MODEL_PRO","use_count":0,"success_rate":0.5}
+];
+function filterPreviewTemplates(kw){
+  if (!kw || kw === '全部') return PREVIEW_TEMPLATES.slice();
+  const q = String(kw).toLowerCase();
+  const hay = t => [t.name, t.style, t.dress_type, t.scene, t.pose, t.shot,
+                    t.lighting, t.color_tone, t.prompt]
+                   .join(' ').toLowerCase();
+  return PREVIEW_TEMPLATES.filter(t => hay(t).includes(q));
+}
 function tplColor(t){
   for (const k in STYLE_COLORS) if ((t.style||'').includes(k)) return STYLE_COLORS[k];
   return 'linear-gradient(135deg,#c4b096,#96795a)';
@@ -3240,25 +3271,38 @@ function tplImgDead(img){
 }
 async function loadTemplates(){
   const kw = document.getElementById('tplSearch').value.trim();
-  try{
-    const uid = S.user ? ('&user_id=' + S.user.id) : '';
-    const d = await api('/api/templates?limit=60' + (kw ? ('&keywords=' + encodeURIComponent(kw)) : '') + uid);
-    S.templates = d.templates;
-    document.getElementById('tplGrid').innerHTML = d.templates.map(tplCardHTML).join('')
-      || '<div class="empty" style="grid-column:1/-1">没有匹配的模板</div>';
-    // 标签行
-    const tags = ['全部','法式','中式','森系','夜景','港风','教堂'];
-    document.getElementById('tagRow').innerHTML = tags.map(t=>
-      `<button class="tag${(kw===t||(!kw&&t==='全部'))?' on':''}" onclick="document.getElementById('tplSearch').value='${t==='全部'?'':t}';loadTemplates()">${t}</button>`).join('');
-  }catch(e){ toast(e.message, true); }
+  let list, usedPreview = false;
+  // 静态预览（没连后端、也没填公网后端）直接用本地副本，省掉一次必然 404 的请求
+  if (S.preview && !authBackend()){
+    list = filterPreviewTemplates(kw); usedPreview = true;
+  } else {
+    try{
+      const uid = S.user ? ('&user_id=' + S.user.id) : '';
+      const d = await api('/api/templates?limit=60' + (kw ? ('&keywords=' + encodeURIComponent(kw)) : '') + uid);
+      list = d.templates || [];
+    }catch(e){
+      // 后端临时挂了也别留白，用本地副本顶上并明确标注
+      list = filterPreviewTemplates(kw); usedPreview = true;
+    }
+  }
+  S.templates = list;
+  renderTplPicker();   // 顺手把创作页两个模板下拉一起填上
+  const note = usedPreview
+    ? '<div class="price-note" style="grid-column:1/-1;margin-bottom:2px">静态预览：以下 ' + list.length + ' 套为内置展示模板，可直接选用并自动填入提示词；投稿、审核与使用统计需在本机双击 start.bat 启动后端。</div>'
+    : '';
+  document.getElementById('tplGrid').innerHTML = note + (list.map(tplCardHTML).join('')
+      || '<div class="empty" style="grid-column:1/-1">没有匹配的模板</div>');
+  // 标签行
+  const tags = ['全部','法式','中式','森系','夜景','港风','教堂'];
+  document.getElementById('tagRow').innerHTML = tags.map(t=>
+    `<button class="tag${(kw===t||(!kw&&t==='全部'))?' on':''}" onclick="document.getElementById('tplSearch').value='${t==='全部'?'':t}';loadTemplates()">${t}</button>`).join('');
 }
 function selectTemplate(id){
   const t = S.templates.find(x=>x.id===id);
   if (!t) return;
-  S.selTemplate = t;
-  renderTplPicker();
+  // 与创作页下拉同源：自动拼好提示词并同步比例/模型/风格，再跳到创作页
+  selectTemplateFromDock(id);
   go('create');
-  toast('已选择模板：' + t.name);
 }
 function selectTemplateFromDock(id){
   const t = S.templates.find(x=>x.id===id);
@@ -3348,6 +3392,7 @@ const SUB_STATUS = {
 };
 async function loadMySubs(){
   if (!S.user) return;
+  if (S.preview && !authBackend()) return;  // 静态预览保留默认空态，不发必然 404 的投稿查询
   const card = document.getElementById('mySubsCard');
   if (!card) return;
   try{
@@ -5730,6 +5775,8 @@ function applyPreviewConfig(){
     key, label, gender, image: 'assets/presets/' + key + '.jpg'
   }));
   S.preview = true;
+  S.templates = PREVIEW_TEMPLATES.slice();   // 创作页模板下拉同步有数据
+  renderTplPicker();
   S.prices = S.prices || {};
   S.media = S.media || {restoring:false};
   S.styles = STYLES.map(([key,label]) => ({key,label}));
