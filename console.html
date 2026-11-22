@@ -1881,7 +1881,7 @@ table.tbl td{transition:background .15s}
               <div class="av-row"><label>后端服务地址（仅静态预览页需要）</label>
                 <input id="avBackend" placeholder="http://127.0.0.1:8080" autocomplete="off"></div>
               <button class="btn btn-ghost" id="avSaveCfg">保存设置</button>
-              <div class="av-hint">Key 只存在你自己的浏览器里，并直接发给上面填的后端做代理，<b>不会上传到 GitHub Pages</b>。静态预览页需要本机双击 start.bat 启动服务；本机完整版留空即可。上游模型按你自己的 Key 计费，平台不扣积分。</div>
+              <div class="av-hint">Key 只存在你自己的浏览器里，只发给你填的后端或视频通道，<b>不会上传到 GitHub Pages</b>。本机双击 start.bat 打开 <b>http://127.0.0.1:8080</b> 就是完整版，两栏留空即可。GitHub Pages 是 https 静态页，浏览器会拦截它连本机 http 服务；在那边要么填 https 公网后端地址，要么填允许跨域(CORS)的视频通道走直连。上游按你自己的 Key 计费，平台不扣积分。</div>
             </details>
 
             <div class="vf-actions">
@@ -1903,7 +1903,7 @@ table.tbl td{transition:background .15s}
               </div>
               <span class="vf-live" id="avLive">AI VIDEO · MODEL GENERATED</span>
             </div>
-            <div class="vf-tips">与「照片成片」不同：这里不是把静态照片加运镜录制，而是由视频大模型重新生成动态画面（人物微动、光影变化、镜头运动）。生成走后端代理，避免浏览器直连中转站被 CORS 拦截，也避免 Key 暴露在公开页面。</div>
+            <div class="vf-tips">与「照片成片」不同：这里不是把静态照片加运镜录制，而是由视频大模型重新生成动态画面（人物微动、光影变化、镜头运动）。生成走后端代理，避免浏览器直连中转站被 CORS 拦截，也避免 Key 暴露在公开页面。GitHub Pages 静态页请用「通道设置」里的直连或 https 公网后端；本机 start.bat 完整版最省事。</div>
           </div>
         </div>
       </div>
@@ -6235,8 +6235,8 @@ window.WA_AIVIDEO = (function(){
     var opt = {method:method||'GET', mode:'cors',
                headers:{'Content-Type':'application/json'}};
     if(body) opt.body = JSON.stringify(body);
-    var tok = ls('wa_token') || ls('token') || ls('waToken');
-    if(tok) opt.headers.Authorization = 'Bearer ' + tok;
+    /* 视频任务按访客模式提交（user_id=0、不扣积分），刻意不带登录 token：
+       本机完整版已自动登录，带上 token 会被 _check_auth 判「无权操作该用户的数据」。*/
     return fetch(backend()+path, opt).then(function(r){
       return r.text().then(function(t){
         var d = {}; try{ d = JSON.parse(t); }catch(e){ d = {detail:'响应不是 JSON（后端地址可能填错）'}; }
@@ -6316,7 +6316,7 @@ window.WA_AIVIDEO = (function(){
         var d = (r.data && r.data.detail) || ('HTTP '+r.status);
         badge('未连接后端 · '+d, false);
         status(isStatic()
-          ? '当前是 GitHub Pages 静态预览。请在本机双击 start.bat 启动服务，或到「通道设置」改后端地址；本机服务起来后点这里会自动重连。'
+          ? '当前是 GitHub Pages 的 https 静态预览，浏览器不允许它连本机 http 后端。请在本机双击 start.bat，用 http://127.0.0.1:8080 打开完整版；或在「通道设置」填 https 公网后端 / 允许跨域的视频通道走直连。'
           : '视频服务未就绪：'+d);
         fillModels(null);
         return;
@@ -6388,6 +6388,100 @@ window.WA_AIVIDEO = (function(){
         status('等待超时，可到「生成记录」查看或重新提交。'); }
     }, 2500);
   }
+
+  /* --- 直连模式：静态预览页连不上后端、且用户自带 Key 时，直接打视频网关。
+         中转站必须允许 CORS 才能走通（yutoapi 实测 OPTIONS 403，走不通）。
+         Key 只在用户自己的浏览器里用，不经过 GitHub Pages。 --- */
+  function dfetch(url, method, body, key){
+    var opt = {method:method||'GET', mode:'cors',
+               headers:{'Authorization':'Bearer '+key}};
+    if(body){ opt.headers['Content-Type']='application/json';
+              opt.body=JSON.stringify(body); }
+    return fetch(url, opt).then(function(r){
+      return r.text().then(function(t){
+        var d={}; try{ d=JSON.parse(t); }catch(e){ d={}; }
+        return {ok:r.ok, status:r.status, data:d, raw:t};
+      });
+    });
+  }
+  function findUrl(o, depth){
+    if(!o || depth>4) return '';
+    if(typeof o==='string') return /^https?:\/\//.test(o) ? o : '';
+    if(Array.isArray(o)){
+      for(var i=0;i<o.length;i++){ var u=findUrl(o[i],depth+1); if(u) return u; }
+      return '';
+    }
+    if(typeof o==='object'){
+      var ks=Object.keys(o).sort(function(a,b){
+        var wa=/url|video|output|file|result/i.test(a)?0:1;
+        var wb=/url|video|output|file|result/i.test(b)?0:1;
+        return wa-wb;
+      });
+      for(var j=0;j<ks.length;j++){
+        var v=findUrl(o[ks[j]],depth+1); if(v) return v;
+      }
+    }
+    return '';
+  }
+  function directDone(u, model, ratio, dur){
+    var v=el('avPlayer'); v.src=u; v.classList.add('show');
+    el('avEmpty').style.display='none';
+    var a=el('avDownload'); a.href=u; a.style.display='inline-block';
+    a.removeAttribute('download');
+    el('avMeta').textContent=(model||'AI 视频')+' · '+(dur||6)+'s · '+(ratio||'16:9')+' · 直连';
+    v.play().catch(function(){});
+  }
+  function directPoll(base, key, tid, n, b){
+    setTimeout(function(){
+      dfetch(base+'/video/generations/'+encodeURIComponent(tid),'GET',null,key)
+      .then(function(r){
+        var st=String((r.data && r.data.status)||'').toLowerCase();
+        var u=findUrl(r.data,0);
+        if(u){
+          S.busy=false; bar(100); badge('AI 视频生成完成（直连）',true);
+          status('生成完成，可直接播放。跨源文件若不能一键下载，请在视频上右键「另存为」。');
+          directDone(u,b.model,b.ratio,b.duration); unlock(); return;
+        }
+        if(st==='failed'||st==='error'||st==='cancelled'){
+          S.busy=false; unlock();
+          status('生成失败：'+((r.data&&(r.data.error||''))||'上游未返回原因'));
+          badge('生成失败 · 可调整参数重试',false); return;
+        }
+        bar(Math.min(90,10+n*4));
+        status('模型正在生成…（直连轮询第 '+(n+1)+' 次，通常 1–5 分钟）');
+        if(n<90) directPoll(base,key,tid,n+1,b);
+        else { S.busy=false; unlock(); status('等待超时，请稍后重试或缩短时长。'); }
+      }).catch(function(e){
+        S.busy=false; unlock();
+        status('直连轮询中断：'+((e&&e.message)||e));
+      });
+    },4000);
+  }
+  function directMake(b){
+    var base=(ls(LS.base)||'').replace(/\/+$/,''), key=ls(LS.key);
+    var payload={model:b.model||'MiniMax-Hailuo-2.3', prompt:b.prompt,
+                 duration:b.duration,
+                 metadata:{resolution:b.resolution, ratio:b.ratio}};
+    if(b.image) payload.image=b.image;
+    status('后端未连接，正在尝试直连视频通道…');
+    badge('直连模式 · 提交中',true); bar(6);
+    dfetch(base+'/video/generations','POST',payload,key).then(function(r){
+      if(!r.ok) throw new Error(
+        (r.data&&r.data.error&&r.data.error.message)||('HTTP '+r.status));
+      var tid=(r.data&&(r.data.task_id||r.data.id))||'';
+      if(!tid) throw new Error('通道未返回任务 ID');
+      status('直连任务已提交（'+tid+'），模型生成中…');
+      directPoll(base,key,tid,0,b);
+    }).catch(function(e){
+      S.busy=false; unlock(); bar(0);
+      var msg=(e&&e.message)||String(e);
+      if(/Failed to fetch|NetworkError|Access-Control/i.test(msg))
+        msg='浏览器跨域策略拦截了该通道（中转站未开放 CORS）。请改用本机 start.bat 完整版，或换一个允许跨域的视频通道。';
+      status('直连失败：'+msg);
+      badge('直连不可用 · 见下方原因',false);
+    });
+  }
+
   function unlock(){
     var b=el('avMake'); if(b){ b.disabled=false; b.textContent='✧ 生成 AI 视频'; }
   }
@@ -6408,6 +6502,9 @@ window.WA_AIVIDEO = (function(){
     };
     req('/api/video/jobs','POST',body).then(function(r){
       if(!r.ok){
+        if(r.status===0 && ls(LS.base) && ls(LS.key)){
+          directMake(body); return;
+        }
         S.busy=false; unlock(); bar(0);
         var d = (r.data && (r.data.detail || r.data.message)) || ('HTTP '+r.status);
         status('提交失败：'+(typeof d==='string'?d:JSON.stringify(d)));
