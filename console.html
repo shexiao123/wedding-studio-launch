@@ -691,8 +691,20 @@ table.tbl tr:hover td{background:var(--soft)}
 .recharge-box .opt.on,.recharge-box .opt:hover{border-color:var(--gold);background:var(--gold-bg)}
 .recharge-box .opt.on b{color:var(--gold)}
 
-/* ---------- 登录弹层 ---------- */
-#loginMask{ display:none !important; } /* 去除登录页面：登录弹层永不显示 */
+/* ---------- 登录弹层（v150：账号密码 / 手机验证码双 tab） ---------- */
+#loginMask .dlg{width:420px;max-width:94vw;max-height:92vh;overflow:auto}
+.lg-tabs{display:flex;gap:6px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+.lg-tabs .lg-tab{flex:1;text-align:center;padding:10px 4px;font-size:13px;color:var(--ink3);
+  cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;user-select:none}
+.lg-tabs .lg-tab:hover{color:var(--gold)}
+.lg-tabs .lg-tab.on{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+.lg-note{font-size:11.5px;line-height:1.65;color:var(--ink2);background:var(--gold-bg);
+  border:1px solid var(--line);border-left:3px solid var(--gold);
+  border-radius:10px;padding:10px 12px;margin-bottom:16px}
+.lg-note b{color:var(--ink);font-weight:700}
+.lg-foot{border-top:1px solid var(--line);margin-top:20px;padding-top:14px}
+.lg-foot .switch{margin-top:10px}
+.lg-foot .dlg-row input{font-size:12px}
 .mask{position:fixed;inset:0;background:rgba(40,32,22,.32);backdrop-filter:blur(7px);
   display:flex;align-items:center;justify-content:center;z-index:99}
 .dlg{background:var(--panel);border-radius:18px;padding:34px 36px;width:390px;
@@ -1450,6 +1462,7 @@ table.tbl td{transition:background .15s}
     <button class="btn btn-ghost bell-btn" id="bellBtn" onclick="openNotifications(event)" title="通知中心" data-page-node-id="REyAuNRlsNWG83hzLTkWTk">🔔<span class="bell-badge hidden" id="bellBadge" data-page-node-id="LGYmAPYpOXq0RZ8gpAFuYR"></span></button>
     <button class="btn btn-ghost" id="themeBtn" onclick="toggleThemePop(event)" title="更换主题" data-page-node-id="bRj78VndQ0LVfMZmXQP8Sb">🎨 主题</button>
     <button class="btn btn-ghost" id="fairyBtn" onclick="toggleFairy()" title="桌宠" data-page-node-id="AXR2hvP84V5nQme0LKTFlW">🐳 桌宠</button>
+    <button class="btn btn-gold" id="btnLogin" style="display:none" onclick="openLogin('pwd')">登录 / 注册</button>
     <div class="userchip" id="userchip" style="display:none" data-page-node-id="MZAQcJgE4GhCgriHWFpNQf">
       <span class="name" id="uName" data-page-node-id="pEbUd1ZMOCnVDMoJp9fGst"></span>
       <span class="bal" id="uBal" data-page-node-id="uC9vMz4UaOxdHn65PD78F1">-- 积分</span>
@@ -2496,25 +2509,43 @@ table.tbl td{transition:background .15s}
   </div>
 </div>
 
-<!-- 登录弹层 -->
+<!-- 登录弹层（v150：账号密码 / 手机验证码双 tab） -->
 <div class="mask hidden" id="loginMask" data-page-node-id="mgbU5GB8SeNxC7AXdLRkFg">
   <div class="dlg" data-page-node-id="l4tr7mZIK69NEUHWiKiT0A">
     <h2 data-page-node-id="2I8hsZrUTzDsU84M9AiktT">AI智能数字影楼</h2>
-    <div class="sub" data-page-node-id="2V5nmxYgt4oN7e7vCld6DC">上传一张照片，AI摄影师为你完成整套婚纱大片</div>
-    <div id="loginForm" data-page-node-id="TJa5OlwRd1fUJ4fPo7YYay">
+    <div class="sub" data-page-node-id="2V5nmxYgt4oN7e7vCld6DC">登录后可使用生图、作品库与积分服务</div>
+    <div id="lgNotice" class="lg-note"></div>
+    <div class="lg-tabs" id="lgTabs">
+      <div class="lg-tab on" id="lgTabPwd" onclick="switchLoginTab('pwd')">账号密码登录</div>
+      <div class="lg-tab" id="lgTabSms" onclick="switchLoginTab('sms')">手机验证码登录</div>
+    </div>
+
+    <div id="idForm" data-page-node-id="Y62PVX8Z1JU4xbqKrgtG7P">
+      <input id="loginId" placeholder="用户名 / 手机号" autocomplete="username" data-page-node-id="r9OiDYeNv0BRCcyu38L9fO">
+      <input id="loginPwd" type="password" placeholder="密码" autocomplete="current-password" data-page-node-id="XAZ0zGRPAFAtqw2AvbyS2J">
+      <button class="btn btn-gold btn-lg" style="width:100%" onclick="submitPwdLogin()" data-page-node-id="siXe1FFs6G5albfuiL0J0z">登录</button>
+      <div class="switch" onclick="showRegForm()">没有账号？注册新用户 →</div>
+      <div class="switch" onclick="showReset()">忘记密码？用邮箱找回 →</div>
+    </div>
+
+    <div id="smsForm" class="hidden">
+      <input id="smsPhone" placeholder="11 位手机号" inputmode="numeric" autocomplete="tel">
+      <div class="dlg-row">
+        <input id="smsCode" placeholder="6 位验证码" inputmode="numeric" style="margin-bottom:0">
+        <button class="btn btn-ghost" id="smsSendBtn" onclick="sendSmsCode()">获取验证码</button>
+      </div>
+      <button class="btn btn-gold btn-lg" style="width:100%;margin-top:12px" onclick="submitSmsLogin()">登录 / 自动注册</button>
+      <div class="tip-sm" id="smsTip">首次使用会自动创建账号；一个手机号只对应一个账号。</div>
+    </div>
+
+    <div id="loginForm" class="hidden" data-page-node-id="TJa5OlwRd1fUJ4fPo7YYay">
       <input id="regName" placeholder="输入昵称，注册新用户" data-page-node-id="1pHgajQpAzIyH5vGZzC7iv">
       <input id="regPwd" type="password" placeholder="设置密码（至少6位）" data-page-node-id="1zdtduWVTEqUd0nH01BL8q">
       <input id="regEmail" placeholder="邮箱（选填，忘记密码时用来找回）" autocomplete="off" data-lpignore data-1p-ignore data-page-node-id="l90iKn0YEcvDD9Neq4KrJG">
-      <button class="btn btn-gold btn-lg" style="width:100%" onclick="doRegister()" data-page-node-id="6rXp4ZMlwFXgrUAzlf2EAO">进入数字影楼</button>
-      <div class="switch" onclick="toggleLogin()" data-page-node-id="dozSqHdnfkCWId7ylwRurg">已有账号？账号密码登录 →</div>
+      <button class="btn btn-gold btn-lg" style="width:100%" onclick="submitRegister()" data-page-node-id="6rXp4ZMlwFXgrUAzlf2EAO">进入数字影楼</button>
+      <div class="switch" onclick="showLoginForm()">← 返回登录</div>
     </div>
-    <div id="idForm" class="hidden" data-page-node-id="Y62PVX8Z1JU4xbqKrgtG7P">
-      <input id="loginId" placeholder="用户名 / 昵称" data-page-node-id="r9OiDYeNv0BRCcyu38L9fO">
-      <input id="loginPwd" type="password" placeholder="密码" data-page-node-id="XAZ0zGRPAFAtqw2AvbyS2J">
-      <button class="btn btn-gold btn-lg" style="width:100%" onclick="doLogin()" data-page-node-id="siXe1FFs6G5albfuiL0J0z">登录</button>
-      <div class="switch" onclick="toggleLogin()" data-page-node-id="6R97zWVlKdpggdQd7XH0Xf">← 返回注册</div>
-      <div class="switch" onclick="showReset()" data-page-node-id="3ywGki6XfLaSxXPH2HRfFa">忘记密码？用邮箱找回 →</div>
-    </div>
+
     <div id="resetForm" class="hidden" data-page-node-id="YUTzOF5dGH0Fn4orG9DxB1">
       <input id="resetEmail" placeholder="你绑定的邮箱" autocomplete="off" data-lpignore data-1p-ignore data-page-node-id="DWNyX5BKr0omM3y1Zi6d25">
       <div class="dlg-row" data-page-node-id="uUIK5m748BQBkMTZINScAP">
@@ -2527,6 +2558,7 @@ table.tbl td{transition:background .15s}
       <div class="tip-sm" data-page-node-id="QuPLP5L8W9N7fpBoUBUjMP">还没绑定邮箱？登录后在「设置」里绑定，否则无法自助找回。</div>
       <div class="switch" onclick="showAppeal()" data-page-node-id="xX8hFGGbArucOqqwJfd0Gv">邮箱也找不回？提交账号申诉 →</div>
     </div>
+
     <div id="appealForm" class="hidden" data-page-node-id="B4CeavnRrEqICkoFFo95HC">
       <div class="sub" style="margin-bottom:14px" data-page-node-id="ulwFf5nyreES1nG3ab05JF">没绑邮箱、密码又忘了？提交申诉，人工核实身份后帮你重置。</div>
       <input id="apName" placeholder="你的用户名 / 昵称" autocomplete="off" data-lpignore data-1p-ignore data-page-node-id="hl349z6deiTOgNXHOitUFw">
@@ -2534,6 +2566,16 @@ table.tbl td{transition:background .15s}
       <textarea id="apMsg" rows="3" placeholder="简单说明情况：大概什么时候注册的、常用设备、最后一次登录时间等，便于核实身份" style="width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:12px;outline:none;background:var(--panel);color:var(--ink);resize:vertical"></textarea>
       <button class="btn btn-gold btn-lg" style="width:100%" onclick="doAppeal()" data-page-node-id="oFk5ChhKNZcPOVxDEj5TXV">提交申诉</button>
       <div class="switch" onclick="showLoginForm()" data-page-node-id="Ei4SHlXdYsd2XTQma1xfQh">← 返回登录</div>
+    </div>
+
+    <div class="lg-foot">
+      <div class="dlg-row" style="margin-bottom:6px">
+        <input id="lgBackend" placeholder="后端地址 https://…（留空为预览）" style="margin-bottom:0">
+        <button class="btn btn-ghost" onclick="saveLoginBackend()">连接</button>
+      </div>
+      <div id="lgMode" class="tip-sm"></div>
+      <div class="switch" onclick="previewSignIn()">以预览身份进入（不上传、不耗积分） →</div>
+      <div class="switch" onclick="closeLogin()">先随便看看 →</div>
     </div>
   </div>
 </div>
@@ -2693,7 +2735,12 @@ const S = {
   memory: null,
   media: {restoring: false},   // 125：媒体后台恢复状态（冷启动期间历史成图暂 404）
 };
-const API = '';
+/* v150：静态页可在登录框填后端地址，登录与业务请求共用同一个基址；
+   未填时保持历史行为（相对路径 / 界面预览）。 */
+let API = (function(){
+  try{ return (localStorage.getItem('waLoginBackend')||'').trim().replace(/\/+$/,''); }
+  catch(e){ return ''; }
+})();
 
 /* 主账号免登录：本地单用户/主账号场景，打开即自动登录，不再弹登录框。
    逻辑：① 先用硬编码凭据登录；② 登录失败（本地库尚无该用户）→ 自动注册同名主账号；
@@ -2740,9 +2787,14 @@ function finishAdminLogin(d){
   localStorage.setItem('wa_token', S.token);
   localStorage.removeItem('wa_skip_auto');
   document.getElementById('loginMask').classList.add('hidden');
-  document.getElementById('userchip').style.display = 'flex';
+  document.getElementById('userchip').style.display = 'flex'; { const _bl=document.getElementById('btnLogin'); if(_bl) _bl.style.display='none'; }
 }
-function fillAdminLoginForm(){ /* 去除登录页面：不再预填/显示登录框，仅静默失败由调用方提示 */ }
+function fillAdminLoginForm(){
+  const a = document.getElementById('loginId'), p = document.getElementById('loginPwd');
+  if (a) a.value = ADMIN_AUTH.username;
+  if (p) p.value = ADMIN_AUTH.password;
+  openLogin('pwd');
+}
 const PHASES = [
   ['正在分析人物特征……','视觉模型识别肤色、发型、身型比例'],
   ['正在匹配婚纱模板……','关键词 + 标签检索最合适的模板'],
@@ -3017,10 +3069,7 @@ async function loadWeddingRecent(){
 }
 
 /* ================= 登录 ================= */
-function toggleLogin(){
-  document.getElementById('loginForm').classList.toggle('hidden');
-  document.getElementById('idForm').classList.toggle('hidden');
-}
+function toggleLogin(){ showRegForm(); }
 async function doRegister(){
   const name = document.getElementById('regName').value.trim();
   const pwd = document.getElementById('regPwd').value;
@@ -3074,7 +3123,7 @@ function setUser(user, wallet, token){
   if (S.token) localStorage.setItem('wa_token', S.token);
   localStorage.removeItem('wa_skip_auto');   // 任何手动登录都清除跳过标记
   document.getElementById('loginMask').classList.add('hidden');
-  document.getElementById('userchip').style.display = 'flex';
+  document.getElementById('userchip').style.display = 'flex'; { const _bl=document.getElementById('btnLogin'); if(_bl) _bl.style.display='none'; }
   refreshHeader();
   toggleAdminNav();
   checkNotifications();
@@ -3088,6 +3137,7 @@ function logout(){
   }catch(e){}
   localStorage.removeItem('wa_user');
   localStorage.removeItem('wa_token');
+  localStorage.removeItem('wa_preview_user');
   localStorage.setItem('wa_skip_auto', '1');   // 主动登出后不再自动进主账号，可登其他账号
   location.reload();
 }
@@ -5700,7 +5750,7 @@ function refreshCreate(){ renderDock(); updatePriceNote(); loadMemory(); renderR
     // 不给超时的话 init 一直卡在 await，兜底进不去，下拉永远是「加载中…」。
     // 本机后端冷启动可能慢，给 15s；github.io / file:// 只等 2.5s。
     const staticHost = /github\.io$/i.test(location.hostname) || location.protocol === 'file:';
-    const cfgWait = staticHost ? 2500 : 15000;
+    const cfgWait = (staticHost && !API) ? 2500 : 15000;
     const c = await Promise.race([
       api('/api/config'),
       new Promise((_, rej) => setTimeout(() => rej(new Error('config timeout')), cfgWait))
@@ -5716,18 +5766,26 @@ function refreshCreate(){ renderDock(); updatePriceNote(); loadMemory(); renderR
     // 静态页没有 /api/：不补本地默认目录的话，模型/风格会永远停在「加载中…」
     applyPreviewConfig();
   }
+  // v150：静态预览身份只存在独立 key，不写 wa_user，避免污染本机完整版登录态
+  if (S.preview && !S.user){
+    try{
+      const pv = JSON.parse(localStorage.getItem('wa_preview_user')||'null');
+      if (pv && pv.preview) S.user = pv;
+    }catch(e){}
+  }
   renderDock();
   updatePriceNote();
   renderGenGrid();
   checkAnnouncements();
   checkNotifications();
-  // 主账号免登录：未登录且用户未主动登出时，自动登录/注册主账号
-  if (!S.user && !localStorage.getItem('wa_skip_auto')){
+  // 主账号免登录：仅「有后端 + 未登录 + 未主动登出」时自动登录/注册主账号；
+  // 静态预览页不做无意义的重登请求。
+  if (!S.user && !S.preview && !localStorage.getItem('wa_skip_auto')){
     await ensureAdminSession();
   }
   if (S.user){
     document.getElementById('loginMask').classList.add('hidden');
-    document.getElementById('userchip').style.display = 'flex';
+    document.getElementById('userchip').style.display = 'flex'; { const _bl=document.getElementById('btnLogin'); if(_bl) _bl.style.display='none'; }
     refreshHeader(); refreshBalance();
     toggleAdminNav();
     await loadTemplates();
@@ -5737,8 +5795,13 @@ function refreshCreate(){ renderDock(); updatePriceNote(); loadMemory(); renderR
     loadChatSessions();
     go('wedding');
   }else{
-    // 去除登录页面：不弹登录框，以访客身份浏览（主账号免登录已在前尝试）
-    try{ toast('正在以访客身份浏览，部分功能需登录', true); }catch(e){}
+    // v150：未登录时显示登录界面；本机主账号免登录失败也能手动登录
+    try{
+      const bl = document.getElementById('btnLogin');
+      if (bl) bl.style.display = 'inline-flex';
+      if (!sessionStorage.getItem('wa_login_skipped')) openLogin('pwd');
+      else toast('正在以访客身份浏览，部分功能需登录', true);
+    }catch(e){}
   }
 })();
 
@@ -5779,8 +5842,233 @@ function createLightbox(){
   return div;
 }
 /* ================= 账号设置 / 收藏 / 作品集（审计 P1 补齐） ================= */
-function showLogin(){ // 去除登录页面：不再弹登录框，改为静默尝试主账号免登录；失败仅提示
-  ensureAdminSession().then(ok=>{ if(!ok) toast('当前以访客身份浏览，部分功能受限', true); });
+/* ================= v150 登录界面 =================
+   静态预览页（GitHub Pages / file://）没有后端，登录分两条路：
+   ① 填了后端地址 → 真登录（账号密码 / 手机验证码都走后端校验）；
+   ② 没填 → 预览身份，仅存在本机，明确标注不上传、不耗积分。
+   本机 start.bat 同源打开时仍自动免登录，点「退出」才弹本界面。
+   新增请求一律走独立封装 authFetch，主业务请求封装一处不动。 */
+function showLogin(){ openLogin('pwd'); }
+function isStaticHost(){
+  return /github\.io$/i.test(location.hostname) || location.protocol === 'file:';
+}
+function authBackend(){
+  try{ return (localStorage.getItem('waLoginBackend')||'').trim().replace(/\/+$/,''); }
+  catch(e){ return ''; }
+}
+function authMode(){
+  // S.preview 由 config 兜底置位：没有后端就是预览态，比按域名猜更可靠
+  if (S.preview) return authBackend() ? 'remote' : 'demo';
+  return authBackend() ? 'remote' : 'local';
+}
+function authFetch(path, body){
+  const base = authBackend();
+  const url = base ? base + path : path;
+  const ctl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  const timer = ctl ? setTimeout(()=>ctl.abort(), 8000) : null;
+  return fetch(url, {
+    method:'POST', mode:'cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body),
+    signal: ctl ? ctl.signal : undefined
+  }).then(r=>{
+    if (timer) clearTimeout(timer);
+    return r.json().catch(()=>({})).then(d=>{
+      if (!r.ok) throw new Error(d.detail || ('HTTP ' + r.status));
+      return d;
+    });
+  }).catch(e=>{
+    if (timer) clearTimeout(timer);
+    if (e && e.name === 'AbortError') throw new Error('连接后端超时，请检查地址或服务是否已启动');
+    if (e instanceof TypeError) throw new Error('连不上后端：' + (base || '本机服务') +
+      '（https 页面不能直连 http 本机地址）');
+    throw e;
+  });
+}
+function hideLoginAux(){
+  const tabs = document.getElementById('lgTabs');
+  if (tabs) tabs.classList.add('hidden');
+  ['idForm','smsForm','loginForm'].forEach(id=>{
+    const e = document.getElementById(id); if (e) e.classList.add('hidden');
+  });
+}
+function switchLoginTab(tab){
+  ['loginForm','resetForm','appealForm'].forEach(id=>{
+    const e = document.getElementById(id); if (e) e.classList.add('hidden');
+  });
+  const tabs = document.getElementById('lgTabs');
+  if (tabs) tabs.classList.remove('hidden');
+  const pwd = document.getElementById('idForm'), sms = document.getElementById('smsForm');
+  const tp = document.getElementById('lgTabPwd'), ts = document.getElementById('lgTabSms');
+  const useSms = (tab === 'sms');
+  if (pwd) pwd.classList.toggle('hidden', useSms);
+  if (sms) sms.classList.toggle('hidden', !useSms);
+  if (tp) tp.classList.toggle('on', !useSms);
+  if (ts) ts.classList.toggle('on', useSms);
+}
+function showRegForm(){
+  hideLoginAux();
+  ['resetForm','appealForm'].forEach(id=>{
+    const e = document.getElementById(id); if (e) e.classList.add('hidden');
+  });
+  document.getElementById('loginForm').classList.remove('hidden');
+}
+function openLogin(tab){
+  const m = document.getElementById('loginMask');
+  if (!m) return;
+  m.classList.remove('hidden');
+  switchLoginTab(tab || 'pwd');
+  updateLoginNotice();
+  try{ sessionStorage.removeItem('wa_login_skipped'); }catch(e){}
+}
+function closeLogin(){
+  const m = document.getElementById('loginMask');
+  if (m) m.classList.add('hidden');
+  try{ sessionStorage.setItem('wa_login_skipped','1'); }catch(e){}
+}
+function updateLoginNotice(){
+  const n = document.getElementById('lgNotice'), mode = document.getElementById('lgMode');
+  const b = authBackend();
+  let msg;
+  if (b){
+    msg = '<b>已连接后端</b>：' + esc(b) +
+      ' · 账号密码与手机验证码都会真实校验（手机验证码需后端配置短信通道）。';
+    if (mode) mode.textContent = '当前：连接后端 ' + b;
+  }else if (S.preview || isStaticHost()){
+    msg = '<b>界面预览模式</b>：这个链接没有服务器，账号不会上传。' +
+      '可直接用「预览身份」进入，或在下方填 https 公网后端地址走真登录。';
+    if (mode) mode.textContent = '当前：预览模式（未连接后端）';
+  }else{
+    msg = '<b>本机完整版</b>：后端就在本机，账号密码与手机验证码会真实校验；主账号已自动登录。';
+    if (mode) mode.textContent = '当前：本机后端';
+  }
+  if (n) n.innerHTML = msg;
+  const bi = document.getElementById('lgBackend');
+  if (bi && bi.value !== b) bi.value = b;
+}
+function saveLoginBackend(){
+  const el = document.getElementById('lgBackend');
+  let v = (el ? el.value : '').trim().replace(/\/+$/,'');
+  if (v && !/^https?:\/\//i.test(v)) v = 'https://' + v;
+  if (v && location.protocol === 'https:' && /^http:\/\//i.test(v)){
+    toast('https 页面不能直连 http 后端，请填 https 公网地址，或改用本机 start.bat', true);
+    return;
+  }
+  try{ localStorage.setItem('waLoginBackend', v); }catch(e){}
+  API = v;                       // 业务请求与登录请求共用同一个基址
+  updateLoginNotice();
+  toast(v ? '已连接后端：' + v + '，现在可以登录了' : '已切回预览模式');
+}
+function finishLoginUI(msg){
+  const m = document.getElementById('loginMask');
+  if (m) m.classList.add('hidden');
+  document.getElementById('userchip').style.display = 'flex';
+  const bl = document.getElementById('btnLogin');
+  if (bl) bl.style.display = 'none';
+  try{ refreshHeader(); toggleAdminNav(); }catch(e){}
+  if (msg) toast(msg);
+}
+function applyRemoteLogin(d, label){
+  S.user = Object.assign({}, d.user, {balance: d.wallet ? d.wallet.balance : 0});
+  S.token = d.token || null;
+  try{
+    localStorage.setItem('wa_user', JSON.stringify(S.user));
+    if (S.token) localStorage.setItem('wa_token', S.token);
+    localStorage.removeItem('wa_skip_auto');
+    localStorage.removeItem('wa_preview_user');
+  }catch(e){}
+  finishLoginUI(label);
+}
+function previewSignIn(name){
+  const who = (name || '').trim() || '预览用户';
+  S.user = {id:0, username:who, role:'preview', status:'active', balance:0, preview:true};
+  S.token = null;
+  try{
+    localStorage.setItem('wa_preview_user', JSON.stringify(S.user));
+    localStorage.removeItem('wa_user');
+    localStorage.removeItem('wa_token');
+  }catch(e){}
+  const bl = document.getElementById('btnLogin');
+  if (bl) bl.style.display = 'none';
+  finishLoginUI('已进入预览身份：账号只存在本机，生图 / 作品库仍需本机启动后端');
+}
+function submitPwdLogin(){
+  const name = document.getElementById('loginId').value.trim();
+  const pwd = document.getElementById('loginPwd').value;
+  if (!name || !pwd) return toast('请输入用户名和密码', true);
+  const mode = authMode();
+  if (mode === 'demo') return previewSignIn(name);
+  if (mode === 'remote'){
+    authFetch('/api/auth/login', {username:name, password:pwd})
+      .then(d=>applyRemoteLogin(d, '登录成功，欢迎回来 ' + d.user.username))
+      .catch(e=>toast(e.message, true));
+  }else{
+    doLogin();
+  }
+}
+function submitRegister(){
+  const name = document.getElementById('regName').value.trim();
+  const pwd = document.getElementById('regPwd').value;
+  const email = document.getElementById('regEmail').value.trim();
+  if (!name) return toast('请输入昵称', true);
+  if (!pwd || pwd.length < 6) return toast('密码至少6位', true);
+  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return toast('邮箱格式不正确', true);
+  const mode = authMode();
+  if (mode === 'demo') return previewSignIn(name);
+  if (mode === 'remote'){
+    authFetch('/api/auth/register', {username:name, password:pwd, email: email || null})
+      .then(d=>applyRemoteLogin(d, '注册成功，欢迎来到数字影楼 ' + name))
+      .catch(e=>toast(e.message, true));
+  }else{
+    doRegister();
+  }
+}
+function sendSmsCode(){
+  const p = document.getElementById('smsPhone').value.trim();
+  if (!/^1[3-9]\d{9}$/.test(p)) return toast('请输入正确的 11 位手机号', true);
+  const tip = document.getElementById('smsTip');
+  if (authMode() === 'demo'){
+    const code = String(Math.floor(100000 + Math.random()*900000));
+    try{ sessionStorage.setItem('wa_sms_demo', p + '|' + code); }catch(e){}
+    if (tip) tip.innerHTML = '<b>演示验证码：' + code +
+      '</b> · 静态页没有服务器，未真正发送短信；此码只在本机有效。';
+    toast('演示验证码 ' + code + '（未发送短信）');
+    countdown('smsSendBtn', 60);
+    return;
+  }
+  authFetch('/api/auth/sms/send', {phone:p}).then(d=>{
+    try{ sessionStorage.setItem('wa_sms_ticket', d.ticket); }catch(e){}
+    if (d.dev_code){
+      if (tip) tip.innerHTML = '<b>联调验证码：' + d.dev_code +
+        '</b> · 后端未配短信网关，仅回显（生产环境不会回显）。';
+      toast('联调验证码：' + d.dev_code);
+    }else{
+      if (tip) tip.textContent = '验证码已发送到 ' + p + '，10 分钟内有效。';
+      toast('验证码已发送，请查收短信');
+    }
+    countdown('smsSendBtn', 60);
+  }).catch(e=>toast(e.message, true));
+}
+function submitSmsLogin(){
+  const p = document.getElementById('smsPhone').value.trim();
+  const c = document.getElementById('smsCode').value.trim();
+  if (!/^1[3-9]\d{9}$/.test(p)) return toast('请输入正确的 11 位手机号', true);
+  if (!c) return toast('请输入验证码', true);
+  if (authMode() === 'demo'){
+    let demo = '';
+    try{ demo = sessionStorage.getItem('wa_sms_demo') || ''; }catch(e){}
+    const parts = demo.split('|');
+    if (parts[0] !== p) return toast('请先点「获取验证码」', true);
+    if (parts[1] !== c) return toast('演示验证码不正确', true);
+    return previewSignIn('手机用户' + p.slice(-4));
+  }
+  let ticket = '';
+  try{ ticket = sessionStorage.getItem('wa_sms_ticket') || ''; }catch(e){}
+  if (!ticket) return toast('请先获取验证码', true);
+  authFetch('/api/auth/sms/login', {phone:p, code:c, ticket:ticket}).then(d=>{
+    try{ sessionStorage.removeItem('wa_sms_ticket'); }catch(e){}
+    applyRemoteLogin(d, d.created ? '已用手机号创建账号并登录' : '登录成功，欢迎回来');
+  }).catch(e=>toast(e.message, true));
 }
 function openSettings(){
   if (!S.user) return showLogin();
@@ -5867,15 +6155,14 @@ async function doBindEmail(){
   }catch(e){ toast(e.message, true); }
 }
 function showReset(){
-  document.getElementById('loginForm').classList.add('hidden');
-  document.getElementById('idForm').classList.add('hidden');
+  hideLoginAux();
   document.getElementById('appealForm').classList.add('hidden');
   document.getElementById('resetForm').classList.remove('hidden');
 }
 function showLoginForm(){
+  hideLoginAux();
   document.getElementById('resetForm').classList.add('hidden');
   document.getElementById('appealForm').classList.add('hidden');
-  document.getElementById('loginForm').classList.add('hidden');
   document.getElementById('idForm').classList.remove('hidden');
 }
 async function sendResetCode(){
@@ -5892,6 +6179,7 @@ async function sendResetCode(){
 }
 /* ---------- 账号申诉：没绑邮箱又忘密码时的唯一退路 ---------- */
 function showAppeal(){
+  hideLoginAux();
   document.getElementById('resetForm').classList.add('hidden');
   document.getElementById('appealForm').classList.remove('hidden');
 }
