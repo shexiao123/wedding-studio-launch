@@ -6089,9 +6089,11 @@ window.WA_VIDEO = (function(){
   function loadOne(src){
     if(V.imgs[src]) return Promise.resolve(V.imgs[src]);
     return new Promise(function(res){
+      var done=false, finish=function(v){ if(done)return; done=true; res(v); };
       var im=new Image();
-      im.onload=function(){ V.imgs[src]=im; res(im); };
-      im.onerror=function(){ V.imgs[src]=null; res(null); };
+      im.onload=function(){ V.imgs[src]=im; finish(im); };   // 超时后到图仍写入缓存
+      im.onerror=function(){ finish(null); };
+      setTimeout(function(){ finish(null); }, 3000);          // 弱网/代理挂起不拖死合成
       im.src=src;
     });
   }
@@ -6282,8 +6284,11 @@ window.WA_VIDEO = (function(){
     o.intro=2; o.outro=2;
     if(over){ if(over.intro!=null)o.intro=over.intro; if(over.outro!=null)o.outro=over.outro; if(over.dur!=null)o.dur=over.dur; }
     setCanvas(o.ratio);
-    o.imgs=[]; o.labels=[];
-    for(var i=0;i<picked.length;i++){ o.imgs.push(await loadOne(V.photos[picked[i]].src)); o.labels.push(V.photos[picked[i]].name); }
+    drawFrame(0.8,previewOpts());
+    status('正在读取照片…');
+    o.labels=picked.map(function(i){ return V.photos[i].name; });
+    o.imgs=await Promise.all(picked.map(function(i){ return loadOne(V.photos[i].src); }));
+    drawFrame(0.8,o);
     V.opts=o; V.total=o.intro+o.imgs.length*o.dur+o.outro;
     if(V.url){ try{ URL.revokeObjectURL(V.url); }catch(e){} V.url=null; }
     el('vfPlayer').style.display='none'; V.canvas.style.display='block';
@@ -6348,6 +6353,7 @@ window.WA_VIDEO = (function(){
     });
     if(el('vfMake')) el('vfMake').onclick=function(){ make(); };
     if(el('vfDownload')) el('vfDownload').onclick=download;
+    V.photos.forEach(function(p){ if(!p.own) loadOne(p.src); });  // 进入视图即后台预取
     drawFrame(0.8,previewOpts());
   }
   return {ensure:ensure, make:make, download:download,
