@@ -727,10 +727,12 @@ table.tbl tr:hover td{background:var(--soft)}
    许可: 代码 MIT；素材禁止商用；二创在公开渠道须署名（见 assets/pet/CREDITS.md）
    交互为本项目自实现: 双缓冲交叉淡入 + 拖拽甩抛 + 自动漫游 + 点击回应
    ============================================================================ */
-#fairy{position:fixed;z-index:180;width:360px;height:203px;
+#fairy{position:fixed;z-index:180;width:360px;height:203px;right:36px;bottom:56px;
   transition:left 2.6s cubic-bezier(.45,.05,.55,.95),top 2.6s cubic-bezier(.45,.05,.55,.95),transform .3s ease;
   pointer-events:none;user-select:none;touch-action:none;
   filter:drop-shadow(0 8px 14px rgba(0,0,0,.18))}
+/* v143 桌宠常驻：点击或任何 hidden 尝试都不隐藏 */
+#fairy.hidden{display:block!important}
 #fairy .pet-hit{position:absolute;left:50%;top:52%;width:150px;height:170px;
   transform:translate(-50%,-50%);pointer-events:auto;cursor:grab;touch-action:none}
 #fairy.dragging,#fairy.throwing{transition:none;cursor:grabbing}
@@ -1999,10 +2001,10 @@ table.tbl td{transition:background .15s}
 </div>
 
 <!-- 桌宠 dsh-pet（Q版蓝发小女仆鲸鱼娘 · 透明动画） -->
-<div id="fairy" class="hidden no-alpha" title="桌宠：点我说话，拖我溜达" data-page-node-id="WWsP0GaIPdWMBpXoR7PL1r">
+<div id="fairy" class="no-alpha" title="桌宠：点我说话，拖我溜达" data-page-node-id="WWsP0GaIPdWMBpXoR7PL1r">
   <video id="petV0" muted playsinline preload="auto"></video>
   <video id="petV1" muted playsinline preload="auto"></video>
-  <img class="pet-fallback" src="assets/pet/poster.png" alt="桌宠" onerror="document.getElementById('fairy').style.display='none'">
+  <img class="pet-fallback" src="assets/pet/poster.png" alt="桌宠" onerror="this.style.display='none'">
   <div class="pet-hit"></div>
 </div>
 <!-- 服装/发型样式墙弹层 -->
@@ -4710,7 +4712,7 @@ const PET_CLIPS = {
   sleepIn:['sleep1'], sleepLoop:['sleep2'], sleepOut:['sleep3']
 };
 const F = {
-  on: localStorage.getItem('wa_fairy') !== '0',
+  on: true,   // v143 常驻：点击不隐藏
   flyTimer: null, chatterTimer: null, crawlTimer: null, idleTimer: null,
   bubbleTimer: null, lastCrawlAt: Number(localStorage.getItem('wa_fairy_crawl') || 0),
 };
@@ -4786,6 +4788,7 @@ function petInit(){
   if(!petAlphaOK()){ P.noVideo = true; return; }   // Safari：永久显示静态海报
   P.layers.forEach(function(v){ v.addEventListener('error', petFallback); });
   P.el.addEventListener('pointerdown', petDown);
+  P.el.addEventListener('click', function(e){ e.stopPropagation(); });
   addEventListener('pointermove', petMove);
   addEventListener('pointerup', petUp);
   addEventListener('pointercancel', petUp);
@@ -4869,15 +4872,20 @@ function petRandomAct(){
 }
 
 function toggleFairy(){
-  F.on = !F.on;
-  localStorage.setItem('wa_fairy', F.on ? '1' : '0');
+  // v143：桌宠常驻。点击只召唤/回应，绝不隐藏
+  F.on = true;
+  localStorage.setItem('wa_fairy', '1');
   updateFairyBtn();
-  if (F.on){ showFairy(); fairyChat(); }
-  else hideFairy();
+  var el = document.getElementById('fairy');
+  el.classList.remove('hidden');
+  el.style.display = '';
+  if (!P.ready){ showFairy(); fairyChat(); return; }
+  petPlay(petPick(PET_CLIPS.clicks), false, petIdle);
+  fairyChat();
 }
 function updateFairyBtn(){
-  document.getElementById('fairyBtn').style.opacity = F.on ? '1' : '.55';
-  document.getElementById('fairyBtn').textContent = F.on ? '🐳 桌宠' : '🐳 已休息';
+  document.getElementById('fairyBtn').style.opacity = '1';
+  document.getElementById('fairyBtn').textContent = '🐳 桌宠';
 }
 function showFairy(){
   petInit();
@@ -4899,12 +4907,7 @@ function showFairy(){
   fairyIdleCheck();
 }
 function hideFairy(){
-  document.getElementById('fairy').classList.add('hidden');
-  fairyBubbleHide();
-  clearInterval(F.flyTimer); clearInterval(F.chatterTimer);
-  clearInterval(F.idleTimer); clearInterval(F.crawlTimer);
-  clearInterval(P.randTimer); cancelAnimationFrame(P.raf);
-  if(P.ready) P.layers.forEach(function(v){ try{ v.pause(); }catch(e){} });
+  /* v143 桌宠常驻：接口保留，但任何点击都不再隐藏 */
 }
 function fairyMove(){
   if(!F.on || P.dragging || P.busy) return;
@@ -5004,8 +5007,10 @@ function refreshCreate(){ renderDock(); updatePriceNote(); loadMemory(); renderR
   // 主题与小精灵恢复
   document.documentElement.dataset.theme = curTheme();
   renderThemeGrid();
+  F.on = true; localStorage.setItem('wa_fairy', '1');
   updateFairyBtn();
-  if (F.on) showFairy();
+  document.getElementById('fairy').classList.remove('hidden');
+  showFairy();
   try{
     const c = await api('/api/config');
     S.prices = c.prices || {};
