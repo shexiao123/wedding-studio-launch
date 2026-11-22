@@ -1296,6 +1296,60 @@ table.tbl td{transition:background .15s}
   background:rgba(20,16,12,.42);border:1px solid rgba(255,232,190,.22);border-radius:6px;padding:4px 8px;pointer-events:none}
 .vf-tips{font-size:11.5px;color:var(--ink3);line-height:1.8}
 @media(max-width:980px){.vf-wrap{grid-template-columns:1fr}.vf-screen{max-height:none}}
+
+/* ===== AI 生成视频工作台 · v144（真·模型生成） ===== */
+.av-mode{display:flex;gap:8px;margin-top:2px}
+.av-mode button{flex:1;padding:9px 8px;border:1px solid var(--line);border-radius:10px;background:var(--panel);
+  color:var(--ink2);font-size:12.5px;font-family:inherit;cursor:pointer;transition:.15s}
+.av-mode button.on{border-color:var(--gold);background:var(--gold-bg);color:var(--gold);font-weight:600}
+.av-ta{width:100%;min-height:104px;resize:vertical;border:1px solid var(--line);border-radius:10px;
+  padding:10px 11px;background:var(--panel);color:var(--ink);font-size:12.5px;line-height:1.75;
+  font-family:inherit;outline:none;box-sizing:border-box}
+.av-ta:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-bg)}
+.av-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.av-chip{padding:4px 9px;border:1px solid var(--line);border-radius:20px;background:var(--soft);
+  color:var(--ink2);font-size:11px;cursor:pointer;transition:.15s}
+.av-chip:hover{border-color:var(--gold);color:var(--gold)}
+.av-first{display:none}
+.av-first.show{display:block}
+.av-picks{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:4px}
+.av-pick{position:relative;aspect-ratio:3/4;border:2px solid transparent;border-radius:9px;overflow:hidden;
+  cursor:pointer;background:var(--soft);transition:.15s}
+.av-pick img{width:100%;height:100%;object-fit:cover;display:block}
+.av-pick.on{border-color:var(--gold);box-shadow:0 4px 14px rgba(176,141,87,.3)}
+.av-up{display:inline-block;margin-top:9px;padding:7px 12px;border:1px dashed var(--gold);border-radius:9px;
+  color:var(--gold);font-size:11.5px;cursor:pointer;background:var(--gold-bg)}
+.av-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:20px;
+  font-size:11px;background:var(--soft);color:var(--ink2);margin-bottom:2px}
+.av-badge.ok{background:rgba(95,174,133,.14);color:#3f8b66}
+.av-badge.warn{background:rgba(217,124,124,.14);color:#b45f5f}
+.av-badge i{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+.av-cfg{border:1px solid var(--line);border-radius:10px;background:var(--soft);padding:10px 12px}
+.av-cfg summary{cursor:pointer;font-size:12px;color:var(--ink2);font-weight:600;list-style:none}
+.av-cfg summary::-webkit-details-marker{display:none}
+.av-cfg summary::before{content:'▸ ';color:var(--gold)}
+.av-cfg[open] summary::before{content:'▾ '}
+.av-cfg .av-row{display:flex;flex-direction:column;gap:5px;margin-top:9px}
+.av-cfg label{font-size:11px;color:var(--ink3)}
+.av-cfg input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:8px;padding:7px 9px;
+  background:var(--panel);color:var(--ink);font-size:12px;font-family:inherit;outline:none}
+.av-cfg input:focus{border-color:var(--gold)}
+.av-cfg .av-hint{font-size:10.5px;line-height:1.7;color:var(--ink3);margin-top:8px}
+.av-cfg .btn{padding:7px 12px;font-size:11.5px;margin-top:9px}
+.av-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:9px;text-align:center;color:rgba(240,226,204,.62);font-size:12.5px;line-height:1.8;padding:24px;
+  background:radial-gradient(ellipse at center,rgba(120,92,54,.18),rgba(20,16,12,.92))}
+.av-empty b{font-family:"Noto Serif SC",Georgia,serif;font-size:17px;letter-spacing:3px;color:rgba(240,226,204,.86);font-weight:500}
+.av-empty span{font-size:11px;max-width:420px}
+.av-player{display:none}
+.av-player.show{display:block}
+.av-hist{display:flex;flex-direction:column;gap:6px;margin-top:2px}
+.av-hist-item{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border:1px solid var(--line);
+  border-radius:9px;background:var(--soft);font-size:11px;color:var(--ink2);cursor:pointer}
+.av-hist-item:hover{border-color:var(--gold);color:var(--gold)}
+.av-hist-item em{font-style:normal;color:var(--ink3);white-space:nowrap}
+@media(max-width:980px){.av-picks{grid-template-columns:repeat(4,1fr)}}
+
 </style>
 </head>
 <body data-page-node-id="49BDSpZ9whJVodG2WbJR0f">
@@ -1334,7 +1388,8 @@ table.tbl td{transition:background .15s}
     <div class="sidenav" data-page-node-id="Art5BcVJD7wCiHhdOHgPbm">
       <button class="nav-item active" data-v="wedding" data-page-node-id="SuRFrZfyvnnkFarqjWGYLv"><span class="ico" data-page-node-id="GP110Fdh4eKkwckxC4wp4S">❤</span>婚礼中心</button>
       <button class="nav-item" data-v="create" data-page-node-id="sKUQdYJmWycZ4hd7QHBvhJ"><span class="ico" data-page-node-id="BD6VTMBd42GQqQXe3ZqVoB">✦</span>AI创作</button>
-    <button class="nav-item" data-v="video"><span class="ico">▶</span>视频成片</button>
+    <button class="nav-item" data-v="aivideo"><span class="ico">✧</span>AI 生成视频</button>
+    <button class="nav-item" data-v="video"><span class="ico">▶</span>照片成片</button>
       <button class="nav-item" data-v="plaza" data-page-node-id="kS1mOvSMeHsHBukPCfu8cm"><span class="ico" data-page-node-id="z1uvPIZNuEyQDoTE265mL3">❖</span>模板广场</button>
       <button class="nav-item hidden" id="navReview" data-v="review" data-page-node-id="73GN1MAa57ghJLmB2Qq3ED"><span class="ico" data-page-node-id="NIGe3nmbGp1AiCS0MsYXRB">✔</span>模板审核</button>
       <button class="nav-item hidden" id="navTpl" data-v="tpl" data-page-node-id="pwmwCkIXdFTTlZBmxENDc7"><span class="ico" data-page-node-id="xea8ackCztfKDMsAbC6MEY">❑</span>模板管理</button>
@@ -1762,6 +1817,93 @@ table.tbl td{transition:background .15s}
               <span class="vf-live" id="vfLive">WEDDING FILM · PREVIEW</span>
             </div>
             <div class="vf-tips">成片在浏览器里逐帧绘制并录制为 WebM，照片不会上传到任何服务器。导出建议用 Chrome / Edge；部分手机内置浏览器只能看实时预览，无法录制。竖屏画幅适合发朋友圈与短视频平台。</div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ============ AI 生成视频工作台（v144 · 调用真实视频模型） ============ -->
+      <div class="view" id="v-aivideo">
+        <h2 class="view-title">AI 生成视频<small>Text / Image → Video · 由 AI 视频模型实时生成，不是照片合成</small></h2>
+        <div class="vf-wrap">
+          <div class="vf-panel vf-settings">
+            <div class="av-badge warn" id="avBadge"><i></i><span>正在检查视频通道…</span></div>
+
+            <div class="vf-sec">
+              <div class="vf-label">01 · 生成方式</div>
+              <div class="av-mode">
+                <button id="avT2V" class="on">✧ 文生视频</button>
+                <button id="avI2V">▣ 图生视频</button>
+              </div>
+              <div class="av-first" id="avFirst">
+                <div class="vf-label" style="margin-top:13px">首帧照片<span>点选一张作为视频开头</span></div>
+                <div class="av-picks" id="avPicks"></div>
+                <label class="av-up" for="avFile">＋ 上传本地照片</label>
+                <input type="file" id="avFile" accept="image/*" hidden>
+                <div id="avFrameName" style="font-size:11px;color:var(--ink3);margin-top:7px">未选择首帧图</div>
+              </div>
+            </div>
+
+            <div class="vf-sec">
+              <div class="vf-label">02 · 画面描述<span>越具体越好</span></div>
+              <textarea class="av-ta" id="avPrompt" maxlength="2000" placeholder="描述你想要的画面：人物、动作、光线、镜头运动…">婚纱照里的新娘在午后柔光里缓缓转身微笑，头纱被微风轻轻扬起，背景是虚化的花园，电影感，镜头缓慢推近，画面稳定自然</textarea>
+              <div class="av-chips" id="avChips"></div>
+            </div>
+
+            <div class="vf-sec">
+              <div class="vf-label">03 · 模型与规格</div>
+              <div class="vf-fields">
+                <label>视频模型<select id="avModel"><option value="">读取中…</option></select></label>
+                <label>时长<select id="avDur">
+                  <option value="6">6 秒</option>
+                  <option value="10">10 秒</option>
+                  <option value="5">5 秒</option>
+                </select></label>
+                <label>画幅<select id="avRatio">
+                  <option value="16:9">横屏 16:9</option>
+                  <option value="9:16">竖屏 9:16</option>
+                  <option value="1:1">方形 1:1</option>
+                </select></label>
+                <label>分辨率<select id="avRes">
+                  <option value="768P">768P · 均衡</option>
+                  <option value="1080P">1080P · 高清</option>
+                  <option value="512P">512P · 省额度</option>
+                </select></label>
+              </div>
+            </div>
+
+            <details class="av-cfg" id="avCfg">
+              <summary>通道设置 · API Key / 后端地址</summary>
+              <div class="av-row"><label>视频 API 地址（如 https://xxx.com/v1）</label>
+                <input id="avApiBase" placeholder="留空 = 用后端 .env 里配置的通道" autocomplete="off"></div>
+              <div class="av-row"><label>视频 API Key</label>
+                <input id="avApiKey" type="password" placeholder="留空 = 用后端 .env 里配置的 Key" autocomplete="off"></div>
+              <div class="av-row"><label>后端服务地址（仅静态预览页需要）</label>
+                <input id="avBackend" placeholder="http://127.0.0.1:8080" autocomplete="off"></div>
+              <button class="btn btn-ghost" id="avSaveCfg">保存设置</button>
+              <div class="av-hint">Key 只存在你自己的浏览器里，并直接发给上面填的后端做代理，<b>不会上传到 GitHub Pages</b>。静态预览页需要本机双击 start.bat 启动服务；本机完整版留空即可。上游模型按你自己的 Key 计费，平台不扣积分。</div>
+            </details>
+
+            <div class="vf-actions">
+              <button class="btn btn-gold" id="avMake">✧ 生成 AI 视频</button>
+              <a class="btn btn-ghost" id="avDownload" style="display:none;text-align:center;text-decoration:none" download="wedding-ai-video.mp4">⬇ 下载视频</a>
+            </div>
+            <div class="vf-progress"><span id="avBar"></span></div>
+            <div class="vf-status" id="avStatus">填写画面描述后点「生成 AI 视频」，模型通常需要 1–5 分钟。</div>
+            <div class="av-hist" id="avHist"></div>
+          </div>
+
+          <div class="vf-panel vf-stage">
+            <div class="vf-stage-head"><strong>AI 成片预览</strong><span id="avMeta">等待生成</span></div>
+            <div class="vf-screen" id="avScreen">
+              <video class="av-player" id="avPlayer" controls playsinline></video>
+              <div class="av-empty" id="avEmpty">
+                <b>AI 心动影像</b>
+                <span>文字或一张照片，交给视频大模型生成会动的画面。<br>生成完成后这里可以直接播放、下载。</span>
+              </div>
+              <span class="vf-live" id="avLive">AI VIDEO · MODEL GENERATED</span>
+            </div>
+            <div class="vf-tips">与「照片成片」不同：这里不是把静态照片加运镜录制，而是由视频大模型重新生成动态画面（人物微动、光影变化、镜头运动）。生成走后端代理，避免浏览器直连中转站被 CORS 拦截，也避免 Key 暴露在公开页面。</div>
           </div>
         </div>
       </div>
@@ -2380,6 +2522,7 @@ function go(v){
   if (v==='create') refreshCreate();
   if (v==='wedding') loadWeddingCenter();
   if (v==='video' && window.WA_VIDEO) WA_VIDEO.ensure();
+  if (v==='aivideo' && window.WA_AIVIDEO) WA_AIVIDEO.ensure();
 }
 
 /* ================= 婚礼中心（首页仪式大屏） ================= */
@@ -2395,7 +2538,8 @@ const WC_THEMES = [
 const WC_QUICK = [
   {v:'create', ico:'✦', t:'AI创作'},
   {v:'plaza',  ico:'❖', t:'模板广场'},
-  {v:'video',  ico:'▶', t:'视频成片'},
+  {v:'aivideo', ico:'✧', t:'AI生成视频'},
+  {v:'video',  ico:'▶', t:'照片成片'},
   {v:'swap',   ico:'✧', t:'灵感换装'},
   {v:'works',  ico:'▣', t:'我的作品'},
   {v:'reverse',ico:'⌾', t:'Prompt反推'},
@@ -6054,6 +6198,283 @@ function weddingSamplesHTML(caption){
 
 /* ===== 视频成片工作台 v144 · Canvas2D 逐帧 + MediaRecorder 导出 =====
    纯前端：不调用 /api/，不冻积分；静态预览页与本机完整版都能出片。 */
+
+/* ===== AI 生成视频工作台 v144 · 真实视频模型（文生 / 图生） =====
+   与 WA_VIDEO（照片成片）互不影响；独立 fetch 封装，原有接口调用一处不动。
+   静态页（github.io）默认把请求发到本机 start.bat 的 127.0.0.1:8080，
+   后端已放行该跨域来源；用户也可在「通道设置」里改地址与自带 Key。 */
+window.WA_AIVIDEO = (function(){
+  var LS = {base:'waVideoApiBase', key:'waVideoApiKey', backend:'waVideoBackend'};
+  var PHOTOS = [
+    {u:'assets/wedding-photos/meadow.jpg', n:'草地'},
+    {u:'assets/wedding-photos/church.jpg', n:'教堂'},
+    {u:'assets/wedding-photos/chinese.jpg', n:'中式'},
+    {u:'assets/wedding-photos/beach.jpg', n:'海边'},
+    {u:'assets/wedding-photos/palace.jpg', n:'宫殿'},
+    {u:'assets/wedding-photos/sakura.jpg', n:'樱花'}
+  ];
+  var CHIPS = ['[Push in]','[Pull out]','[Pan left]','[Pan right]',
+               '[Tracking shot]','[Static shot]','[Zoom in]','[Soft sunlight]'];
+  var S = {mode:'t2v', frame:'', frameName:'', busy:false, timer:null, last:''};
+
+  function el(id){ return document.getElementById(id); }
+  function ls(k){ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } }
+  function setls(k,v){ try{ localStorage.setItem(k,v||''); }catch(e){} }
+  function isStatic(){
+    return /github\.io$/i.test(location.hostname) || location.protocol==='file:';
+  }
+  function backend(){
+    var forced = (ls(LS.backend)||'').trim();
+    if(forced) return forced.replace(/\/+$/,'');
+    if(!isStatic()) return '';
+    return 'http://127.0.0.1:8080';
+  }
+  function esc(t){ return String(t||'').replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function req(path, method, body){
+    var opt = {method:method||'GET', mode:'cors',
+               headers:{'Content-Type':'application/json'}};
+    if(body) opt.body = JSON.stringify(body);
+    var tok = ls('wa_token') || ls('token') || ls('waToken');
+    if(tok) opt.headers.Authorization = 'Bearer ' + tok;
+    return fetch(backend()+path, opt).then(function(r){
+      return r.text().then(function(t){
+        var d = {}; try{ d = JSON.parse(t); }catch(e){ d = {detail:'响应不是 JSON（后端地址可能填错）'}; }
+        return {ok:r.ok, status:r.status, data:d};
+      });
+    }).catch(function(e){
+      return {ok:false, status:0,
+              data:{detail:'连不上后端服务：'+(e && e.message ? e.message : e)}};
+    });
+  }
+  function badge(text, ok){
+    var b = el('avBadge'); if(!b) return;
+    b.className = 'av-badge ' + (ok ? 'ok' : 'warn');
+    b.innerHTML = '<i></i><span>'+esc(text)+'</span>';
+  }
+  function status(t){ var e=el('avStatus'); if(e) e.textContent=t; }
+  function bar(p){ var e=el('avBar'); if(e) e.style.width = Math.max(0,Math.min(100,p))+'%'; }
+
+  function renderPicks(){
+    var box = el('avPicks'); if(!box) return;
+    box.innerHTML = PHOTOS.map(function(p,i){
+      return '<div class="av-pick'+(S.frame===p.u?' on':'')+'" data-i="'+i+'">'+
+             '<img src="'+p.u+'" alt="'+esc(p.n)+'" loading="lazy"></div>';
+    }).join('');
+    [].forEach.call(box.querySelectorAll('.av-pick'), function(n){
+      n.onclick = function(){
+        var p = PHOTOS[+n.dataset.i];
+        S.frame = ''; S.frameName = p.n + '（内置照片）';
+        status('正在读取首帧图…');
+        readAsData(p.u).then(function(d){
+          S.frame = d; renderPicks();
+          el('avFrameName').textContent = '已选：' + S.frameName;
+          status('首帧图已就绪，可以生成了。');
+        }).catch(function(){
+          status('这张内置照片读取失败，请换一张或上传本地照片。');
+        });
+      };
+    });
+  }
+  function readAsData(url){
+    return fetch(url).then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.blob();
+    }).then(function(b){
+      return new Promise(function(res,rej){
+        var fr = new FileReader();
+        fr.onload = function(){ res(fr.result); };
+        fr.onerror = function(){ rej(new Error('读取失败')); };
+        fr.readAsDataURL(b);
+      });
+    });
+  }
+
+  function loadCfg(){
+    var b=el('avApiBase'), k=el('avApiKey'), h=el('avBackend');
+    if(b) b.value = ls(LS.base);
+    if(k) k.value = ls(LS.key);
+    if(h) h.value = isStatic() ? (ls(LS.backend)||'http://127.0.0.1:8080') : '';
+    if(h && !isStatic()) h.placeholder = '本机完整版无需填写';
+  }
+  function fillModels(o){
+    var sel = el('avModel'); if(!sel) return;
+    var arr = (o && o.models && o.models.models) || [];
+    var def = (o && o.default_model) || '';
+    if(!arr.length) arr = [{id:def||'MiniMax-Hailuo-2.3', label:def||'MiniMax-Hailuo-2.3'}];
+    var cur = sel.value;
+    sel.innerHTML = arr.map(function(m){
+      return '<option value="'+esc(m.id)+'">'+esc(m.label||m.id)+'</option>';
+    }).join('');
+    if(def && [].some.call(sel.options,function(x){return x.value===def;})) sel.value=def;
+    else if(cur) sel.value=cur;
+  }
+  function ensure(){
+    loadCfg(); renderPicks(); renderChips(); loadHistory();
+    req('/api/video/config','GET').then(function(r){
+      if(!r.ok){
+        var d = (r.data && r.data.detail) || ('HTTP '+r.status);
+        badge('未连接后端 · '+d, false);
+        status(isStatic()
+          ? '当前是 GitHub Pages 静态预览。请在本机双击 start.bat 启动服务，或到「通道设置」改后端地址；本机服务起来后点这里会自动重连。'
+          : '视频服务未就绪：'+d);
+        fillModels(null);
+        return;
+      }
+      fillModels(r.data);
+      var cfg = r.data.configured;
+      badge(cfg ? '通道已配置 · '+(r.data.base_host||'服务端 .env') :
+                  '未配置视频通道 · 请在下方填 API 地址与 Key', !!cfg);
+      if(cfg && r.data.models && r.data.models.error)
+        status('模型清单读取提示：'+r.data.models.error);
+    });
+  }
+
+  function renderChips(){
+    var box = el('avChips'); if(!box) return;
+    box.innerHTML = CHIPS.map(function(c){
+      return '<span class="av-chip" data-c="'+esc(c)+'">'+esc(c)+'</span>';
+    }).join('');
+    [].forEach.call(box.querySelectorAll('.av-chip'), function(n){
+      n.onclick = function(){
+        var t = el('avPrompt');
+        t.value = (t.value.replace(/\s+$/,'') + ' ' + n.dataset.c).trim();
+        t.focus();
+      };
+    });
+  }
+
+  function setMode(m){
+    S.mode = m;
+    el('avT2V').classList.toggle('on', m==='t2v');
+    el('avI2V').classList.toggle('on', m==='i2v');
+    el('avFirst').classList.toggle('show', m==='i2v');
+  }
+
+  function showVideo(d){
+    var v = el('avPlayer'), e = el('avEmpty'), a = el('avDownload');
+    var url = backend() + (d.video_url || ('/files/'+(d.storage_key||'')));
+    v.src = url; v.classList.add('show'); e.style.display='none';
+    a.href = url; a.style.display='inline-block';
+    a.download = 'wedding-ai-' + (d.job_no||'video') + '.mp4';
+    el('avMeta').textContent = (d.model||'AI 视频') + ' · ' +
+                               (d.duration||6) + 's · ' + (d.ratio||'16:9');
+    v.play().catch(function(){});
+  }
+
+  function poll(jobNo){
+    var n = 0;
+    clearInterval(S.timer);
+    S.timer = setInterval(function(){
+      n++;
+      req('/api/video/jobs/'+encodeURIComponent(jobNo),'GET').then(function(r){
+        if(!r.ok || !r.data){ return; }
+        var d = r.data;
+        bar(d.progress || 0);
+        if(d.status==='SUCCEEDED'){
+          clearInterval(S.timer); S.busy=false;
+          bar(100); status('生成完成，可以直接播放或下载。');
+          badge('AI 视频生成完成', true);
+          showVideo(d); loadHistory(); unlock();
+        } else if(d.status==='FAILED'){
+          clearInterval(S.timer); S.busy=false;
+          status('生成失败：'+(d.error||'上游未返回原因'));
+          badge('生成失败 · 可调整参数重试', false); unlock();
+        } else {
+          status('模型正在生成… '+(d.progress||0)+'%（通常 1–5 分钟，可切走页面，回来继续看）');
+        }
+      });
+      if(n>240){ clearInterval(S.timer); S.busy=false; unlock();
+        status('等待超时，可到「生成记录」查看或重新提交。'); }
+    }, 2500);
+  }
+  function unlock(){
+    var b=el('avMake'); if(b){ b.disabled=false; b.textContent='✧ 生成 AI 视频'; }
+  }
+  function make(){
+    if(S.busy) return;
+    var prompt = (el('avPrompt').value||'').trim();
+    if(!prompt){ status('请先写一句画面描述。'); return; }
+    if(S.mode==='i2v' && !S.frame){ status('图生视频需要先选一张首帧照片并等它读取完成。'); return; }
+    S.busy = true;
+    var b = el('avMake'); b.disabled=true; b.textContent='提交中…';
+    bar(4); status('正在向视频模型提交任务…');
+    var body = {
+      user_id:0, mode:S.mode, model:el('avModel').value, prompt:prompt,
+      image:S.mode==='i2v' ? S.frame : '',
+      duration:+el('avDur').value, ratio:el('avRatio').value,
+      resolution:el('avRes').value,
+      api_base:ls(LS.base), api_key:ls(LS.key)
+    };
+    req('/api/video/jobs','POST',body).then(function(r){
+      if(!r.ok){
+        S.busy=false; unlock(); bar(0);
+        var d = (r.data && (r.data.detail || r.data.message)) || ('HTTP '+r.status);
+        status('提交失败：'+(typeof d==='string'?d:JSON.stringify(d)));
+        badge('通道不可用 · 见下方原因', false);
+        return;
+      }
+      S.last = r.data.job_no;
+      status('任务已提交（'+r.data.job_no+'），模型正在生成…');
+      badge('模型生成中', true);
+      poll(r.data.job_no);
+    });
+  }
+
+  function loadHistory(){
+    var box = el('avHist'); if(!box) return;
+    req('/api/video/jobs?user_id=0&limit=5','GET').then(function(r){
+      if(!r.ok || !r.data || !r.data.jobs) return;
+      var rows = r.data.jobs.filter(function(x){ return x.status==='SUCCEEDED'; });
+      if(!rows.length){ box.innerHTML=''; return; }
+      box.innerHTML = rows.map(function(x){
+        return '<div class="av-hist-item" data-u="'+esc(x.video_url||'')+'" data-j="'+esc(x.job_no)+'">'+
+               '<span>'+esc((x.prompt||'').slice(0,26))+'…</span>'+
+               '<em>'+esc(x.model||'')+' · '+esc((x.created_at||'').slice(5,16))+'</em></div>';
+      }).join('');
+      [].forEach.call(box.querySelectorAll('.av-hist-item'), function(n){
+        n.onclick=function(){
+          if(n.dataset.u){ showVideo({video_url:n.dataset.u, job_no:n.dataset.j});
+            status('已载入历史成片。'); }
+        };
+      });
+    });
+  }
+
+  function bind(){
+    var t=el('avT2V'), i=el('avI2V');
+    if(t) t.onclick=function(){ setMode('t2v'); };
+    if(i) i.onclick=function(){ setMode('i2v'); };
+    var m=el('avMake'); if(m) m.onclick=make;
+    var sv=el('avSaveCfg');
+    if(sv) sv.onclick=function(){
+      setls(LS.base, el('avApiBase').value.trim());
+      setls(LS.key, el('avApiKey').value.trim());
+      setls(LS.backend, el('avBackend').value.trim());
+      status('设置已保存在本机浏览器，正在重新检查通道…');
+      ensure();
+    };
+    var f=el('avFile');
+    if(f) f.onchange=function(){
+      var file=f.files && f.files[0]; if(!file) return;
+      if(file.size > 8*1024*1024){ status('图片太大，请选 8MB 以内的。'); return; }
+      status('正在读取本地照片…');
+      var fr=new FileReader();
+      fr.onload=function(){
+        S.frame=fr.result; S.frameName=file.name;
+        el('avFrameName').textContent='已选：'+file.name;
+        renderPicks(); status('首帧图已就绪，可以生成了。');
+      };
+      fr.onerror=function(){ status('照片读取失败，换一张试试。'); };
+      fr.readAsDataURL(file);
+    };
+  }
+  function init(){ bind(); setMode('t2v'); ensure(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else init();
+  return {ensure:ensure, make:make, init:init, state:S};
+})();
+
 window.WA_VIDEO = (function(){
   var V = {ready:false, photos:[], picked:[], imgs:{}, busy:false, canvas:null, ctx:null,
            rec:null, stream:null, chunks:[], blob:null, url:null, mime:'', raf:0,
