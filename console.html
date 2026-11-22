@@ -565,6 +565,10 @@ input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink)}
 .svc-banner{margin-top:12px;padding:10px 14px;border-radius:10px;font-size:12.5px;line-height:1.7;
   background:rgba(180,60,50,.14);border:1px solid rgba(220,90,80,.45);color:#f0c8c2}
 .svc-banner b{color:#ffd9d3}
+/* 浅色主题（classic/rose/sakura/ocean/forest/ink）下浅粉字几乎看不见，换成深红字 */
+:root:not([data-theme="midnight"]):not([data-theme="velvet"]) .svc-banner{
+  background:rgba(180,60,50,.08);border-color:rgba(180,60,50,.32);color:#7d322c}
+:root:not([data-theme="midnight"]):not([data-theme="velvet"]) .svc-banner b{color:#8f2f27}
 .dock-prompt{display:flex;gap:10px;margin-top:12px;align-items:center}
 .dock-prompt input{flex:1;padding:12px 16px;border:1px solid var(--line);border-radius:24px;background:var(--panel);outline:none;font-size:14px}
 .dock-prompt input:focus{border-color:var(--gold)}
@@ -5688,7 +5692,15 @@ function refreshCreate(){ renderDock(); updatePriceNote(); loadMemory(); renderR
   document.getElementById('fairy').classList.remove('hidden');
   showFairy();
   try{
-    const c = await api('/api/config');
+    // https 静态页的 /api/config 会被 CDN/代理挂住，既不返回也不报错；
+    // 不给超时的话 init 一直卡在 await，兜底进不去，下拉永远是「加载中…」。
+    // 本机后端冷启动可能慢，给 15s；github.io / file:// 只等 2.5s。
+    const staticHost = /github\.io$/i.test(location.hostname) || location.protocol === 'file:';
+    const cfgWait = staticHost ? 2500 : 15000;
+    const c = await Promise.race([
+      api('/api/config'),
+      new Promise((_, rej) => setTimeout(() => rej(new Error('config timeout')), cfgWait))
+    ]);
     S.preview = false;
     S.prices = c.prices || {};
     S.genModels = c.gen_models || [];
