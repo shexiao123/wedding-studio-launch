@@ -738,7 +738,7 @@ table.tbl tr:hover td{background:var(--soft)}
 #fairy video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
   pointer-events:none;opacity:0;transition:opacity .26s ease}
 #fairy video.on{opacity:1}
-#fairy img.pet-fallback{position:absolute;left:50%;top:50%;width:118px;height:118px;
+#fairy img.pet-fallback{position:absolute;left:50%;top:52%;width:170px;height:auto;
   transform:translate(-50%,-50%);object-fit:contain;pointer-events:none;display:none}
 #fairy.no-alpha img.pet-fallback{display:block}
 #fairy.no-alpha video{display:none}
@@ -1999,10 +1999,10 @@ table.tbl td{transition:background .15s}
 </div>
 
 <!-- 桌宠 dsh-pet（Q版蓝发小女仆鲸鱼娘 · 透明动画） -->
-<div id="fairy" class="hidden" title="桌宠：点我说话，拖我溜达" data-page-node-id="WWsP0GaIPdWMBpXoR7PL1r">
+<div id="fairy" class="hidden no-alpha" title="桌宠：点我说话，拖我溜达" data-page-node-id="WWsP0GaIPdWMBpXoR7PL1r">
   <video id="petV0" muted playsinline preload="auto"></video>
   <video id="petV1" muted playsinline preload="auto"></video>
-  <img class="pet-fallback" src="assets/pet/logo.png" alt="桌宠" onerror="document.getElementById('fairy').style.display='none'">
+  <img class="pet-fallback" src="assets/pet/poster.png" alt="桌宠" onerror="document.getElementById('fairy').style.display='none'">
   <div class="pet-hit"></div>
 </div>
 <!-- 服装/发型样式墙弹层 -->
@@ -4718,22 +4718,52 @@ const P = {
   W:360, H:203, cur:0, clip:'', layers:[], el:null, ready:false, placed:false,
   x:120, y:260, vx:0, vy:0, dragging:false, moved:false, busy:false,
   downX:0, downY:0, downT:0, offX:0, offY:0,
-  lastPX:0, lastPY:0, lastPT:0, raf:0, randTimer:0
+  lastPX:0, lastPY:0, lastPT:0, raf:0, randTimer:0,
+  urls:{}, pending:{}, seq:0, played:false, noVideo:false
 };
 function petPick(a){ return a[Math.floor(Math.random()*a.length)]; }
 
+function petFallback(){
+  if(P.el) P.el.classList.add('no-alpha');
+}
+function petLoad(name, done){
+  if(P.urls[name]){ done(P.urls[name]); return; }
+  if(P.pending[name]){ P.pending[name].push(done); return; }
+  P.pending[name] = [done];
+  fetch(PET_BASE + name + '.webm').then(function(r){
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return r.blob();
+  }).then(function(b){
+    const u = URL.createObjectURL(b);
+    P.urls[name] = u;
+    const q = P.pending[name] || []; delete P.pending[name];
+    q.forEach(function(f){ f(u); });
+  }).catch(function(){
+    const q = P.pending[name] || []; delete P.pending[name];
+    q.forEach(function(f){ f(null); });
+    petFallback();
+  });
+}
 function petPlay(name, loop, onEnd){
   if(!P.ready) return;
-  const st = P.layers[1-P.cur], ac = P.layers[P.cur];
-  if(P.clip === name && loop) return;
+  if(P.clip === name && loop && P.played) return;
+  const token = ++P.seq;
   P.clip = name;
-  st.onended = null;
-  st.loop = !!loop;
-  st.src = PET_BASE + name + '.webm';
-  try{ st.load(); const q = st.play(); if(q && q.catch) q.catch(function(){}); }catch(e){}
-  st.classList.add('on'); ac.classList.remove('on');
-  P.cur = 1 - P.cur;
-  if(onEnd && !loop) st.onended = onEnd;
+  petLoad(name, function(url){
+    if(!url || !F.on) return;
+    // 已有画面在播时丢弃过期请求（URL 仍已缓存，下次零网络）；首个请求永远放行
+    if(token !== P.seq && P.played) return;
+    const st = P.layers[1-P.cur], ac = P.layers[P.cur];
+    st.onended = null;
+    st.loop = !!loop;
+    st.src = url;   // Blob URL：本地内存，无需 load()，不会被新请求打断
+    try{ const q = st.play(); if(q && q.catch) q.catch(function(){}); }catch(e){}
+    st.classList.add('on'); ac.classList.remove('on');
+    P.cur = 1 - P.cur;
+    P.played = true;
+    if(P.el) P.el.classList.remove('no-alpha');
+    if(onEnd && !loop) st.onended = onEnd;
+  });
 }
 function petIdle(){
   if(!F.on || P.dragging || P.busy) return;
@@ -4749,14 +4779,12 @@ function petAlphaOK(){
   }catch(e){ return true; }
 }
 function petInit(){
-  if(P.ready) return;
+  if(P.ready || P.noVideo) return;
   P.el = document.getElementById('fairy');
   P.layers = [document.getElementById('petV0'), document.getElementById('petV1')];
   if(!P.el || !P.layers[0] || !P.layers[1]) return;
-  if(!petAlphaOK()) P.el.classList.add('no-alpha');
-  P.layers.forEach(function(v){
-    v.addEventListener('error', function(){ P.el.classList.add('no-alpha'); });
-  });
+  if(!petAlphaOK()){ P.noVideo = true; return; }   // Safari：永久显示静态海报
+  P.layers.forEach(function(v){ v.addEventListener('error', petFallback); });
   P.el.addEventListener('pointerdown', petDown);
   addEventListener('pointermove', petMove);
   addEventListener('pointerup', petUp);
@@ -4858,6 +4886,10 @@ function showFairy(){
   if(!P.placed){
     petPos(Math.max(16, innerWidth-P.W-40), Math.max(70, innerHeight-P.H-60));
     P.placed = true;
+  }
+  if(P.ready && P.played){
+    const v = P.layers[P.cur];
+    try{ const q = v.play(); if(q && q.catch) q.catch(function(){}); }catch(e){}
   }
   fairyMove();
   clearInterval(F.flyTimer);      F.flyTimer = setInterval(fairyMove, 6800);
