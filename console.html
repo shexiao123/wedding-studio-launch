@@ -1383,6 +1383,54 @@ table.tbl td{transition:background .15s}
 .sc-check input{accent-color:var(--gold)}
 @media(max-width:980px){.sc-wrap{grid-template-columns:1fr}}
 
+
+/* ===== 影像工具箱 · v147（纯前端本地处理） ===== */
+.tb-wrap{display:grid;grid-template-columns:352px minmax(0,1fr);gap:18px;align-items:start;padding-bottom:36px}
+.tb-wrap .vf-actions{flex-wrap:wrap}
+.tb-wrap .vf-actions .btn{min-width:132px}
+.tb-tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.tb-tab{padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--panel);
+  color:var(--ink2);font-size:11.5px;cursor:pointer;transition:.15s;white-space:nowrap}
+.tb-tab:hover{border-color:var(--gold);color:var(--gold)}
+.tb-tab.on{background:var(--gold-bg);border-color:var(--gold);color:var(--gold);font-weight:600}
+.tb-pane{display:none}
+.tb-pane.on{display:block}
+.tb-thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:9px;
+  max-height:184px;overflow:auto;padding-right:3px}
+.tb-thumb{position:relative;aspect-ratio:1/1;border:2px solid transparent;border-radius:8px;overflow:hidden;
+  cursor:pointer;background:var(--soft);transition:.15s}
+.tb-thumb:hover{transform:translateY(-2px)}
+.tb-thumb.on{border-color:var(--gold);box-shadow:0 4px 12px rgba(176,141,87,.28)}
+.tb-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.tb-thumb .n{position:absolute;left:3px;top:3px;min-width:16px;height:16px;border-radius:8px;
+  background:rgba(30,22,14,.62);color:#fff;font-size:9px;line-height:16px;text-align:center;padding:0 3px}
+.tb-thumb .x{position:absolute;right:2px;top:2px;width:16px;height:16px;border-radius:8px;
+  background:rgba(30,22,14,.62);color:#fff;font-size:11px;line-height:15px;text-align:center;display:none}
+.tb-thumb:hover .x{display:block}
+.tb-empty{grid-column:1/-1;padding:16px 6px;text-align:center;color:var(--ink3);font-size:11.5px;line-height:1.8}
+.tb-presets{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.tb-preset{padding:8px 4px;border:1px solid var(--line);border-radius:9px;background:var(--panel);
+  color:var(--ink2);font-size:11px;cursor:pointer;transition:.15s;text-align:center}
+.tb-preset:hover{border-color:var(--gold);color:var(--gold)}
+.tb-preset.on{background:var(--gold-bg);border-color:var(--gold);color:var(--gold);font-weight:600}
+.tb-range{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink2);margin:6px 0}
+.tb-range span{width:52px;flex-shrink:0}
+.tb-range input[type=range]{flex:1;min-width:0;accent-color:var(--gold);height:4px}
+.tb-range b{width:38px;text-align:right;color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums}
+.tb-line{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink2);margin-top:9px}
+.tb-line input[type=checkbox]{accent-color:var(--gold)}
+.tb-sub{font-size:10.5px;color:var(--ink3);line-height:1.6;margin:7px 0 0}
+.tb-screen{position:relative;background:#17120d;border-radius:12px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;min-height:330px}
+.tb-screen canvas{display:block;max-width:100%;max-height:540px;object-fit:contain}
+.tb-splitbar{display:flex;align-items:center;gap:9px;margin-top:10px;font-size:11px;color:var(--ink3)}
+.tb-splitbar input[type=range]{flex:1;accent-color:var(--gold)}
+.tb-badge{display:inline-block;padding:2px 8px;border-radius:10px;background:var(--gold-bg);
+  color:var(--gold);font-size:10px;margin-left:6px}
+.tb-mini{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tb-mini button{padding:5px 9px;border:1px solid var(--line);border-radius:7px;background:var(--panel);
+  color:var(--ink2);font-size:10.5px;cursor:pointer}
+.tb-mini button:hover{border-color:var(--gold);color:var(--gold)}
 </style>
 </head>
 <body data-page-node-id="49BDSpZ9whJVodG2WbJR0f">
@@ -1424,6 +1472,7 @@ table.tbl td{transition:background .15s}
     <button class="nav-item" data-v="aivideo"><span class="ico">✧</span>AI 生成视频</button>
     <button class="nav-item" data-v="video"><span class="ico">▶</span>照片成片</button>
     <button class="nav-item" data-v="cut"><span class="ico">✂</span>智能剪辑</button>
+    <button class="nav-item" data-v="tools"><span class="ico">▦</span>影像工具箱</button>
       <button class="nav-item" data-v="plaza" data-page-node-id="kS1mOvSMeHsHBukPCfu8cm"><span class="ico" data-page-node-id="z1uvPIZNuEyQDoTE265mL3">❖</span>模板广场</button>
       <button class="nav-item hidden" id="navReview" data-v="review" data-page-node-id="73GN1MAa57ghJLmB2Qq3ED"><span class="ico" data-page-node-id="NIGe3nmbGp1AiCS0MsYXRB">✔</span>模板审核</button>
       <button class="nav-item hidden" id="navTpl" data-v="tpl" data-page-node-id="pwmwCkIXdFTTlZBmxENDc7"><span class="ico" data-page-node-id="xea8ackCztfKDMsAbC6MEY">❑</span>模板管理</button>
@@ -2024,6 +2073,176 @@ table.tbl td{transition:background .15s}
               <span class="vf-live" id="scLive">SMART CUT · AUTO EDIT</span>
             </div>
             <div class="vf-tips">智能剪辑会先对每段素材抽帧，量化清晰度、曝光、层次、色彩、构图与运动量，得分过低的自动降权或剔除，相近画面自动去重；再按 BPM 把切点对齐节拍，用相邻镜头的色彩距离决定叠化 / 擦除 / 淡黑，最后统一调色、补片头片尾字幕卡并录成 30fps 成片。所有决策都可在左侧素材列表里手动覆写（启停、排序、删除）。素材不上传，不耗积分，静态页也能用；导出请用 Chrome / Edge。</div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ============ 影像工具箱 · v147（批量精修 / 证件冲印 / 电子请柬 / 样片水印） ============ -->
+      <div class="view" id="v-tools">
+        <h2 class="view-title">影像工具箱<small>批量精修 · 证件冲印 · 电子请柬 · 样片水印 · 全部本地完成</small></h2>
+        <div class="tb-wrap">
+          <div class="vf-panel vf-settings">
+            <div class="vf-sec">
+              <div class="vf-label">00 · 图片池<span>共 <b id="tbCount">0</b> 张 · 上限 12</span></div>
+              <label class="sc-drop" for="tbFile">＋ 导入本地照片（可多选）</label>
+              <input type="file" id="tbFile" accept="image/*" multiple hidden>
+              <div class="sc-srcline">
+                <button class="sc-srcbtn" id="tbBuiltin">⟵ 内置样片</button>
+                <button class="sc-srcbtn" id="tbClear">✕ 清空</button>
+              </div>
+              <div class="tb-thumbs" id="tbThumbs"></div>
+            </div>
+
+            <div class="tb-tabs" id="tbTabs">
+              <button class="tb-tab on" data-t="retouch">✦ 批量精修</button>
+              <button class="tb-tab" data-t="idphoto">▣ 证件冲印</button>
+              <button class="tb-tab" data-t="invite">❦ 电子请柬</button>
+              <button class="tb-tab" data-t="mark">◈ 样片水印</button>
+            </div>
+
+            <!-- ① 批量精修 -->
+            <div class="tb-pane on" data-p="retouch">
+              <div class="vf-sec">
+                <div class="vf-label">01 · 一键调色预设<span>点击即套用</span></div>
+                <div class="tb-presets" id="tbPresets"></div>
+                <div class="tb-range"><span>曝光</span><input type="range" id="tbExp" min="60" max="145" value="100"><b id="tbExpV">1.00</b></div>
+                <div class="tb-range"><span>对比</span><input type="range" id="tbCon" min="60" max="150" value="100"><b id="tbConV">1.00</b></div>
+                <div class="tb-range"><span>饱和</span><input type="range" id="tbSat" min="0" max="180" value="100"><b id="tbSatV">1.00</b></div>
+                <div class="tb-range"><span>色温</span><input type="range" id="tbTemp" min="-60" max="60" value="0"><b id="tbTempV">0</b></div>
+                <div class="tb-range"><span>柔肤</span><input type="range" id="tbSkin" min="0" max="100" value="0"><b id="tbSkinV">0</b></div>
+                <div class="tb-range"><span>锐化</span><input type="range" id="tbSharp" min="0" max="100" value="0"><b id="tbSharpV">0</b></div>
+                <div class="tb-range"><span>暗角</span><input type="range" id="tbVig" min="0" max="100" value="0"><b id="tbVigV">0</b></div>
+                <div class="tb-mini"><button id="tbReset">↺ 复位参数</button><button id="tbCopyAll">⧉ 参数应用到全部</button></div>
+                <p class="tb-sub">参数对图片池内所有照片生效；导出时逐张重算原图，不会反复叠加损失画质。</p>
+              </div>
+              <div class="vf-actions">
+                <button class="btn btn-gold" id="tbExportOne">⬇ 导出当前</button>
+                <button class="btn btn-ghost" id="tbExportZip">▤ 批量打包 ZIP</button>
+              </div>
+            </div>
+
+            <!-- ② 证件照 / 冲印排版 -->
+            <div class="tb-pane" data-p="idphoto">
+              <div class="vf-sec">
+                <div class="vf-label">02 · 标准尺寸<span>@300dpi 冲印参考</span></div>
+                <div class="vf-fields">
+                  <label>规格<select id="tbSize">
+                    <option value="295,413,1">一寸 295×413</option>
+                    <option value="413,579,2">二寸 413×579</option>
+                    <option value="413,531,2">小二寸 413×531</option>
+                    <option value="390,567,2">结婚登记照 390×567</option>
+                    <option value="1800,1200,6">6 寸 1800×1200</option>
+                    <option value="2400,1800,8">8 寸 2400×1800</option>
+                    <option value="1200,1200,1">方形 1200×1200</option>
+                  </select></label>
+                  <label>换底色<select id="tbBg">
+                    <option value="none">不换（保留原背景）</option>
+                    <option value="#ffffff">纯白底</option>
+                    <option value="#c8302f">证件红底</option>
+                    <option value="#3b6cb5">证件蓝底</option>
+                    <option value="#efe4d2">香槟金底</option>
+                  </select></label>
+                </div>
+                <div class="tb-range"><span>容差</span><input type="range" id="tbTol" min="12" max="120" value="52"><b id="tbTolV">52</b></div>
+                <p class="tb-sub">换底色适合纯色背景的证件照：自动取四角平均色做色键，容差越大替换越广；复杂背景建议选「不换」。</p>
+              </div>
+              <div class="vf-sec">
+                <div class="vf-label">03 · 相纸排版</div>
+                <div class="vf-fields">
+                  <label>相纸<select id="tbPaper">
+                    <option value="a4">A4 2480×3508</option>
+                    <option value="6">6 寸 1800×1200</option>
+                    <option value="none">不排版（单张）</option>
+                  </select></label>
+                  <label>每行张数<select id="tbCols">
+                    <option value="2">2 张</option>
+                    <option value="3">3 张</option>
+                    <option value="4">4 张</option>
+                  </select></label>
+                </div>
+                <label>总张数<input id="tbCopies" type="number" min="1" max="24" value="8" autocomplete="off"></label>
+              </div>
+              <div class="vf-actions">
+                <button class="btn btn-gold" id="tbExportId">⬇ 导出证件照</button>
+                <button class="btn btn-ghost" id="tbExportSheet">▤ 导出冲印版</button>
+              </div>
+            </div>
+
+            <!-- ③ 电子请柬 -->
+            <div class="tb-pane" data-p="invite">
+              <div class="vf-sec">
+                <div class="vf-label">04 · 版式与文案</div>
+                <div class="vf-fields">
+                  <label>风格<select id="tbStyle">
+                    <option value="chinese">中式囍韵</option>
+                    <option value="classic">香槟金</option>
+                    <option value="fresh">森系清新</option>
+                    <option value="ocean">海边蓝调</option>
+                  </select></label>
+                  <label>底图<select id="tbInviteSrc">
+                    <option value="current">图片池当前选中</option>
+                    <option value="hero">内置主视觉</option>
+                  </select></label>
+                </div>
+                <div class="vf-fields" style="margin-top:9px">
+                  <label>新人姓名<input id="tbNames" value="舍先生 &amp; 砚生" autocomplete="off"></label>
+                  <label>婚期<input id="tbDate" value="2026.10.01" autocomplete="off"></label>
+                  <label>地点<input id="tbPlace" value="银川 · 满心欢喜礼堂" autocomplete="off"></label>
+                  <label>敬邀<input id="tbGuest" value="敬备喜筵 · 恭请光临" autocomplete="off"></label>
+                </div>
+                <label style="display:block;margin-top:9px;font-size:11.5px;color:var(--ink2)">寄语
+                  <textarea id="tbWords" rows="2" style="width:100%;margin-top:5px;border:1px solid var(--line);border-radius:9px;padding:8px 9px;background:var(--panel);color:var(--ink);font-family:inherit;font-size:13px;resize:vertical">山海有期，欢喜相逢。愿与你共赴这场关于爱的约定。</textarea>
+                </label>
+                <p class="tb-sub">导出 900×1200 PNG，可直接发微信 / 打印。文字、底图都在本地合成，不上传。</p>
+              </div>
+              <div class="vf-actions"><button class="btn btn-gold" id="tbExportInvite">⬇ 导出请柬 PNG</button></div>
+            </div>
+
+            <!-- ④ 样片水印 -->
+            <div class="tb-pane" data-p="mark">
+              <div class="vf-sec">
+                <div class="vf-label">05 · 水印内容</div>
+                <div class="vf-fields">
+                  <label>主标<input id="tbMarkText" value="舍先生 · 影像工作室" autocomplete="off"></label>
+                  <label>副标<input id="tbMarkSub" value="SAMPLE · 样片请勿商用" autocomplete="off"></label>
+                </div>
+                <label class="sc-drop" for="tbLogo" style="margin-top:9px">＋ 可选：上传 LOGO（透明 PNG 最佳）</label>
+                <input type="file" id="tbLogo" accept="image/*" hidden>
+                <div class="vf-fields" style="margin-top:9px">
+                  <label>位置<select id="tbMarkPos">
+                    <option value="tile">满铺平铺（防盗最强）</option>
+                    <option value="br">右下角</option>
+                    <option value="bl">左下角</option>
+                    <option value="tr">右上角</option>
+                    <option value="tl">左上角</option>
+                    <option value="center">正中央</option>
+                  </select></label>
+                  <label>角度<select id="tbMarkRot">
+                    <option value="-25">斜 -25°</option>
+                    <option value="0">水平 0°</option>
+                  </select></label>
+                </div>
+                <div class="tb-range"><span>透明度</span><input type="range" id="tbMarkAlpha" min="8" max="90" value="34"><b id="tbMarkAlphaV">34%</b></div>
+                <div class="tb-range"><span>字号</span><input type="range" id="tbMarkSize" min="10" max="60" value="26"><b id="tbMarkSizeV">26</b></div>
+                <p class="tb-sub">水印叠加在精修后的成片上；平铺模式会自动按画面大小铺满，导出为 ZIP 一次拿走全部样片。</p>
+              </div>
+              <div class="vf-actions">
+                <button class="btn btn-ghost" id="tbExportMarkOne">⬇ 导出当前</button>
+                <button class="btn btn-gold" id="tbExportMarkZip">▤ 批量打包 ZIP</button>
+              </div>
+            </div>
+
+            <div class="vf-actions" style="margin-top:4px"><button class="btn btn-ghost" id="tbRefresh">↻ 刷新预览</button></div>
+            <div class="vf-progress"><span id="tbBar"></span></div>
+            <div class="vf-status" id="tbStatus">图片池就绪。选一张照片，切到上方任意工具即可实时预览并导出。</div>
+          </div>
+
+          <div class="vf-panel vf-stage">
+            <div class="vf-stage-head"><strong id="tbStageTitle">精修预览</strong><span id="tbMeta">—</span></div>
+            <div class="tb-screen"><canvas id="tbCanvas" width="900" height="600"></canvas></div>
+            <div class="tb-splitbar" id="tbSplitBar">原图 <input type="range" id="tbSplit" min="0" max="100" value="52"> 成片 <span class="tb-badge">拖动看前后对比</span></div>
+            <div class="vf-tips">工具箱全部在浏览器本地用 Canvas 完成：调色逐像素处理，照片不上传、不耗积分、静态页也能用。批量导出用自写的 ZIP 打包器（无压缩，浏览器原生可解），一次拿走全部成片。证件照按 300dpi 标准尺寸裁切并可拼成 A4/6 寸冲印版；水印与请柬同样离线生成。</div>
           </div>
         </div>
       </div>
@@ -2644,6 +2863,7 @@ function go(v){
   if (v==='video' && window.WA_VIDEO) WA_VIDEO.ensure();
   if (v==='cut' && window.WA_CUT) WA_CUT.ensure();
   if (v==='aivideo' && window.WA_AIVIDEO) WA_AIVIDEO.ensure();
+  if (v==='tools' && window.WA_TOOLS) WA_TOOLS.ensure();
 }
 
 /* ================= 婚礼中心（首页仪式大屏） ================= */
@@ -2662,6 +2882,7 @@ const WC_QUICK = [
   {v:'aivideo', ico:'✧', t:'AI生成视频'},
   {v:'video',  ico:'▶', t:'照片成片'},
   {v:'cut',    ico:'✂', t:'智能剪辑'},
+  {v:'tools',  ico:'▦', t:'影像工具箱'},
   {v:'swap',   ico:'✧', t:'灵感换装'},
   {v:'works',  ico:'▣', t:'我的作品'},
   {v:'reverse',ico:'⌾', t:'Prompt反推'},
@@ -7623,6 +7844,606 @@ window.WA_CUT = (function(){
             analyzed:C.analyzed,segs:C.segs.length,total:C.total,
             blob:C.blob?C.blob.size:0,score:C.items.map(function(x){return x.score;})}; }};
 })();
+</script>
+<script>
+
+/* ============ 影像工具箱 · v147（纯前端：调色 / 证件冲印 / 电子请柬 / 样片水印 / ZIP 打包） ============ */
+window.WA_TOOLS = (function(){
+  'use strict';
+  var S = {ready:false, tab:'retouch', photos:[], active:0, preset:'classic',
+           logo:null, inviteImg:null, busy:false, last:null};
+  var BUILTIN = ['assets/wedding-photos/hero.jpg','assets/wedding-photos/meadow.jpg',
+                 'assets/wedding-photos/church.jpg','assets/wedding-photos/chinese.jpg',
+                 'assets/wedding-photos/beach.jpg','assets/wedding-photos/palace.jpg'];
+  var PRESETS = {
+    none:    {name:'原图',     exp:100,con:100,sat:100,temp:0,  skin:0, sharp:0, vig:0, sep:0,   gray:0,tint:[0,0,0]},
+    classic: {name:'香槟金',   exp:104,con:106,sat:106,temp:12, skin:22,sharp:16,vig:18,sep:0,   gray:0,tint:[8,3,-5]},
+    film:    {name:'胶片',     exp:100,con:94, sat:88, temp:8,  skin:14,sharp:8, vig:28,sep:0.16,gray:0,tint:[7,1,4]},
+    fresh:   {name:'森系清新', exp:106,con:100,sat:112,temp:-8, skin:18,sharp:14,vig:10,sep:0,   gray:0,tint:[-3,5,1]},
+    chinese: {name:'中式囍韵', exp:102,con:110,sat:114,temp:18, skin:12,sharp:12,vig:20,sep:0,   gray:0,tint:[12,0,-7]},
+    bw:      {name:'黑白',     exp:102,con:112,sat:0,  temp:0,  skin:10,sharp:22,vig:30,sep:0,   gray:1,tint:[0,0,0]}
+  };
+  var TITLES = {retouch:'精修预览 · 拖动滑块看前后对比',idphoto:'证件照 / 冲印排版预览',
+                invite:'电子请柬预览 · 900×1200',mark:'样片水印预览'};
+
+  function el(id){ return document.getElementById(id); }
+  function mk(w,h){ var c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
+  function num(id){ var n=el(id); return n?Number(n.value):0; }
+  function clamp(v){ return v<0?0:(v>255?255:v); }
+  function iw(im){ return im.naturalWidth||im.width||1; }
+  function ih(im){ return im.naturalHeight||im.height||1; }
+  function status(t,bad){ var n=el('tbStatus'); if(n){ n.textContent=t; n.style.color=bad?'#b45f5f':''; } }
+  function meta(t){ var n=el('tbMeta'); if(n) n.textContent=t; }
+  function bar(p){ var n=el('tbBar'); if(n) n.style.width=(p||0)+'%'; }
+  function resize(cv,w,h){ if(cv.width!==w) cv.width=w; if(cv.height!==h) cv.height=h; }
+  function stamp(){ var d=new Date(); return d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'_'+String(d.getHours()).padStart(2,'0')+String(d.getMinutes()).padStart(2,'0'); }
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function safe(n){ return String(n||'photo').replace(/\.[^.]+$/,'').replace(/[^\w\u4e00-\u9fa5-]/g,'_').slice(0,24); }
+  function save(blob,name){
+    if(!blob){ status('导出失败：没有生成文件',true); return; }
+    S.last={name:name,size:blob.size,type:blob.type};
+    var u=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=u; a.download=name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(u); },60000);
+    status('已导出 '+name+'（'+(blob.size/1024).toFixed(0)+' KB）'); bar(100);
+  }
+
+  /* ---- store 模式 ZIP 打包器（无压缩，浏览器原生可解） ---- */
+  var CRCT=(function(){ var t=new Uint32Array(256);
+    for(var n=0;n<256;n++){ var c=n; for(var k=0;k<8;k++) c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1); t[n]=c>>>0; }
+    return t; })();
+  function crc32(u){ var c=0xFFFFFFFF; for(var i=0;i<u.length;i++) c=CRCT[(c^u[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; }
+  function zipOf(files){
+    var parts=[],cd=[],off=0;
+    files.forEach(function(f){
+      var nm=new TextEncoder().encode(f.name),data=f.bytes,crc=crc32(data),n=nm.length,sz=data.length;
+      var lh=new Uint8Array(30+n),d=new DataView(lh.buffer);
+      d.setUint32(0,0x04034b50,true); d.setUint16(4,20,true); d.setUint16(6,0x0800,true);
+      d.setUint16(8,0,true); d.setUint16(10,0,true); d.setUint16(12,0,true);
+      d.setUint32(14,crc,true); d.setUint32(18,sz,true); d.setUint32(22,sz,true);
+      d.setUint16(26,n,true); d.setUint16(28,0,true); lh.set(nm,30);
+      parts.push(lh,data);
+      var ch=new Uint8Array(46+n),q=new DataView(ch.buffer);
+      q.setUint32(0,0x02014b50,true); q.setUint16(4,20,true); q.setUint16(6,20,true);
+      q.setUint16(8,0x0800,true); q.setUint16(10,0,true); q.setUint16(12,0,true); q.setUint16(14,0,true);
+      q.setUint32(16,crc,true); q.setUint32(20,sz,true); q.setUint32(24,sz,true);
+      q.setUint16(28,n,true); q.setUint32(42,off,true); ch.set(nm,46);
+      cd.push(ch); off+=lh.length+sz;
+    });
+    var cs=cd.reduce(function(a,b){ return a+b.length; },0);
+    var e=new Uint8Array(22),ev=new DataView(e.buffer);
+    ev.setUint32(0,0x06054b50,true); ev.setUint16(8,files.length,true); ev.setUint16(10,files.length,true);
+    ev.setUint32(12,cs,true); ev.setUint32(16,off,true);
+    return new Blob(parts.concat(cd,[e]),{type:'application/zip'});
+  }
+  function bytesOf(cv,type,q){
+    return new Promise(function(res){ cv.toBlob(function(b){
+      if(!b){ res(null); return; }
+      var fr=new FileReader();
+      fr.onload=function(){ res(new Uint8Array(fr.result)); };
+      fr.onerror=function(){ res(null); };
+      fr.readAsArrayBuffer(b);
+    },type||'image/png',q); });
+  }
+  function blobOf(cv,type,q){
+    return new Promise(function(res){ cv.toBlob(function(b){ res(b); },type||'image/png',q); });
+  }
+
+  /* ---- 图片池 ---- */
+  function addURL(url,name){
+    if(S.photos.length>=12){ status('图片池已满（上限 12 张）',true); return null; }
+    var im=new Image(), it={name:name,img:im,url:url,ready:false,err:false};
+    S.photos.push(it);
+    im.onload=function(){ it.ready=true; renderThumbs(); if(S.photos[S.active]===it) draw(); };
+    im.onerror=function(){ it.err=true; renderThumbs(); };
+    im.src=url;
+    renderThumbs();
+    return it;
+  }
+  function addFiles(fl){
+    var n=0;
+    [].slice.call(fl||[]).forEach(function(f){
+      if(!/^image\//.test(f.type) || S.photos.length>=12) return;
+      addURL(URL.createObjectURL(f),f.name); n++;
+    });
+    status(n?('已加入 '+n+' 张照片。'):'没有可加入的图片（仅支持图片文件，上限 12 张）。',!n);
+  }
+  function renderThumbs(){
+    var box=el('tbThumbs'); if(!box) return;
+    box.innerHTML='';
+    var c=el('tbCount'); if(c) c.textContent=S.photos.length;
+    if(!S.photos.length){
+      box.innerHTML='<div class="tb-empty">还没有照片。<br>点上方导入，或加载内置样片。</div>'; return;
+    }
+    S.photos.forEach(function(p,i){
+      var d=document.createElement('div'); d.className='tb-thumb'+(i===S.active?' on':'');
+      var im=document.createElement('img'); im.src=p.url;
+      im.onerror=function(){ im.style.visibility='hidden'; };
+      var n=document.createElement('span'); n.className='n'; n.textContent=String(i+1);
+      var x=document.createElement('span'); x.className='x'; x.textContent='×';
+      x.onclick=function(e){ e.stopPropagation(); S.photos.splice(i,1);
+        if(S.active>=S.photos.length) S.active=Math.max(0,S.photos.length-1);
+        renderThumbs(); draw(); };
+      d.onclick=function(){ S.active=i; renderThumbs(); draw(); };
+      d.appendChild(im); d.appendChild(n); d.appendChild(x); box.appendChild(d);
+    });
+  }
+  function cur(){
+    var p=S.photos[S.active]; if(p&&p.ready&&!p.err) return p;
+    for(var i=0;i<S.photos.length;i++){ var q=S.photos[i]; if(q.ready&&!q.err){ S.active=i; return q; } }
+    return null;
+  }
+
+  /* ---- 调色管线 ---- */
+  function cfg(){
+    var p=PRESETS[S.preset]||PRESETS.classic;
+    return {exp:num('tbExp')/100,con:num('tbCon')/100,sat:num('tbSat')/100,
+            temp:num('tbTemp'),skin:num('tbSkin')/100,sharp:num('tbSharp')/100,
+            vig:num('tbVig')/100,sep:p.sep,gray:p.gray,tint:p.tint};
+  }
+  function sharpen(g,w,h,k){
+    var src=g.getImageData(0,0,w,h),out=g.createImageData(w,h),a=src.data,b=out.data;
+    b.set(a); var K=k*0.7;
+    for(var y=1;y<h-1;y++){ var row=y*w;
+      for(var x=1;x<w-1;x++){ var q=(row+x)*4,qm=q-w*4,qp=q+w*4;
+        for(var ch=0;ch<3;ch++){
+          var v=a[q+ch]*(1+4*K)-K*(a[q-4+ch]+a[q+4+ch]+a[qm+ch]+a[qp+ch]);
+          b[q+ch]=v<0?0:(v>255?255:v);
+        } } }
+    g.putImageData(out,0,0);
+  }
+  function process(img,c,max){
+    var iw0=iw(img),ih0=ih(img),sc=Math.min(1,(max||1400)/Math.max(iw0,ih0));
+    var w=Math.max(1,Math.round(iw0*sc)),h=Math.max(1,Math.round(ih0*sc));
+    var cv=mk(w,h),g=cv.getContext('2d',{willReadFrequently:true});
+    var f='brightness('+c.exp+') contrast('+c.con+') saturate('+c.sat+')';
+    if(c.sep) f+=' sepia('+c.sep+')';
+    if(c.gray) f+=' grayscale(1)';
+    g.filter=f; g.drawImage(img,0,0,w,h); g.filter='none';
+    var t=c.temp*0.42,tr=c.tint[0],tg=c.tint[1],tb=c.tint[2];
+    if(t||tr||tg||tb){
+      var d=g.getImageData(0,0,w,h),p=d.data;
+      for(var i=0;i<p.length;i+=4){ p[i]=clamp(p[i]+t+tr); p[i+1]=clamp(p[i+1]+tg); p[i+2]=clamp(p[i+2]-t+tb); }
+      g.putImageData(d,0,0);
+    }
+    if(c.skin>0){
+      var b=mk(w,h),bg=b.getContext('2d');
+      bg.filter='blur('+(1+c.skin*2.2)+'px)'; bg.drawImage(cv,0,0); bg.filter='none';
+      g.save(); g.globalAlpha=c.skin*0.5; g.drawImage(b,0,0); g.restore();
+    }
+    if(c.sharp>0) sharpen(g,w,h,c.sharp*0.85);
+    if(c.vig>0){
+      var rg=g.createRadialGradient(w/2,h/2,Math.min(w,h)*0.28,w/2,h/2,Math.max(w,h)*0.72);
+      rg.addColorStop(0,'rgba(0,0,0,0)');
+      rg.addColorStop(1,'rgba(18,12,6,'+(c.vig*0.62).toFixed(3)+')');
+      g.fillStyle=rg; g.fillRect(0,0,w,h);
+    }
+    return cv;
+  }
+  function drawCover(g,im,W,H){
+    var w=iw(im),h=ih(im),s=Math.max(W/w,H/h),dw=w*s,dh=h*s;
+    g.drawImage(im,(W-dw)/2,(H-dh)/2,dw,dh);
+  }
+  function placeholder(g,W,H,t){
+    g.fillStyle='#17120d'; g.fillRect(0,0,W,H);
+    g.fillStyle='rgba(240,226,204,.72)'; g.textAlign='center';
+    g.font='18px Georgia,"Noto Serif SC",serif';
+    g.fillText(t||'图片加载中 · 稍候或导入本地照片',W/2,H/2-6);
+    g.font='12px Georgia,serif'; g.fillStyle='rgba(240,226,204,.42)';
+    g.fillText('照片不上传 · 全部在浏览器本地处理',W/2,H/2+22);
+  }
+  function drawRetouch(cv){
+    var W=900,H=600; resize(cv,W,H);
+    var g=cv.getContext('2d'); g.fillStyle='#17120d'; g.fillRect(0,0,W,H);
+    var p=cur(); if(!p){ placeholder(g,W,H); meta('—'); return; }
+    var done=process(p.img,cfg(),900), sp=num('tbSplit')/100*W;
+    g.save(); g.beginPath(); g.rect(0,0,sp,H); g.clip(); drawCover(g,p.img,W,H); g.restore();
+    g.save(); g.beginPath(); g.rect(sp,0,W-sp,H); g.clip(); drawCover(g,done,W,H); g.restore();
+    g.fillStyle='rgba(240,226,204,.9)'; g.fillRect(sp-1,0,2,H);
+    g.fillStyle='rgba(20,14,9,.55)'; g.fillRect(10,10,74,24); g.fillRect(W-84,10,74,24);
+    g.fillStyle='rgba(240,226,204,.9)'; g.font='11px Georgia,serif'; g.textAlign='center';
+    g.fillText('原图',47,26); g.fillText('成片',W-47,26);
+    meta('900×600 · '+PRESETS[S.preset].name+' · '+p.name.slice(0,16));
+  }
+
+  /* ---- 证件照 / 冲印排版 ---- */
+  function hex2rgb(h){ return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]; }
+  function sizeSpec(){ var a=(el('tbSize')?el('tbSize').value:'295,413,1').split(','); return [Number(a[0]),Number(a[1])]; }
+  function makeId(img,tw,th,sc){
+    sc=sc||1; var w=Math.max(1,Math.round(tw*sc)),h=Math.max(1,Math.round(th*sc));
+    var cv=mk(w,h),g=cv.getContext('2d',{willReadFrequently:true});
+    var a=iw(img),b=ih(img),s=Math.max(w/a,h/b),dw=a*s,dh=b*s;
+    g.drawImage(img,(w-dw)/2,(h-dh)/2,dw,dh);
+    var bg=el('tbBg')?el('tbBg').value:'none';
+    if(bg!=='none') keyBg(cv,bg,num('tbTol'));
+    return cv;
+  }
+  function keyBg(cv,hex,tol){
+    /* 先在小图上做「从四边连通」的背景标记：人物即使与背景颜色接近，
+       只要不与画面边缘连通就不会被替换，避免把婚纱/皮肤误抠成底色。 */
+    var g=cv.getContext('2d',{willReadFrequently:true}),w=cv.width,h=cv.height;
+    var sw=Math.min(400,w),sh=Math.max(1,Math.round(h*sw/w));
+    var tmp=mk(sw,sh),tg=tmp.getContext('2d',{willReadFrequently:true});
+    tg.drawImage(cv,0,0,sw,sh);
+    var sd=tg.getImageData(0,0,sw,sh).data,sr=0,sg=0,sb=0,n=0;
+    function samp(x0,y0,x1,y1){ for(var y=y0;y<y1;y+=2) for(var x=x0;x<x1;x+=2){
+      var q=(y*sw+x)*4; sr+=sd[q]; sg+=sd[q+1]; sb+=sd[q+2]; n++; } }
+    var bw=Math.max(2,Math.round(sw*0.09)),bh=Math.max(2,Math.round(sh*0.09));
+    samp(0,0,bw,bh); samp(sw-bw,0,sw,bh); samp(0,sh-bh,bw,sh); samp(sw-bw,sh-bh,sw,sh);
+    if(!n) return;
+    var br=sr/n,bgc=sg/n,bb=sb/n,t2=tol*tol;
+    var mask=new Uint8Array(sw*sh),stack=[];
+    function sim(i){ var q=i*4,dr=sd[q]-br,dg=sd[q+1]-bgc,db=sd[q+2]-bb;
+      return (dr*dr+dg*dg+db*db)<t2; }
+    function seed(x,y){ var i=y*sw+x; if(!mask[i]&&sim(i)){ mask[i]=1; stack.push(i); } }
+    for(var x=0;x<sw;x++){ seed(x,0); seed(x,sh-1); }
+    for(var y=0;y<sh;y++){ seed(0,y); seed(sw-1,y); }
+    while(stack.length){
+      var i=stack.pop(),cy=Math.floor(i/sw),cx=i-cy*sw;
+      if(cx>0) seed(cx-1,cy); if(cx<sw-1) seed(cx+1,cy);
+      if(cy>0) seed(cx,cy-1); if(cy<sh-1) seed(cx,cy+1);
+    }
+    var d=g.getImageData(0,0,w,h),p=d.data,rgb=hex2rgb(hex);
+    for(var yy=0;yy<h;yy++){
+      var my=Math.min(sh-1,Math.floor(yy*sh/h));
+      for(var xx=0;xx<w;xx++){
+        var mx=Math.min(sw-1,Math.floor(xx*sw/w)),cnt=0;
+        for(var dy=-1;dy<=1;dy++) for(var dx=-1;dx<=1;dx++){
+          var ny=my+dy,nx=mx+dx;
+          if(ny>=0&&ny<sh&&nx>=0&&nx<sw) cnt+=mask[ny*sw+nx];
+        }
+        if(!cnt) continue;
+        var a=1-cnt/9,q=(yy*w+xx)*4;
+        p[q]=clamp(p[q]*a+rgb[0]*(1-a));
+        p[q+1]=clamp(p[q+1]*a+rgb[1]*(1-a));
+        p[q+2]=clamp(p[q+2]*a+rgb[2]*(1-a));
+      }
+    }
+    g.putImageData(d,0,0);
+  }
+  function makeSheet(idc,sc){
+    sc=sc||1; var paper=el('tbPaper')?el('tbPaper').value:'a4';
+    var PW,PH;
+    if(paper==='a4'){ PW=2480;PH=3508; } else { PW=1800;PH=1200; }
+    PW=Math.round(PW*sc); PH=Math.round(PH*sc);
+    var cols=Math.max(1,num('tbCols')||2),copies=Math.max(1,Math.min(24,num('tbCopies')||8));
+    var cv=mk(PW,PH),g=cv.getContext('2d');
+    g.fillStyle='#fff'; g.fillRect(0,0,PW,PH);
+    var gap=Math.max(2,Math.round(Math.min(PW,PH)*0.02));
+    var cw=(PW-gap*(cols+1))/cols, ch=cw*idc.height/idc.width;
+    var rows=Math.floor((PH-gap)/(ch+gap));
+    for(var i=0;i<copies&&i<cols*rows;i++){
+      var x=gap+(i%cols)*(cw+gap), y=gap+Math.floor(i/cols)*(ch+gap);
+      g.drawImage(idc,x,y,cw,ch);
+      g.strokeStyle='rgba(0,0,0,.10)'; g.lineWidth=Math.max(1,Math.round(2*sc));
+      g.strokeRect(x,y,cw,ch);
+    }
+    return cv;
+  }
+  function drawId(cv){
+    var W=900,H=600; resize(cv,W,H);
+    var g=cv.getContext('2d'); g.fillStyle='#17120d'; g.fillRect(0,0,W,H);
+    var p=cur(); if(!p){ placeholder(g,W,H); meta('—'); return; }
+    var sp=sizeSpec(),k=Math.min(1,360/Math.max(sp[0],sp[1]));
+    var idc=makeId(p.img,sp[0],sp[1],k);
+    var ih0=Math.min(500,H-60),iw0=Math.round(ih0*idc.width/idc.height);
+    g.fillStyle='rgba(255,255,255,.05)'; g.fillRect(20,30,W-40,H-60);
+    g.drawImage(idc,40+(360-iw0)/2,(H-ih0)/2,iw0,ih0);
+    var paper=el('tbPaper')?el('tbPaper').value:'a4';
+    if(paper!=='none'){
+      var sh2=makeSheet(idc,0.13);
+      var sw=Math.min(400,sh2.width),sh2h=Math.round(sh2.height*sw/sh2.width);
+      if(sh2h>H-60){ sw=Math.round(sw*(H-60)/sh2h); sh2h=H-60; }
+      g.fillStyle='#f6f1e9'; g.fillRect(W-sw-30,(H-sh2h)/2-3,sw+6,sh2h+6);
+      g.drawImage(sh2,W-sw-30,(H-sh2h)/2,sw,sh2h);
+      g.fillStyle='rgba(240,226,204,.6)'; g.font='11px Georgia,serif'; g.textAlign='left';
+      g.fillText('单张 '+sp[0]+'×'+sp[1],40,H-24);
+      g.textAlign='right'; g.fillText('冲印版缩略',W-30,H-24);
+    } else {
+      g.fillStyle='rgba(240,226,204,.6)'; g.font='11px Georgia,serif'; g.textAlign='center';
+      g.fillText('单张 '+sp[0]+'×'+sp[1]+' · 未排版',W/2,H-24);
+    }
+    meta(sp[0]+'×'+sp[1]+' · @300dpi');
+  }
+
+  /* ---- 电子请柬 ---- */
+  function inviteCanvas(){
+    var W=900,H=1200,cv=mk(W,H),g=cv.getContext('2d');
+    var srcMode=el('tbInviteSrc')?el('tbInviteSrc').value:'current';
+    var im=(srcMode==='hero'&&S.inviteImg&&S.inviteImg.complete&&S.inviteImg.naturalWidth)?S.inviteImg:(cur()?cur().img:null);
+    var st=el('tbStyle')?el('tbStyle').value:'chinese';
+    var P={chinese:{c:'#e7c98b',d:'#8f2b26',sub:'#f3dfc0'},
+           classic:{c:'#d8b779',d:'#7a5a2c',sub:'#f7ecd9'},
+           fresh:{c:'#c9dcc2',d:'#3d5a3a',sub:'#f2f7ee'},
+           ocean:{c:'#a9cde0',d:'#2c5570',sub:'#eef6fa'}}[st];
+    if(im&&iw(im)>1) drawCover(g,im,W,H);
+    else { var lg=g.createLinearGradient(0,0,W,H); lg.addColorStop(0,'#3b2b22'); lg.addColorStop(1,'#17120d'); g.fillStyle=lg; g.fillRect(0,0,W,H); }
+    var sh=g.createLinearGradient(0,0,0,H);
+    sh.addColorStop(0,'rgba(18,12,8,.46)');     sh.addColorStop(.42,'rgba(18,12,8,.36)');
+    sh.addColorStop(1,'rgba(12,8,5,.82)'); g.fillStyle=sh; g.fillRect(0,0,W,H);
+    g.strokeStyle=P.c; g.globalAlpha=.82; g.lineWidth=2;
+    g.strokeRect(46,46,W-92,H-92); g.globalAlpha=.4; g.lineWidth=1;
+    g.strokeRect(58,58,W-116,H-116); g.globalAlpha=1;
+    g.textAlign='center';
+    g.shadowColor='rgba(0,0,0,.62)'; g.shadowBlur=10; g.shadowOffsetY=2;
+    if(st==='chinese'){
+      g.globalAlpha=.10; g.fillStyle=P.c; g.font='380px Georgia,"Noto Serif SC",serif';
+      g.fillText('囍',W/2,470); g.globalAlpha=1;
+    } else if(st==='ocean'){
+      g.strokeStyle=P.c; g.globalAlpha=.45; g.lineWidth=2;
+      for(var i=0;i<3;i++){ g.beginPath();
+        for(var x=70;x<W-70;x+=8){ var y=980+i*22+Math.sin((x/90)+i)*9; if(x===70)g.moveTo(x,y);else g.lineTo(x,y); }
+        g.stroke(); }
+      g.globalAlpha=1;
+    } else if(st==='fresh'){
+      g.strokeStyle=P.c; g.globalAlpha=.5; g.lineWidth=2;
+      g.beginPath(); g.arc(W/2,300,120,0.15*Math.PI,0.85*Math.PI); g.stroke();
+      g.beginPath(); g.arc(W/2,300,132,0.18*Math.PI,0.82*Math.PI); g.stroke(); g.globalAlpha=1;
+    }
+    g.fillStyle=P.c; g.font='26px Georgia,"Noto Serif SC",serif';
+    g.fillText('—  W E D D I N G  I N V I T A T I O N  —',W/2,168);
+    g.font='22px Georgia,"Noto Serif SC",serif'; g.fillStyle=P.sub;
+    g.fillText('敬 邀',W/2,258);
+    g.fillStyle=P.c; g.font='62px Georgia,"Noto Serif SC",serif';
+    g.fillText((el('tbNames')?el('tbNames').value:'')||'新人姓名',W/2,420);
+    g.strokeStyle=P.c; g.globalAlpha=.7; g.lineWidth=1.5;
+    g.beginPath(); g.moveTo(W/2-130,456); g.lineTo(W/2+130,456); g.stroke(); g.globalAlpha=1;
+    g.fillStyle=P.sub; g.font='30px Georgia,"Noto Serif SC",serif';
+    g.fillText((el('tbDate')?el('tbDate').value:''),W/2,540);
+    g.font='22px Georgia,"Noto Serif SC",serif';
+    g.fillText((el('tbPlace')?el('tbPlace').value:''),W/2,594);
+    var words=(el('tbWords')?el('tbWords').value:'').trim();
+    if(words){
+      g.font='21px Georgia,"Noto Serif SC",serif'; g.globalAlpha=.92;
+      var line='',yy=760,maxW=W-190;
+      for(var ci=0;ci<words.length;ci++){
+        var t=line+words[ci];
+        if(g.measureText(t).width>maxW){ g.fillText(line,W/2,yy); yy+=38; line=words[ci]; }
+        else line=t;
+      }
+      if(line) g.fillText(line,W/2,yy);
+      g.globalAlpha=1;
+    }
+    g.fillStyle=P.c; g.font='20px Georgia,"Noto Serif SC",serif';
+    g.fillText((el('tbGuest')?el('tbGuest').value:''),W/2,1080);
+    return cv;
+  }
+  function drawInvite(cv){ var c=inviteCanvas(); resize(cv,900,1200); cv.getContext('2d').drawImage(c,0,0); meta('900 × 1200 PNG'); }
+
+  /* ---- 样片水印 ---- */
+  function drawWatermark(g,w,h){
+    var txt=(el('tbMarkText')?el('tbMarkText').value:'').trim();
+    var sub=(el('tbMarkSub')?el('tbMarkSub').value:'').trim();
+    var a=num('tbMarkAlpha')/100, fs=Math.max(10,Math.round(w*num('tbMarkSize')/1000));
+    var rot=Number(el('tbMarkRot')?el('tbMarkRot').value:0)*Math.PI/180;
+    var pos=el('tbMarkPos')?el('tbMarkPos').value:'tile';
+    g.save(); g.globalAlpha=a; g.textBaseline='middle'; g.textAlign='center';
+    g.fillStyle='#ffffff'; g.strokeStyle='rgba(0,0,0,.45)'; g.lineWidth=Math.max(1,fs/16);
+    function one(x,y,k){
+      g.save(); g.translate(x,y); g.rotate(rot); g.font=Math.round(fs*k)+'px Georgia,"Noto Serif SC",serif';
+      if(txt){ g.strokeText(txt,0,0); g.fillText(txt,0,0); }
+      if(sub){ g.font=Math.round(fs*k*0.58)+'px Georgia,"Noto Serif SC",serif';
+        g.strokeText(sub,0,fs*k*1.15); g.fillText(sub,0,fs*k*1.15); }
+      if(S.logo&&S.logo.ready&&S.logo.img&&S.logo.img.naturalWidth){
+        var lw=fs*k*2.2,lh=lw*S.logo.img.naturalHeight/S.logo.img.naturalWidth;
+        g.globalAlpha=a*0.9; g.drawImage(S.logo.img,-lw/2,-fs*k*2.6-lh,lw,lh); g.globalAlpha=a;
+      }
+      g.restore();
+    }
+    if(pos==='tile'){
+      var sx=Math.max(fs*6.2,txt.length*fs*0.85+fs*3),sy=fs*4.4;
+      for(var y=-h*0.3;y<h*1.3;y+=sy) for(var x=-w*0.3;x<w*1.3;x+=sx) one(x,y,1);
+    } else {
+      var mx=w*0.5,my=h*0.5;
+      if(pos.indexOf('l')>=0) mx=w*0.22; else if(pos.indexOf('r')>=0) mx=w*0.78;
+      if(pos.indexOf('t')>=0) my=h*0.14; else if(pos.indexOf('b')>=0) my=h*0.86;
+      one(mx,my,1.4);
+    }
+    g.restore();
+  }
+  function markCanvas(img,max){
+    var cv=process(img,cfg(),max||1200),g=cv.getContext('2d');
+    drawWatermark(g,cv.width,cv.height); return cv;
+  }
+  function drawMark(cv){
+    var W=900,H=600; resize(cv,W,H);
+    var g=cv.getContext('2d'); g.fillStyle='#17120d'; g.fillRect(0,0,W,H);
+    var p=cur(); if(!p){ placeholder(g,W,H); meta('—'); return; }
+    var done=markCanvas(p.img,900);
+    drawCover(g,done,W,H);
+    meta('900×600 · '+(el('tbMarkPos')?el('tbMarkPos').value:'tile')+' · '+num('tbMarkAlpha')+'%');
+  }
+
+  /* ---- 绘制调度 / 导出 ---- */
+  function draw(){
+    var cv=el('tbCanvas'); if(!cv) return;
+    try{
+      if(S.tab==='retouch') drawRetouch(cv);
+      else if(S.tab==='idphoto') drawId(cv);
+      else if(S.tab==='invite') drawInvite(cv);
+      else drawMark(cv);
+    }catch(e){ status('预览出错：'+e.message,true); }
+  }
+  function changeTab(t){
+    S.tab=t;
+    document.querySelectorAll('#tbTabs .tb-tab').forEach(function(b){ b.classList.toggle('on',b.dataset.t===t); });
+    document.querySelectorAll('#v-tools .tb-pane').forEach(function(p){ p.classList.toggle('on',p.dataset.p===t); });
+    var h=el('tbStageTitle'); if(h) h.textContent=TITLES[t]||'预览';
+    var sb=el('tbSplitBar'); if(sb) sb.style.display=(t==='retouch')?'flex':'none';
+    draw();
+  }
+  function currentCanvas(kind){
+    var p=cur();
+    if(kind==='invite') return inviteCanvas();
+    if(!p) return null;
+    if(kind==='id'){ var s=sizeSpec(); return makeId(p.img,s[0],s[1],1); }
+    if(kind==='sheet'){ var s2=sizeSpec(); return makeSheet(makeId(p.img,s2[0],s2[1],1),1); }
+    if(kind==='mark') return markCanvas(p.img,1600);
+    return process(p.img,cfg(),1600);
+  }
+  function exportCurrent(kind,name,type){
+    var cv=currentCanvas(kind);
+    if(!cv){ status('当前图片还没加载好，稍候再试',true); return Promise.resolve(null); }
+    status('正在生成 '+name+' …'); bar(30);
+    return blobOf(cv,type||'image/png').then(function(b){
+      if(b) save(b,name); else status('导出失败：浏览器未返回文件',true);
+      return b;
+    });
+  }
+  function buildZip(kind){
+    var list=S.photos.filter(function(p){ return p.ready&&!p.err; });
+    if(!list.length) return Promise.resolve(null);
+    return Promise.all(list.map(function(p,i){
+      var cv=(kind==='mark')?markCanvas(p.img,1400):process(p.img,cfg(),1400);
+      return bytesOf(cv,'image/jpeg',0.9).then(function(bs){
+        if(!bs) return null;
+        return {name:pad(i+1)+'_'+(kind==='mark'?'sample':'retouch')+'_'+safe(p.name)+'.jpg',bytes:bs};
+      });
+    })).then(function(arr){
+      var jobs=arr.filter(Boolean);
+      return jobs.length?zipOf(jobs):null;
+    });
+  }
+  function exportZip(kind){
+    if(S.busy) return;
+    S.busy=true; bar(8); status('正在逐张处理并打包…');
+    buildZip(kind).then(function(z){
+      S.busy=false;
+      if(z) save(z,'wedding_'+(kind==='mark'?'samples':'retouch')+'_'+stamp()+'.zip');
+      else status('没有可导出的图片（图片可能还在加载）',true);
+    }).catch(function(e){ S.busy=false; status('打包失败：'+e.message,true); });
+  }
+
+  /* ---- 绑定 ---- */
+  function buildPresets(){
+    var box=el('tbPresets'); if(!box) return;
+    box.innerHTML='';
+    Object.keys(PRESETS).forEach(function(k){
+      var b=document.createElement('button'); b.className='tb-preset'+(k===S.preset?' on':'');
+      b.textContent=PRESETS[k].name; b.dataset.k=k;
+      b.onclick=function(){
+        S.preset=k; var p=PRESETS[k];
+        [['tbExp',p.exp],['tbCon',p.con],['tbSat',p.sat],['tbTemp',p.temp],
+         ['tbSkin',p.skin],['tbSharp',p.sharp],['tbVig',p.vig]].forEach(function(x){
+          var n=el(x[0]); if(n) n.value=x[1]; });
+        syncLabels();
+        document.querySelectorAll('#tbPresets .tb-preset').forEach(function(o){ o.classList.toggle('on',o.dataset.k===k); });
+        draw(); status('已套用「'+p.name+'」预设。');
+      };
+      box.appendChild(b);
+    });
+  }
+  function syncLabels(){
+    [['tbExp','tbExpV',100,2],['tbCon','tbConV',100,2],['tbSat','tbSatV',100,2],
+     ['tbTemp','tbTempV',1,0],['tbSkin','tbSkinV',1,0],['tbSharp','tbSharpV',1,0],
+     ['tbVig','tbVigV',1,0],['tbTol','tbTolV',1,0],['tbMarkSize','tbMarkSizeV',1,0]].forEach(function(x){
+      var n=el(x[0]),v=el(x[1]); if(n&&v) v.textContent=x[2]===100?(n.value/x[2]).toFixed(2):String(Math.round(n.value));
+    });
+    var a=el('tbMarkAlphaV'),n=el('tbMarkAlpha'); if(a&&n) a.textContent=n.value+'%';
+  }
+  function bind(){
+    var f=el('tbFile'); if(f) f.onchange=function(){ addFiles(f.files); f.value=''; };
+    var lg=el('tbLogo'); if(lg) lg.onchange=function(){
+      var fl=lg.files&&lg.files[0]; if(!fl) return;
+      var im=new Image(); S.logo={img:im,ready:false};
+      im.onload=function(){ S.logo.ready=true; draw(); status('LOGO 已载入。'); };
+      im.src=URL.createObjectURL(fl); lg.value='';
+    };
+    var bi=el('tbBuiltin'); if(bi) bi.onclick=function(){
+      var n=0; BUILTIN.forEach(function(u,i){
+        if(S.photos.length>=12) return;
+        if(S.photos.some(function(p){ return p.url===u; })) return;
+        addURL(u,'样片 '+(i+1)); n++;
+      });
+      status(n?('已加入 '+n+' 张内置样片（加载中，稍候自动刷新预览）。'):'内置样片已在图片池里。');
+      setTimeout(draw,1800);
+    };
+    var cl=el('tbClear'); if(cl) cl.onclick=function(){ S.photos=[]; S.active=0; renderThumbs(); draw(); status('图片池已清空。'); };
+    document.querySelectorAll('#tbTabs .tb-tab').forEach(function(b){
+      b.onclick=function(){ changeTab(b.dataset.t); };
+    });
+    ['tbExp','tbCon','tbSat','tbTemp','tbSkin','tbSharp','tbVig','tbTol','tbMarkAlpha','tbMarkSize','tbSplit'].forEach(function(id){
+      var n=el(id); if(!n) return;
+      n.addEventListener('input',function(){ syncLabels(); if(S.tab!=='invite') draw(); });
+    });
+    ['tbSize','tbBg','tbPaper','tbCols','tbCopies','tbStyle','tbInviteSrc','tbMarkPos','tbMarkRot','tbMarkText','tbMarkSub','tbNames','tbDate','tbPlace','tbGuest','tbWords'].forEach(function(id){
+      var n=el(id); if(!n) return;
+      var h=function(){ draw(); };
+      n.addEventListener('input',h); n.addEventListener('change',h);
+    });
+    var rs=el('tbReset'); if(rs) rs.onclick=function(){
+      [['tbExp',100],['tbCon',100],['tbSat',100],['tbTemp',0],['tbSkin',0],['tbSharp',0],['tbVig',0]].forEach(function(x){
+        var n=el(x[0]); if(n) n.value=x[1]; });
+      S.preset='none'; syncLabels();
+      document.querySelectorAll('#tbPresets .tb-preset').forEach(function(o){ o.classList.toggle('on',o.dataset.k==='none'); });
+      draw(); status('参数已复位。');
+    };
+    var ca=el('tbCopyAll'); if(ca) ca.onclick=function(){
+      status('参数对图片池内全部 '+S.photos.length+' 张照片生效，打包导出时会逐张套用。'); bar(100);
+    };
+    var rf=el('tbRefresh'); if(rf) rf.onclick=function(){ draw(); status('预览已刷新。'); };
+    [['tbExportOne','retouch','wedding_retouch_'+stamp()+'.png'],
+     ['tbExportId','id','wedding_id_'+stamp()+'.png'],
+     ['tbExportSheet','sheet','wedding_print_'+stamp()+'.png'],
+     ['tbExportInvite','invite','wedding_invite_'+stamp()+'.png'],
+     ['tbExportMarkOne','mark','wedding_sample_'+stamp()+'.png']].forEach(function(x){
+      var n=el(x[0]); if(n) n.onclick=function(){ exportCurrent(x[1],x[2],'image/png'); };
+    });
+    var z1=el('tbExportZip'); if(z1) z1.onclick=function(){ exportZip('retouch'); };
+    var z2=el('tbExportMarkZip'); if(z2) z2.onclick=function(){ exportZip('mark'); };
+  }
+  function ensure(){
+    if(S.ready) return; S.ready=true;
+    buildPresets(); bind(); syncLabels();
+    S.inviteImg=new Image(); S.inviteImg.onload=function(){ if(S.tab==='invite') draw(); };
+    S.inviteImg.src=BUILTIN[0];
+    addURL(BUILTIN[0],'样片 · 主视觉');
+    addURL(BUILTIN[1],'样片 · 草地');
+    changeTab('retouch');
+    status('图片池载入中。选一张照片，切到上方任意工具即可实时预览并导出。');
+    setTimeout(draw,2200);
+  }
+  return {
+    ensure:ensure, draw:draw, tab:changeTab, addFiles:addFiles,
+    exportCurrent:exportCurrent, buildZip:buildZip,
+    /* 供自动化验证：返回普通对象，不触发任何下载 */
+    make:function(kind){
+      var cv=currentCanvas(kind);
+      if(!cv) return Promise.resolve(null);
+      return blobOf(cv).then(function(bb){ return bb?{size:bb.size,type:bb.type,w:cv.width,h:cv.height}:null; });
+    },
+    zip:function(kind){ return buildZip(kind||'retouch').then(function(z){ return z?{size:z.size,type:z.type}:null; }); },
+    zipProbe:function(kind){
+      return buildZip(kind||'retouch').then(function(z){
+        if(!z) return null;
+        return z.arrayBuffer().then(function(ab){
+          var u=new Uint8Array(ab),d=new DataView(ab),eo=0;
+          for(var i=u.length-22;i>=Math.max(0,u.length-65557);i--)
+            if(d.getUint32(i,true)===0x06054b50){ eo=i; break; }
+          var count=eo?d.getUint16(eo+10,true):0,co=eo?d.getUint32(eo+16,true):0;
+          var local=d.getUint32(0,true),central=co?d.getUint32(co,true):0;
+          var str='',CH=0x8000;
+          for(var j=0;j<u.length;j+=CH) str+=String.fromCharCode.apply(null,u.subarray(j,j+CH));
+          return {size:u.length,local:local,central:central,eocd:eo?d.getUint32(eo,true):0,count:count,
+                  ok:(local===0x04034b50&&central===0x02014b50&&count>0),b64:btoa(str)};
+        });
+      });
+    },
+    pixels:function(){
+      var p=cur(); if(!p) return null;
+      var c=process(p.img,cfg(),200),g=c.getContext('2d');
+      var d=g.getImageData(Math.floor(c.width/2),Math.floor(c.height/2),1,1).data;
+      var t=mk(200,200),tg=t.getContext('2d'); drawCover(tg,p.img,200,200);
+      var o=tg.getImageData(100,100,1,1).data;
+      return {orig:[o[0],o[1],o[2]],done:[d[0],d[1],d[2]]};
+    },
+    state:function(){ return {ready:S.ready,tab:S.tab,photos:S.photos.length,
+      readyCount:S.photos.filter(function(p){ return p.ready&&!p.err; }).length,
+      active:S.active,preset:S.preset,busy:S.busy,last:S.last,
+      canvas:(function(){ var c=el('tbCanvas'); return c?[c.width,c.height]:[0,0]; })()}; }
+  };
+})();
+
 </script>
 
 </body>
