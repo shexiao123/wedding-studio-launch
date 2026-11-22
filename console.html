@@ -722,20 +722,26 @@ table.tbl tr:hover td{background:var(--soft)}
 .theme-sw .c2{height:12px;display:block}
 .theme-sw span{display:block;font-size:10px;color:var(--ink2);padding:3px 0 4px;background:var(--panel)}
 
-/* ================= 小精灵（桌面宠物） ================= */
-#fairy{position:fixed;z-index:180;width:96px;height:120px;cursor:pointer;
-  transition:left 2.6s cubic-bezier(.45,.05,.55,.95), top 2.6s cubic-bezier(.45,.05,.55,.95);
-  pointer-events:auto;user-select:none;filter:drop-shadow(0 6px 10px rgba(0,0,0,.12))}
-#fairy .body-bob{animation:fairy-bob 2.2s ease-in-out infinite}
-@keyframes fairy-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
-#fairy .wing-l,#fairy .wing-r{transform-origin:60px 52px;animation:wing .28s ease-in-out infinite alternate}
-#fairy .wing-r{animation-name:wing-r}
-@keyframes wing{from{transform:rotate(-8deg) scaleX(1)}to{transform:rotate(16deg) scaleX(.82)}}
-@keyframes wing-r{from{transform:rotate(8deg) scaleX(1)}to{transform:rotate(-16deg) scaleX(.82)}}
-#fairy .wand-tip{animation:sparkle 1.6s ease-in-out infinite}
-@keyframes sparkle{0%,100%{opacity:.25;r:2}50%{opacity:1;r:3.4}}
-#fairy .blink{animation:blink 4.6s infinite}
-@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%,98%{transform:scaleY(.08)}}
+/* ================= 桌宠 dsh-pet（透明动画 · 替代旧 SVG 小精灵） =================
+   素材: dsh-pet 0.4.5 by PC2005-cloud / https://github.com/PC2005-cloud/dsh-pet
+   许可: 代码 MIT；素材禁止商用；二创在公开渠道须署名（见 assets/pet/CREDITS.md）
+   交互为本项目自实现: 双缓冲交叉淡入 + 拖拽甩抛 + 自动漫游 + 点击回应
+   ============================================================================ */
+#fairy{position:fixed;z-index:180;width:360px;height:203px;
+  transition:left 2.6s cubic-bezier(.45,.05,.55,.95),top 2.6s cubic-bezier(.45,.05,.55,.95),transform .3s ease;
+  pointer-events:none;user-select:none;touch-action:none;
+  filter:drop-shadow(0 8px 14px rgba(0,0,0,.18))}
+#fairy .pet-hit{position:absolute;left:50%;top:52%;width:150px;height:170px;
+  transform:translate(-50%,-50%);pointer-events:auto;cursor:grab;touch-action:none}
+#fairy.dragging,#fairy.throwing{transition:none;cursor:grabbing}
+#fairy.flip{transform:scaleX(-1)}
+#fairy video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  pointer-events:none;opacity:0;transition:opacity .26s ease}
+#fairy video.on{opacity:1}
+#fairy img.pet-fallback{position:absolute;left:50%;top:50%;width:118px;height:118px;
+  transform:translate(-50%,-50%);object-fit:contain;pointer-events:none;display:none}
+#fairy.no-alpha img.pet-fallback{display:block}
+#fairy.no-alpha video{display:none}
 .fairy-bubble{position:fixed;z-index:181;max-width:230px;background:var(--panel);
   border:1px solid var(--line);border-radius:14px;border-bottom-left-radius:4px;
   box-shadow:var(--shadow);padding:10px 13px;font-size:12px;color:var(--ink2);
@@ -1254,7 +1260,7 @@ table.tbl td{transition:background .15s}
     <div class="spacer" data-page-node-id="1ZDAwvsgjHmp3k9eJeqHuf"></div>
     <button class="btn btn-ghost bell-btn" id="bellBtn" onclick="openNotifications(event)" title="通知中心" data-page-node-id="REyAuNRlsNWG83hzLTkWTk">🔔<span class="bell-badge hidden" id="bellBadge" data-page-node-id="LGYmAPYpOXq0RZ8gpAFuYR"></span></button>
     <button class="btn btn-ghost" id="themeBtn" onclick="toggleThemePop(event)" title="更换主题" data-page-node-id="bRj78VndQ0LVfMZmXQP8Sb">🎨 主题</button>
-    <button class="btn btn-ghost" id="fairyBtn" onclick="toggleFairy()" title="小精灵" data-page-node-id="AXR2hvP84V5nQme0LKTFlW">🧚 小精灵</button>
+    <button class="btn btn-ghost" id="fairyBtn" onclick="toggleFairy()" title="桌宠" data-page-node-id="AXR2hvP84V5nQme0LKTFlW">🐳 桌宠</button>
     <div class="userchip" id="userchip" style="display:none" data-page-node-id="MZAQcJgE4GhCgriHWFpNQf">
       <span class="name" id="uName" data-page-node-id="pEbUd1ZMOCnVDMoJp9fGst"></span>
       <span class="bal" id="uBal" data-page-node-id="uC9vMz4UaOxdHn65PD78F1">-- 积分</span>
@@ -1992,60 +1998,12 @@ table.tbl td{transition:background .15s}
   <div style="font-size:11px;color:var(--ink3);line-height:1.6" data-page-node-id="vvoExk9AMVRbO04mZTzF4l">主题会自动记忆，深色主题适合夜间修片～</div>
 </div>
 
-<!-- 小精灵（4岁精灵萌娃 · 桌面宠物） -->
-<div id="fairy" class="hidden" onclick="fairyChat()" title="小精灵（点我说话）" data-page-node-id="WWsP0GaIPdWMBpXoR7PL1r">
-  <svg viewBox="0 0 120 140" width="96" height="120" data-page-node-id="UvUzggUfbMrxHfohzICAZa">
-    <defs data-page-node-id="bGzydHY2qeSLOOTUOYRZ3K">
-      <radialGradient id="fGlow" cx="50%" cy="50%" r="50%" data-page-node-id="ZkxUQhJ3eBB5upELS3FY2q">
-        <stop offset="0%" stop-color="#ffe9a8" stop-opacity=".9" data-page-node-id="FjwKuJqCd4qQanyD1a5AyK"/>
-        <stop offset="100%" stop-color="#ffe9a8" stop-opacity="0" data-page-node-id="xTMuKTCCmNIQlMT2dkREQv"/>
-      </radialGradient>
-      <linearGradient id="fDress" x1="0" y1="0" x2="0" y2="1" data-page-node-id="L4eo3uxfK52ppeN0gDCUdB">
-        <stop offset="0%" stop-color="#ffd9e2" data-page-node-id="xj3n0xQ4zYpvAnYnPHhxyJ"/><stop offset="100%" stop-color="#e9a8bd" data-page-node-id="QlF4r6GJkqHwJiHX1FlkY7"/>
-      </linearGradient>
-      <linearGradient id="fHair" x1="0" y1="0" x2="0" y2="1" data-page-node-id="bRV5ZRPxlcCkxVmKgDFKpo">
-        <stop offset="0%" stop-color="#8a5a44" data-page-node-id="FgL6Xge5KnkxyeiIoNaUi7"/><stop offset="100%" stop-color="#5e3a2c" data-page-node-id="bp4xzYg8Wvu0HatlmSDcZH"/>
-      </linearGradient>
-    </defs>
-    <circle cx="60" cy="70" r="52" fill="url(#fGlow)" data-page-node-id="3XIiyM64LghB7JLbtzCn5d"/>
-    <g class="body-bob" data-page-node-id="IPlbtuVzKmpW6rqUFgdh9R">
-      <!-- 翅膀 -->
-      <ellipse class="wing-l" cx="30" cy="52" rx="17" ry="26" fill="#cfe8ff" opacity=".75"
-               transform="rotate(-24 30 52)" data-page-node-id="bZ0DtxbAUcTF8HrkIFOwnj"/>
-      <ellipse class="wing-r" cx="90" cy="52" rx="17" ry="26" fill="#cfe8ff" opacity=".75"
-               transform="rotate(24 90 52)" data-page-node-id="v0jWyiyInWaAuYW4kgIuwP"/>
-      <!-- 头发双丸子 -->
-      <circle cx="38" cy="30" r="11" fill="url(#fHair)" data-page-node-id="ZMIFF5u7rZFRR49NwkGimT"/>
-      <circle cx="82" cy="30" r="11" fill="url(#fHair)" data-page-node-id="aOG38nHWvtPrAo3jumLri2"/>
-      <path d="M38 36 Q60 12 82 36 Q82 52 60 54 Q38 52 38 36 Z" fill="url(#fHair)" data-page-node-id="xu3YR9tRptRZfRJvd7gpWR"/>
-      <!-- 脸 -->
-      <ellipse cx="60" cy="46" rx="24" ry="22" fill="#fff4ec" data-page-node-id="qBm7W4kaNx98CtUgZlO1uI"/>
-      <!-- 刘海 -->
-      <path d="M38 38 Q46 26 60 28 Q74 26 82 38 Q74 32 60 33 Q46 32 38 38 Z" fill="url(#fHair)" data-page-node-id="2egZV4OHXhG2ve4J7r5PFB"/>
-      <!-- 眼睛（会眨） -->
-      <g class="blink" data-page-node-id="IAK2bJkjrMATC6FBq16YEM"><circle cx="51" cy="47" r="4.6" fill="#3a2b26" data-page-node-id="Sp3dTFmTVPuJWk1uA0k51C"/>
-        <circle cx="52.4" cy="45.6" r="1.6" fill="#fff" data-page-node-id="TKun5PuQnhTpxgfCPvw2Do"/></g>
-      <g class="blink" data-page-node-id="lD2VNOuhUidvr8K7h59pXO"><circle cx="69" cy="47" r="4.6" fill="#3a2b26" data-page-node-id="AHFUUZLX82KvfsaHktMAWl"/>
-        <circle cx="70.4" cy="45.6" r="1.6" fill="#fff" data-page-node-id="CGFKzIQvXKqyMNFj7uiO69"/></g>
-      <!-- 腮红/嘴 -->
-      <ellipse cx="45" cy="55" rx="4.4" ry="2.8" fill="#ffb6c1" opacity=".8" data-page-node-id="2OPGDPlr4H4j2a8ue31wFc"/>
-      <ellipse cx="75" cy="55" rx="4.4" ry="2.8" fill="#ffb6c1" opacity=".8" data-page-node-id="0vkpKiOSnVKoZ6Wpkv7XQS"/>
-      <path d="M56 57 Q60 61 64 57" stroke="#d96a7c" stroke-width="2" fill="none" stroke-linecap="round" data-page-node-id="BBmB88DmVn5bwypLcPZrsY"/>
-      <!-- 小裙 -->
-      <path d="M48 66 Q60 62 72 66 L84 100 Q60 110 36 100 Z" fill="url(#fDress)" data-page-node-id="JtEeFvmGIt1q9FjqBinEoF"/>
-      <path d="M48 66 Q60 70 72 66 L70 74 Q60 78 50 74 Z" fill="#fff" opacity=".5" data-page-node-id="qEX6uk60FCJfKUVFYVmjgN"/>
-      <!-- 手臂 + 星光魔杖 -->
-      <path d="M50 74 Q40 84 34 88" stroke="#fff4ec" stroke-width="7" fill="none" stroke-linecap="round" data-page-node-id="YyHLeyQwQzs3cmfisGYXpN"/>
-      <path d="M70 74 Q80 82 86 78" stroke="#fff4ec" stroke-width="7" fill="none" stroke-linecap="round" data-page-node-id="6XTc9jceIOMjGD3dWQm4ZO"/>
-      <line x1="86" y1="78" x2="98" y2="58" stroke="#c9a06a" stroke-width="2.4" stroke-linecap="round" data-page-node-id="68weIL1W3MRGAe4yN35grd"/>
-      <circle class="wand-tip" cx="99" cy="56" r="3" fill="#ffd76e" data-page-node-id="1SjPmBllfaPGPMqSADEy2k"/>
-      <!-- 小腿 -->
-      <line x1="53" y1="100" x2="51" y2="112" stroke="#fff4ec" stroke-width="7" stroke-linecap="round" data-page-node-id="uCA9zrMFErFTxdguWpt23w"/>
-      <line x1="67" y1="100" x2="69" y2="112" stroke="#fff4ec" stroke-width="7" stroke-linecap="round" data-page-node-id="IndEzVwqrTTGKfyLp1BIph"/>
-      <ellipse cx="50" cy="115" rx="6" ry="3" fill="#d96a7c" data-page-node-id="MbClAf34iN1WZUHfjgDzXP"/>
-      <ellipse cx="70" cy="115" rx="6" ry="3" fill="#d96a7c" data-page-node-id="74fYvMotFXuOsqDqFOkwqt"/>
-    </g>
-  </svg>
+<!-- 桌宠 dsh-pet（Q版蓝发小女仆鲸鱼娘 · 透明动画） -->
+<div id="fairy" class="hidden" title="桌宠：点我说话，拖我溜达" data-page-node-id="WWsP0GaIPdWMBpXoR7PL1r">
+  <video id="petV0" muted playsinline preload="auto"></video>
+  <video id="petV1" muted playsinline preload="auto"></video>
+  <img class="pet-fallback" src="assets/pet/logo.png" alt="桌宠" onerror="document.getElementById('fairy').style.display='none'">
+  <div class="pet-hit"></div>
 </div>
 <!-- 服装/发型样式墙弹层 -->
 <div class="preset-modal hidden" id="presetModal" data-page-node-id="VtKgijmpyFag5zbcB9IOa9">
@@ -4737,12 +4695,151 @@ document.addEventListener('click', e=>{
   }
 });
 
-/* ================= 小精灵（4岁精灵萌娃 · 桌面宠物） ================= */
+/* ================= 桌宠 dsh-pet（透明动画 · 替代旧 SVG 小精灵） =================
+   素材 dsh-pet 0.4.5 by PC2005-cloud / https://github.com/PC2005-cloud/dsh-pet
+   许可: 代码 MIT；素材禁止商用；二创在公开渠道须署名（见 assets/pet/CREDITS.md）
+   交互为本项目自实现，与上游 Cordis/React/DSH 宿主无依赖
+   ============================================================================ */
+const PET_BASE = 'assets/pet/';
+const PET_CLIPS = {
+  idle:['idle'], drag:['drag'],
+  clicks:['click1','click2','click3','click4','click5'],
+  moves:['move1','move2','move3'],
+  work:['work1','work2','work3'],
+  random:['whisper','eat','play','bubble','work3'],
+  sleepIn:['sleep1'], sleepLoop:['sleep2'], sleepOut:['sleep3']
+};
 const F = {
   on: localStorage.getItem('wa_fairy') !== '0',
   flyTimer: null, chatterTimer: null, crawlTimer: null, idleTimer: null,
   bubbleTimer: null, lastCrawlAt: Number(localStorage.getItem('wa_fairy_crawl') || 0),
 };
+const P = {
+  W:360, H:203, cur:0, clip:'', layers:[], el:null, ready:false, placed:false,
+  x:120, y:260, vx:0, vy:0, dragging:false, moved:false, busy:false,
+  downX:0, downY:0, downT:0, offX:0, offY:0,
+  lastPX:0, lastPY:0, lastPT:0, raf:0, randTimer:0
+};
+function petPick(a){ return a[Math.floor(Math.random()*a.length)]; }
+
+function petPlay(name, loop, onEnd){
+  if(!P.ready) return;
+  const st = P.layers[1-P.cur], ac = P.layers[P.cur];
+  if(P.clip === name && loop) return;
+  P.clip = name;
+  st.onended = null;
+  st.loop = !!loop;
+  st.src = PET_BASE + name + '.webm';
+  try{ st.load(); const q = st.play(); if(q && q.catch) q.catch(function(){}); }catch(e){}
+  st.classList.add('on'); ac.classList.remove('on');
+  P.cur = 1 - P.cur;
+  if(onEnd && !loop) st.onended = onEnd;
+}
+function petIdle(){
+  if(!F.on || P.dragging || P.busy) return;
+  if(P.el) P.el.classList.remove('throwing');
+  petPlay('idle', true);
+}
+function petAlphaOK(){
+  try{
+    const v = document.createElement('video');
+    const ok = !!(v.canPlayType && v.canPlayType('video/webm; codecs="vp9"'));
+    const safari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+    return ok && !safari;
+  }catch(e){ return true; }
+}
+function petInit(){
+  if(P.ready) return;
+  P.el = document.getElementById('fairy');
+  P.layers = [document.getElementById('petV0'), document.getElementById('petV1')];
+  if(!P.el || !P.layers[0] || !P.layers[1]) return;
+  if(!petAlphaOK()) P.el.classList.add('no-alpha');
+  P.layers.forEach(function(v){
+    v.addEventListener('error', function(){ P.el.classList.add('no-alpha'); });
+  });
+  P.el.addEventListener('pointerdown', petDown);
+  addEventListener('pointermove', petMove);
+  addEventListener('pointerup', petUp);
+  addEventListener('pointercancel', petUp);
+  P.ready = true;
+  petPlay('idle', true);
+}
+function petPos(x, y){
+  if(!P.el) return;
+  P.el.style.left = x + 'px'; P.el.style.top = y + 'px';
+  P.x = x; P.y = y;
+}
+function petDown(e){
+  if(!F.on || !P.ready) return;
+  P.dragging = true; P.moved = false; P.busy = true;
+  P.downX = e.clientX; P.downY = e.clientY; P.downT = performance.now();
+  P.lastPX = e.clientX; P.lastPY = e.clientY; P.lastPT = P.downT;
+  P.vx = 0; P.vy = 0;
+  cancelAnimationFrame(P.raf);
+  P.el.classList.add('dragging'); P.el.classList.remove('throwing');
+  const r = P.el.getBoundingClientRect();
+  P.offX = e.clientX - r.left; P.offY = e.clientY - r.top;
+  petPlay('drag', true);
+  try{ P.el.setPointerCapture(e.pointerId); }catch(_){}
+  e.preventDefault();
+}
+function petMove(e){
+  if(!P.dragging) return;
+  if(Math.abs(e.clientX-P.downX) + Math.abs(e.clientY-P.downY) > 5) P.moved = true;
+  const x = Math.max(-P.W*0.3, Math.min(innerWidth-P.W*0.7, e.clientX-P.offX));
+  const y = Math.max(0, Math.min(innerHeight-P.H*0.6, e.clientY-P.offY));
+  petPos(x, y); placeBubble();
+  const t = performance.now(), dt = Math.max(1, t-P.lastPT);
+  P.vx = (e.clientX-P.lastPX)/dt*16; P.vy = (e.clientY-P.lastPY)/dt*16;
+  P.lastPX = e.clientX; P.lastPY = e.clientY; P.lastPT = t;
+}
+function petUp(){
+  if(!P.dragging) return;
+  P.dragging = false;
+  P.el.classList.remove('dragging');
+  if(!P.moved){
+    P.busy = false;
+    petPlay(petPick(PET_CLIPS.clicks), false, petIdle);
+    fairyChat();
+    placeBubble();
+    return;
+  }
+  P.el.classList.add('throwing');
+  P.vx = Math.max(-26, Math.min(26, P.vx));
+  P.vy = Math.max(-26, Math.min(26, P.vy));
+  petPlay(petPick(PET_CLIPS.moves), true);
+  petThrow();
+}
+function petThrow(){
+  cancelAnimationFrame(P.raf);
+  const step = function(){
+    P.vy += 0.55; P.vx *= 0.985; P.vy *= 0.992;
+    let x = P.x + P.vx, y = P.y + P.vy;
+    const maxX = innerWidth - P.W, maxY = innerHeight - P.H;
+    if(x < 0){ x = 0; P.vx = -P.vx*0.55; }
+    if(x > maxX){ x = maxX; P.vx = -P.vx*0.55; }
+    if(y < 0){ y = 0; P.vy = -P.vy*0.45; }
+    if(y > maxY){
+      y = maxY; P.vy = -P.vy*0.42; P.vx *= 0.82;
+      if(Math.abs(P.vy) < 1.2){ P.vy = 0; P.vx *= 0.7; }
+    }
+    petPos(x, y); placeBubble();
+    if(Math.abs(P.vx) > 0.15 || Math.abs(P.vy) > 0.15 || y < maxY-1){
+      P.raf = requestAnimationFrame(step);
+    }else{
+      P.busy = false;
+      P.el.classList.remove('throwing');
+      petIdle();
+    }
+  };
+  P.raf = requestAnimationFrame(step);
+}
+function petRandomAct(){
+  if(!F.on || P.dragging || P.busy) return;
+  P.busy = true;
+  petPlay(petPick(PET_CLIPS.random), false, function(){ P.busy = false; petIdle(); });
+}
+
 function toggleFairy(){
   F.on = !F.on;
   localStorage.setItem('wa_fairy', F.on ? '1' : '0');
@@ -4752,18 +4849,21 @@ function toggleFairy(){
 }
 function updateFairyBtn(){
   document.getElementById('fairyBtn').style.opacity = F.on ? '1' : '.55';
-  document.getElementById('fairyBtn').textContent = F.on ? '🧚 小精灵' : '🧚 已休息';
+  document.getElementById('fairyBtn').textContent = F.on ? '🐳 桌宠' : '🐳 已休息';
 }
 function showFairy(){
+  petInit();
   const el = document.getElementById('fairy');
   el.classList.remove('hidden');
+  if(!P.placed){
+    petPos(Math.max(16, innerWidth-P.W-40), Math.max(70, innerHeight-P.H-60));
+    P.placed = true;
+  }
   fairyMove();
-  clearInterval(F.flyTimer);
-  F.flyTimer = setInterval(fairyMove, 3400);
-  clearInterval(F.chatterTimer);
-  F.chatterTimer = setInterval(fairyChatter, 52000);
-  clearInterval(F.idleTimer);
-  F.idleTimer = setInterval(fairyIdleCheck, 65000);
+  clearInterval(F.flyTimer);      F.flyTimer = setInterval(fairyMove, 6800);
+  clearInterval(F.chatterTimer);  F.chatterTimer = setInterval(fairyChatter, 52000);
+  clearInterval(F.idleTimer);     F.idleTimer = setInterval(fairyIdleCheck, 65000);
+  clearInterval(P.randTimer);     P.randTimer = setInterval(petRandomAct, 15000);
   fairyIdleCheck();
 }
 function hideFairy(){
@@ -4771,12 +4871,20 @@ function hideFairy(){
   fairyBubbleHide();
   clearInterval(F.flyTimer); clearInterval(F.chatterTimer);
   clearInterval(F.idleTimer); clearInterval(F.crawlTimer);
+  clearInterval(P.randTimer); cancelAnimationFrame(P.raf);
+  if(P.ready) P.layers.forEach(function(v){ try{ v.pause(); }catch(e){} });
 }
 function fairyMove(){
-  const el = document.getElementById('fairy');
-  const w = Math.max(120, innerWidth - 140), h = Math.max(160, innerHeight - 190);
-  const x = 16 + Math.random() * w, y = 70 + Math.random() * h * 0.72;
-  el.style.left = x + 'px'; el.style.top = y + 'px';
+  if(!F.on || P.dragging || P.busy) return;
+  petInit();
+  const w = Math.max(120, innerWidth-P.W-40), h = Math.max(160, innerHeight-P.H-90);
+  const x = 16 + Math.random()*w, y = 70 + Math.random()*h*0.72;
+  if(x < P.x - 20) P.el.classList.add('flip');
+  else if(x > P.x + 20) P.el.classList.remove('flip');
+  P.el.classList.remove('throwing');
+  petPos(x, y);
+  petPlay(petPick(PET_CLIPS.moves), true);
+  setTimeout(function(){ if(F.on && !P.dragging && !P.busy) petIdle(); }, 2600);
   placeBubble(x, y);
 }
 function placeBubble(x, y){
@@ -4784,7 +4892,7 @@ function placeBubble(x, y){
   if (b.classList.contains('hidden')) return;
   const el = document.getElementById('fairy');
   x = x || parseFloat(el.style.left || 100); y = y || parseFloat(el.style.top || 100);
-  const bx = Math.min(x + 96, innerWidth - 246), by = Math.max(64, y - 8);
+  const bx = Math.min(x + P.W, innerWidth - 246), by = Math.max(64, y - 8);
   b.style.left = Math.max(8, bx) + 'px'; b.style.top = by + 'px';
 }
 function fairyBubbleShow(html, sticky){
@@ -4798,10 +4906,11 @@ function fairyBubbleShow(html, sticky){
 function fairyBubbleHide(){ document.getElementById('fairyBubble').classList.add('hidden'); }
 async function fairyChat(){
   if (!F.on) return;
-  let line = '主人好呀～我是小精灵，今年4岁！';
+  let line = '主人好呀～我是鲸鱼娘，今天也在努力吃白饭！';
   try{ const g = await api('/api/fairy/greet'); if (g.text) line = g.text; }catch(e){}
+  if(P.ready) petPlay('whisper', false, petIdle);
   fairyBubbleShow(
-    `<b>🧚 小精灵</b><br>${esc(line)}
+    `<b>🐳 鲸鱼娘</b><br>${esc(line)}
      <div class="fa">
        <button onclick="fairyCrawl()">出门采集新模板</button>
        <button onclick="fairyBubbleHide()">去玩吧</button>
@@ -4810,12 +4919,13 @@ async function fairyChat(){
 async function fairyChatter(){
   if (!F.on) return;
   const b = document.getElementById('fairyBubble');
-  if (!b.classList.contains('hidden')) return;   // 气泡开着就不打扰
+  if (!b.classList.contains('hidden')) return;
   try{ const g = await api('/api/fairy/greet'); fairyBubbleShow(esc(g.text)); }catch(e){}
 }
 async function fairyCrawl(){
   try{ await api('/api/fairy/crawl', {}); }
   catch(e){ toast(e.message, true); return; }
+  if(P.ready) petPlay(petPick(PET_CLIPS.work), true);
   F.lastCrawlAt = Date.now();
   localStorage.setItem('wa_fairy_crawl', String(F.lastCrawlAt));
   fairyBubbleShow('出发咯～我去<b>婚礼纪 / Pinterest / 小红书 / 金夫人</b>这些地方采新模板啦！<div class="log" id="fairyLog">· 起飞～</div>', true);
@@ -4834,23 +4944,23 @@ async function fairyPoll(){
   clearInterval(F.crawlTimer); F.crawlTimer = null;
   F.lastCrawlAt = Date.now();
   localStorage.setItem('wa_fairy_crawl', String(F.lastCrawlAt));
+  if(P.ready) petPlay('work3', false, petIdle);
   if (s.found > 0){
     fairyBubbleShow(`叮咚～我带回 <b>${s.found}</b> 个新模板！<div class="fa">
       <button onclick="go('plaza');loadTemplates();fairyBubbleHide()">去模板广场看</button>
-      <button onclick="fairyBubbleHide()">谢谢小精灵</button></div>`, true);
+      <button onclick="fairyBubbleHide()">谢谢小鲸</button></div>`, true);
   }else{
     fairyBubbleShow(s.error ? '呜……采集途中遇到问题：' + esc(s.error) : '回来啦～这次没有新收获（重复的都过滤掉了哦）');
   }
 }
 async function fairyIdleCheck(){
-  // 主人没用控制台（无生成任务）且距上次采集超过30分钟 → 小精灵主动外出
   if (!F.on || _genTimer || F.crawlTimer) return;
   if (Date.now() - F.lastCrawlAt < 30*60*1000) return;
   try{
     const s = await api('/api/fairy/status');
     if (s.auto_suggested && !s.running){
       fairyBubbleShow('主人好像在忙别的～那我偷偷出门采点新模板回来好不好？<div class="fa"><button onclick="fairyCrawl()">好呀去吧</button><button onclick="fairyBubbleHide()">先不要</button></div>', true);
-      F.lastCrawlAt = Date.now() - 28*60*1000;   // 2分钟内不重复问
+      F.lastCrawlAt = Date.now() - 28*60*1000;
       localStorage.setItem('wa_fairy_crawl', String(F.lastCrawlAt));
     }
   }catch(e){}
