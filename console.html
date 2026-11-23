@@ -3195,7 +3195,8 @@ function filterPreviewTemplates(kw){
   if (!kw || kw === '全部') return PREVIEW_TEMPLATES.slice();
   const q = String(kw).toLowerCase();
   const hay = t => [t.name, t.style, t.dress_type, t.scene, t.pose, t.shot,
-                    t.lighting, t.color_tone, t.prompt]
+                    t.lighting, t.color_tone, t.prompt, t.credit, t.origin_title,
+                    t.web ? '全网 联网 commons' : '']
                    .join(' ').toLowerCase();
   return PREVIEW_TEMPLATES.filter(t => hay(t).includes(q));
 }
@@ -3217,16 +3218,33 @@ function tplAssetFail(img, id){
   img.onerror = () => tplPreviewRetry(img, id, 0);
   img.src = `${API}/api/templates/${id}/preview`;
 }
+function tplWebFail(img, id){
+  // 全网采集的外链封面：CDN 不通 / 防盗链时先落回本地样片，仍然失败才显示占位卡
+  const t = (S.templates || []).find(x => x.id === id);
+  if (t && t.cover_fallback && !img.dataset.triedFallback){
+    img.dataset.triedFallback = '1';
+    img.onerror = () => tplImgDead(img);
+    img.src = t.cover_fallback;
+    return;
+  }
+  tplImgDead(img);
+}
 function tplCardHTML(t){
   // 优先级：投稿原图 > 后端封面图 > 预生成静态封面 > AI 生成通道
   const origin = t.origin_image_key
     ? `<img src="${API}/files${t.origin_image_key}" loading="lazy" onerror="tplImgFallback(this,${t.id})">` : '';
   const cover = origin || (t.image_key
     ? `<img src="${API}/files${t.image_key}" loading="lazy" onerror="tplImgFallback(this,${t.id})">`
-    : `<img src="${tplAssetCover(t)}" loading="lazy"
-         onerror="tplAssetFail(this,${t.id})" style="background:${tplColor(t)}">`);
+    : `<img src="${esc(tplAssetCover(t))}" loading="lazy"
+         onerror="${t.web ? 'tplWebFail' : 'tplAssetFail'}(this,${t.id})" style="background:${tplColor(t)}">`);
   const badge2 = t.origin_image_key
-    ? `<span class="tpl-badge" style="left:auto;right:10px;background:rgba(178,140,60,.85)">📷 原图</span>` : '';
+    ? `<span class="tpl-badge" style="left:auto;right:10px;background:rgba(178,140,60,.85)">📷 原图</span>`
+    : (t.web ? `<span class="tpl-badge" style="left:auto;right:10px;background:rgba(58,104,138,.88)">🌐 全网</span>` : '');
+  const credit = t.web
+    ? `<div style="margin-top:5px;font-size:11px;color:var(--ink3);line-height:1.5">
+         图源：${esc(t.credit || 'Wikimedia Commons')} · ${esc(t.license || 'CC0')}
+         <a href="${esc(t.source || '#')}" target="_blank" rel="noopener" onclick="event.stopPropagation()"
+            style="color:var(--gold,#a8844c)">来源 ↗</a></div>` : '';
   return `<div class="tpl-card photo" onclick="selectTemplate(${t.id})">
     <div class="tpl-cover">
       ${cover}
@@ -3239,6 +3257,7 @@ function tplCardHTML(t){
       <b>${esc(t.name)}</b>
       场景：${esc(t.scene||'-')} · ${esc(t.pose||'')}<br>
       ${esc(t.lens||'')} · ${esc(t.lighting||'')}
+      ${credit}
     </div>
     <div class="tpl-use" style="padding:8px 13px"><span class="cnt">已用 ${t.use_count||0} 次 · 成功率 ${Math.round((t.success_rate||1)*100)}%</span><span class="sel">选用 →</span></div>
   </div>`;
@@ -3290,8 +3309,16 @@ async function loadTemplates(){
   }
   S.templates = list;
   renderTplPicker();   // 顺手把创作页两个模板下拉一起填上
+  const liveN = list.filter(x => x.web && x.live).length;
+  const cloudN = list.filter(x => x.web && !x.live).length;
+  const webTip = (liveN || cloudN)
+    ? '，其中 ' + (liveN ? '<b>' + liveN + '</b> 套实时检索自全网公开图库' : '') +
+      (liveN && cloudN ? '、' : '') +
+      (cloudN ? '<b>' + cloudN + '</b> 套来自云端 CC 图库' : '') + '（署名见卡片）'
+    : '';
   const note = usedPreview
-    ? '<div class="price-note" style="grid-column:1/-1;margin-bottom:2px">静态预览：以下 ' + list.length + ' 套为内置展示模板，可直接选用并自动填入提示词；投稿、审核与使用统计需在本机双击 start.bat 启动后端。</div>'
+    ? '<div class="price-note" style="grid-column:1/-1;margin-bottom:2px">静态预览：以下 ' + list.length + ' 套可直接选用并自动填入提示词' + webTip +
+      '；投稿、审核与使用统计需在本机双击 start.bat 启动后端。</div>'
     : '';
   document.getElementById('tplGrid').innerHTML = note + (list.map(tplCardHTML).join('')
       || '<div class="empty" style="grid-column:1/-1">没有匹配的模板</div>');
@@ -5687,12 +5714,18 @@ async function fairyChatter(){
   const b = document.getElementById('fairyBubble');
   if (!b.classList.contains('hidden')) return;
   try{ const g = await api('/api/fairy/greet'); fairyBubbleShow(esc(g.text)); }
-  catch(e){ if (S.preview && !authBackend()) fairyBubbleShow('🐳 今天也在认真吃白饭～（预览模式，点我可以出门采本地样片哦）'); }
+  catch(e){ if (S.preview && !authBackend()) fairyBubbleShow('🐳 今天也在认真吃白饭～（预览模式，点我可以联网去全网采新模板哦）'); }
 }
-/* 静态预览的「出门采集」：真采集走后端线程（LLM 生成趋势模板 + 写库），
-   GitHub Pages 没有后端，点按钮只会撞采集接口 404 然后弹个错。
-   这里降级成「本地样片巡游」：从 6 张内置实拍样片里带回 1~2 套展示模板，
-   有动画、有结果、能去广场选用；明确标注不联网、不写库、刷新即清空。 */
+/* ===== 桌宠「联网出门采集」· 静态预览链路 =====
+   真后端仍走原来的采集接口线程（LLM 抓趋势 + 写库），逻辑一字未改。
+   GitHub Pages 没有后端，但浏览器能直接跨域访问公开图库（Wikimedia Commons
+   返回 ACAO:*）。所以静态页这次是真联网，三层来源、如实标注：
+     ① 实时全网检索 Commons（insource:Unsplash + 趋势词）→ 真实 CC0/CC BY 婚照
+        + 作者/许可/来源链接，外链封面并配本地回退防裂图；
+     ② 实时源不通（部分网络 / 超时）→ 同源拉 assets/web-templates/manifest.json，
+        那是预先从全网抓取压缩好的 CC 图库，每次仍真发网络请求取云端清单；
+     ③ 网络全断 → 6 张内置样片兜底，明确写「网络没连上」。
+   三种情况都不写库、不冒充真实后端采集；结果仅本次浏览有效，刷新即清空。 */
 const FAIRY_LOCAL_POOL = [
   {key:'meadow', name:'晨光草坪白纱', style:'森系/自然/清新', dress_type:'轻纱A字裙',
    scene:'阳光草坪', pose:'并肩回望', shot:'全身', lens:'35mm', lighting:'清晨侧逆光', color_tone:'暖绿调',
@@ -5713,45 +5746,217 @@ const FAIRY_LOCAL_POOL = [
    scene:'樱花花园', pose:'抬手接花瓣', shot:'半身', lens:'85mm', lighting:'阴天柔光', color_tone:'粉白调',
    prompt:'樱花纷飞的庭园里，柔纱齐地婚纱的新娘抬手接花瓣，日系柔光梦幻婚照'}
 ];
+/* 全网实时检索用的趋势词。insource:Unsplash 是 Commons 上的现代婚照子集，
+   比裸搜 wedding 干净得多（后者常出老照片 / 版画 / 展品）。 */
+const FAIRY_WEB_TOPICS = [
+  {q:'insource:Unsplash bride wedding cliff',     zh:'海崖誓言',     style:'旅拍/电影感/大气', scene:'海崖与远海', light:'黄昏侧逆光',   tone:'暖金调'},
+  {q:'insource:Unsplash forest bride wedding',    zh:'森系林间白纱', style:'森系/自然/清新',   scene:'林间小径',   light:'树影斑驳柔光', tone:'青绿柔调'},
+  {q:'insource:Unsplash wedding couple beach',    zh:'海边仪式',     style:'海边/自然/纪实',   scene:'海滩仪式',   light:'海面反射补光', tone:'冷蓝柔调'},
+  {q:'insource:Unsplash wedding ceremony church', zh:'教堂誓约',     style:'西式/神圣/纪实',   scene:'教堂长廊',   light:'彩窗自然光',   tone:'暖金调'},
+  {q:'insource:Unsplash bride orchard wedding',   zh:'果园新娘',     style:'田园/自然/治愈',   scene:'果园树荫',   light:'黄金时刻侧光', tone:'暖绿调'},
+  {q:'insource:Unsplash wedding city street',     zh:'都市街拍婚照', style:'都市/纪实/松弛',   scene:'城市街道',   light:'傍晚自然光',   tone:'琥珀胶片调'},
+  {q:'insource:Unsplash wedding bouquet',         zh:'捧花细节',     style:'细节/柔光/浪漫',   scene:'花艺近景',   light:'阴天漫射柔光', tone:'粉白柔调'},
+  {q:'insource:Unsplash wedding dance',           zh:'第一支舞',     style:'纪实/夜景/氛围',   scene:'宴会灯串下', light:'暖色环境光',   tone:'琥珀调'},
+  {q:'insource:Unsplash bride barn wedding',      zh:'谷仓婚礼',     style:'乡村/复古/温暖',   scene:'木质谷仓',   light:'窗口侧光',     tone:'焦糖暖调'},
+  {q:'insource:Unsplash wedding kiss couple',     zh:'相拥瞬间',     style:'纪实/情绪/温柔',   scene:'户外草坪',   light:'逆光柔化',     tone:'奶油暖调'}
+];
+const FAIRY_WEB_BAD = /(museum|exhibition|mannequin|painting|engraving|illustration|coat of arms|logo|diagram|chart|stamp|\.svg|\.gif|\.tif|\.pdf)/i;
+
+function fairyHash(s){
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function fairyStrip(s){
+  return String(s || '').replace(/<[^>]*>/g, '').replace(/&amp;/g, '&')
+                         .replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+}
+function fairyLocalFallback(i){
+  return 'assets/wedding-photos/' + FAIRY_LOCAL_POOL[i % FAIRY_LOCAL_POOL.length].key + '.jpg';
+}
+/* 把一条全网素材（实时检索或云端清单）变成广场里可选用、可拼提示词的模板 */
+function fairyWebTemplate(x, i, live){
+  const name = x.name || x.zh || '全网灵感模板';
+  const style = x.style || '纪实/自然/高级';
+  const scene = x.scene || '户外婚礼现场';
+  const light = x.lighting || x.light || '自然柔光';
+  const tone  = x.color_tone || x.tone || '自然调';
+  return {
+    id: 1000 + PREVIEW_TEMPLATES.length + i,
+    template_code: x.code || ('tpl_live_' + fairyHash(x.cover || name)),
+    name: name, style: style, dress_type: x.dress_type || '白纱/婚礼礼服',
+    scene: scene, pose: x.pose || '自然互动', shot: x.shot || '环境人像',
+    lens: x.lens || '35mm / 85mm', lighting: light, color_tone: tone,
+    aspect_ratio: x.aspect_ratio || '3:4',
+    prompt: x.prompt || (name + '主题婚纱大片，' + scene + '，' + style + '风格，' + light +
+            '，' + tone + '，真实婚礼摄影质感，人物情绪自然，细节锐利画面通透'),
+    negative_prompt: x.negative_prompt || '畸形手指，模糊，变形面部，多余肢体，过曝死白，杂乱路人',
+    recommended_model: x.recommended_model || 'MODEL_PRO',
+    use_count: 0, success_rate: 1,
+    image_key: null, origin_image_key: null,
+    cover: x.cover, cover_fallback: fairyLocalFallback(i),
+    web: true, live: !!live,
+    credit: x.credit || 'Wikimedia Commons 贡献者',
+    license: x.license || 'CC0 / 公有领域',
+    source: x.source || 'https://commons.wikimedia.org/',
+    origin_title: x.origin_title || ''
+  };
+}
+/* ① 实时跨域检索 Wikimedia Commons。带硬超时，国内网络不通时能快速失败降级。 */
+async function fairyFetchCommons(topic){
+  const args = new URLSearchParams({
+    action:'query', generator:'search', gsrsearch:topic.q, gsrnamespace:'6',
+    gsrlimit:'6', prop:'imageinfo', iiprop:'url|size|extmetadata',
+    iiurlwidth:'900', format:'json', formatversion:'2', origin:'*'
+  });
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 5500);
+  let d;
+  try{
+    const r = await fetch('https://commons.wikimedia.org/w/api.php?' + args, { signal: ctrl.signal });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    d = await r.json();
+  } finally { clearTimeout(timer); }
+  const out = [];
+  for (const p of ((d.query && d.query.pages) || [])){
+    const ii = (p.imageinfo || [])[0];
+    if (!ii) continue;
+    const title = p.title || '', cover = ii.thumburl || ii.url || '';
+    if (!cover || FAIRY_WEB_BAD.test(title)) continue;
+    if (!/\.(jpe?g|png)(\?|$)/i.test(cover)) continue;
+    if (ii.width && ii.height && (ii.width < 600 || ii.height < 450)) continue;
+    const em = ii.extmetadata || {};
+    // 合规：只收 CC0 / CC BY / 公有领域；带 SA 传染条款、NC 非商用、ND 禁改的不要
+    const lic = fairyStrip(em.LicenseShortName && em.LicenseShortName.value).slice(0, 40);
+    if (/BY-SA|GFDL|GPL|ShareAlike|\bNC\b|\bND\b/i.test(lic)) continue;
+    const code = 'tpl_live_' + fairyHash(cover.split('?')[0]);
+    if (PREVIEW_TEMPLATES.some(t => t.template_code === code)) continue;
+    out.push(fairyWebTemplate({
+      name: out.length ? topic.zh + ' · ' + (out.length + 1) : topic.zh,
+      style: topic.style, scene: topic.scene,
+      light: topic.light, tone: topic.tone, cover: cover,
+      credit: fairyStrip(em.Artist && em.Artist.value).slice(0, 70),
+      license: lic,
+      source: 'https://commons.wikimedia.org/wiki/' + encodeURIComponent(title.replace(/ /g, '_')),
+      origin_title: title.slice(0, 110)
+    }, out.length, true));
+    if (out.length >= 3) break;
+  }
+  return out;
+}
+/* 外链封面先探活，加载不出来的不进广场，避免占位图充数 */
+function fairyProbeImage(url, ms){
+  return new Promise(resolve => {
+    const im = new Image(); let done = false;
+    const fin = v => { if (done) return; done = true; resolve(v); };
+    const timer = setTimeout(() => fin(false), ms || 3600);
+    im.onload  = () => { clearTimeout(timer); fin(im.naturalWidth > 0); };
+    im.onerror = () => { clearTimeout(timer); fin(false); };
+    im.src = url;
+  });
+}
+/* ② 云端全网图库：预先抓好的 CC 图集，走同源 manifest，弱网/墙内也能真联网取到 */
+async function fairyFetchCloudPool(){
+  const r = await fetch('assets/web-templates/manifest.json?t=' + Date.now(), { cache:'no-store' });
+  if (!r.ok) throw new Error('manifest HTTP ' + r.status);
+  const m = await r.json();
+  const pool = (m.items || []).filter(x =>
+    !PREVIEW_TEMPLATES.some(t => t.template_code === x.code));
+  if (!pool.length) throw new Error('云端图库已全部采过');
+  const picked = pool.slice().sort(() => Math.random() - .5)
+                     .slice(0, 1 + Math.floor(Math.random() * 2));
+  return picked.map((x, i) => fairyWebTemplate(x, i, false));
+}
+/* ③ 本地样片：只在网络全断时启用，且明确标注原因 */
+function fairyLocalPick(){
+  const remain = FAIRY_LOCAL_POOL.filter(x =>
+    !PREVIEW_TEMPLATES.some(t => t.template_code === 'tpl_local_' + x.key));
+  const n = Math.min(1 + Math.floor(Math.random() * 2), remain.length);
+  return remain.slice(0, n).map((x, i) => ({
+    id: 1000 + PREVIEW_TEMPLATES.length + i,
+    template_code: 'tpl_local_' + x.key,
+    name: x.name, style: x.style, dress_type: x.dress_type,
+    scene: x.scene, pose: x.pose, shot: x.shot, lens: x.lens,
+    lighting: x.lighting, color_tone: x.color_tone,
+    aspect_ratio: '3:4', prompt: x.prompt,
+    negative_prompt: '畸形手指，模糊，变形面部，多余肢体',
+    recommended_model: 'MODEL_STANDARD',
+    use_count: 0, success_rate: 1,
+    image_key: null, origin_image_key: null,
+    cover: 'assets/wedding-photos/' + x.key + '.jpg'
+  }));
+}
+/* 一次采集的主任务：与动画并行跑，按 ①②③ 顺序择优 */
+async function fairyWebCollect(topics){
+  try{
+    const batches = await Promise.all(topics.map(tp => fairyFetchCommons(tp).catch(() => [])));
+    // 每个趋势词先各取 1 套，保证带回来的不是同一个主题的重复模板；不够再补
+    const live = [];
+    for (const arr of batches) if (arr.length) live.push(arr[0]);
+    for (const arr of batches) for (const x of arr.slice(1))
+      if (live.length < 4 && !live.some(y => y.template_code === x.template_code)) live.push(x);
+    if (live.length){
+      const checked = await Promise.all(live.slice(0, 4).map(async x =>
+        ({ x, ok: await fairyProbeImage(x.cover, 3600) })));
+      const good = checked.filter(c => c.ok).map(c => c.x).slice(0, 2);
+      if (good.length) return { items: good, from: 'live', note: 'Wikimedia Commons 实时全网检索' };
+    }
+  }catch(e){ /* 实时源不通，继续下一层 */ }
+  try{
+    const items = await fairyFetchCloudPool();
+    if (items.length) return { items, from: 'cloud', note: '云端全网图库（预抓取 CC 授权婚照）' };
+  }catch(e){ /* 云端清单也不通 */ }
+  return { items: fairyLocalPick(), from: 'local', note: '网络未连通，已改用本地样片' };
+}
 function fairyPreviewCrawl(){
   if (F.crawlTimer) return;   // 上一趟还没回来
   F.lastCrawlAt = Date.now();
   localStorage.setItem('wa_fairy_crawl', String(F.lastCrawlAt));
   if (P.ready) petPlay(petPick(PET_CLIPS.work), true);
-  const remain = FAIRY_LOCAL_POOL.filter(x =>
-    !PREVIEW_TEMPLATES.some(t => t.template_code === 'tpl_local_' + x.key));
-  const steps = ['· 起飞～', '· 在本地样片库里翻了翻…', '· 挑了几张顺眼的带回来～'];
+  const topics = FAIRY_WEB_TOPICS.slice().sort(() => Math.random() - .5).slice(0, 2);
+  const steps = [
+    '· 起飞～连上全网公开图库',
+    '· 正在检索「' + esc(topics[0].zh) + ' / ' + esc(topics[1].zh) + '」趋势…',
+    '· 挑图、核对 CC 授权与作者署名…',
+    '· 回航整理模板参数…'
+  ];
+  const job = fairyWebCollect(topics);
   let step = 0;
-  fairyBubbleShow('出发咯～我去<b>本地样片库</b>采新模板啦！<div class="log"><div>' + steps[0] + '</div></div>', true);
-  F.crawlTimer = setInterval(()=>{
+  fairyBubbleShow('出发咯～这次我<b>联网</b>去全网找新模板啦！<div class="log"><div>' + steps[0] + '</div></div>', true);
+  F.crawlTimer = setInterval(async () => {
     step++;
-    if (step < 3){
+    if (step < 4){
       const log = steps.slice(0, step + 1).map(s => '<div>' + s + '</div>').join('');
-      fairyBubbleShow('正在 <b>本地样片库</b> 采风 · 预览采集（不联网）<div class="log">' + log + '</div>', true);
+      fairyBubbleShow('正在 <b>全网采风</b> · 联网检索中<div class="log">' + log + '</div>', true);
       return;
     }
     clearInterval(F.crawlTimer); F.crawlTimer = null;
     if (P.ready) petPlay('work3', false, petIdle);
-    const n = Math.min(1 + Math.floor(Math.random() * 2), remain.length);
-    const picked = remain.slice(0, n);
-    picked.forEach(x => PREVIEW_TEMPLATES.push({
-      id: 1000 + PREVIEW_TEMPLATES.length,
-      template_code: 'tpl_local_' + x.key,
-      name: x.name, style: x.style, dress_type: x.dress_type,
-      scene: x.scene, pose: x.pose, shot: x.shot, lens: x.lens,
-      lighting: x.lighting, color_tone: x.color_tone,
-      aspect_ratio: '3:4', prompt: x.prompt,
-      negative_prompt: '畸形手指，模糊，变形面部，多余肢体',
-      recommended_model: 'MODEL_STANDARD',
-      use_count: 0, success_rate: 1,
-      image_key: null, origin_image_key: null,
-      cover: 'assets/wedding-photos/' + x.key + '.jpg'
-    }));
-    const tip = '<div style="margin-top:6px;font-size:11px;color:var(--ink3)">预览采集：仅本次浏览有效，刷新后清空；真采集（联网抓趋势＋写入模板库）需在本机双击 start.bat 启动后端。</div>';
+    let res;
+    try{
+      res = await Promise.race([
+        job,
+        new Promise(r => setTimeout(() => r({ items: fairyLocalPick(), from: 'local', note: '网络超时，已改用本地样片' }), 4500))
+      ]);
+    }catch(e){ res = { items: fairyLocalPick(), from: 'local', note: '联网失败，已改用本地样片' }; }
+    const picked = (res.items || []).filter(x =>
+      !PREVIEW_TEMPLATES.some(t => t.template_code === x.template_code));
+    picked.forEach(x => { x.id = 1000 + PREVIEW_TEMPLATES.length; PREVIEW_TEMPLATES.push(x); });
+    const head = res.from === 'live'
+      ? '叮咚～我<b>联网</b>从 Wikimedia Commons 实时采回 <b>' + picked.length + '</b> 套全网模板：'
+      : res.from === 'cloud'
+      ? '叮咚～实时检索没连上，我从<b>云端全网图库</b>带回 <b>' + picked.length + '</b> 套模板：'
+      : '呜……这次全网没连上，我先把 <b>' + picked.length + '</b> 套本地样片带回来顶上：';
+    const licenseTip = res.from === 'local'
+      ? '本地样片不联网、不涉及外部素材授权。'
+      : '图片为公开 CC0 / CC BY 授权素材，作者与许可已标在卡片上，仅作灵感参考。';
+    const tip = '<div style="margin-top:6px;font-size:11px;color:var(--ink3)">' +
+      '来源：' + esc(res.note) + '。' + licenseTip +
+      '预览采集不写数据库、仅本次浏览有效，刷新后清空；真·写库采集需本机双击 start.bat 启动后端。</div>';
     const goBtn = '<div class="fa"><button onclick="go(\'plaza\');loadTemplates();fairyBubbleHide()">去模板广场看</button><button onclick="fairyBubbleHide()">谢谢小鲸</button></div>';
     fairyBubbleShow(picked.length
-      ? '叮咚～我带回 <b>' + picked.length + '</b> 套本地样片模板：' + esc(picked.map(x => x.name).join('、')) + '！' + tip + goBtn
-      : '本地样片都采过啦～' + tip + goBtn, true);
+      ? head + esc(picked.map(x => x.name).join('、')) + '！' + tip + goBtn
+      : '这次全网没有新收获（重复的都过滤掉啦）～' + tip + goBtn, true);
   }, 2600);
 }
 async function fairyCrawl(){
